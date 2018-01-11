@@ -222,7 +222,7 @@ public class ShipController : MonoBehaviour
 
         switch (t.Task_Type)
         {
-            case TaskType.FIRE_TORPEDO:
+            case TaskType.LAUNCH_TORPEDO:
                 s_rend.color = Color.magenta;
                 break;
             case TaskType.REPAIR:

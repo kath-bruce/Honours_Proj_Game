@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 
 namespace HonsProj {
-    public enum RoomType { COMMS, SHIELD_GENERATOR, LIFE_SUPPORT, TORPEDO_LAUNCHER, NAVIGATION }
+    public enum RoomType { COMMS, SHIELD_GENERATOR,
+        LIFE_SUPPORT, TORPEDO_LAUNCHER, NAVIGATION }
 
     public struct RoomInfo
     {

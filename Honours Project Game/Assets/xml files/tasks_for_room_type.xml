@@ -1,0 +1,22 @@
+<rooms>
+	<room type = "COMMS">
+		<task_type> REPAIR </task_type>
+		<task_type> TALK_TO_OTHER_SHIP </task_type>
+	</room>
+	<room type = "SHIELD_GENERATOR">
+		<task_type> REPAIR </task_type>
+		<task_type> CHARGE_SHIELDS </task_type>
+	</room>
+	<room type = "LIFE_SUPPORT">
+		<task_type> REPAIR </task_type>
+		<task_type> MAINTAIN_LIFE_SUPPORT </task_type>
+	</room>
+	<room type = "TORPEDO_LAUNCHER">
+		<task_type> REPAIR </task_type>
+		<task_type> LAUNCH_TORPEDO </task_type>
+	</room>
+	<room type = "NAVIGATION">
+		<task_type> REPAIR </task_type>
+		<task_type> STEER_SHIP </task_type>
+	</room>
+</rooms>
