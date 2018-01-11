@@ -30,6 +30,8 @@ public class ShipController : MonoBehaviour
 
     private Graph ship_graph;
 
+    private Dictionary<RoomType, List<TaskType>> tasks_for_room_type;
+
     //mark nodes in scene with empty game object
     //get game objects and add x,y to list of nodes
     //edges??? - draw with line renderers??? then do the same thing 
@@ -80,7 +82,7 @@ public class ShipController : MonoBehaviour
                 case RoomType.LIFE_SUPPORT:
                     s_rend.color = Color.green;
                     break;
-                case RoomType.SHIELD_GENERATOR:
+                case RoomType.SHIELD_CHARGER:
                     s_rend.color = Color.red;
                     break;
                 case RoomType.COMMS:
@@ -103,6 +105,8 @@ public class ShipController : MonoBehaviour
         ship_graph = GraphPlotter.CreateGraph(roomGoDict.GetFs().ToList());
 
         currentTasks = new List<Task>();
+
+        tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
 
         //set player in random room
         Room player_room = GetRandomRoom();
@@ -158,10 +162,16 @@ public class ShipController : MonoBehaviour
 
                 Room rm = roomGoDict.GetfType(random_room_w_no_task);
 
+                List<TaskType> task_type_list = new List<TaskType>();
+                tasks_for_room_type.TryGetValue(rm.Room_Type, out task_type_list);
+
+                TaskType task_type = task_type_list[Random.Range(0, task_type_list.Count)];
+
                 //temp random task
                 Task task =
                     new Task(
-                        (TaskType)Random.Range(0, System.Enum.GetNames(typeof(TaskType)).Length), //random task type
+                        //(TaskType)Random.Range(0, System.Enum.GetNames(typeof(TaskType)).Length), //random task type
+                        task_type,
                         Random.Range(1, 4),                                                       //random work needed
                         rm                                                                        //the random room
                         );

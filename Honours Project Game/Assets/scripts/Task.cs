@@ -10,9 +10,12 @@ namespace HonsProj
     //  to provide single thing for tasks to use???
     //  with 2 constructors - default will spawn random one and another will be specific
     //  idk
-    public enum TaskType { REPAIR, LAUNCH_TORPEDO,
+    public enum TaskType
+    {
+        REPAIR, LAUNCH_TORPEDO,
         CHARGE_SHIELDS, MAINTAIN_LIFE_SUPPORT,
-        STEER_SHIP, TALK_TO_OTHER_SHIP }
+        STEER_SHIP, TALK_TO_OTHER_SHIP
+    }
 
     public class Task
     {
