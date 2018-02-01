@@ -110,9 +110,12 @@ public class ShipController : MonoBehaviour
 
         //set player in random room
         Room player_room = GetRandomRoom();
-        Player.INSTANCE.SetPlayerPos(player_room.Room_Info.X, player_room.Room_Info.Y);
+        //Player.INSTANCE.SetPlayerPos(player_room.Room_Info.X, player_room.Room_Info.Y);
 
-        Node playerpos = Player.INSTANCE.GetPlayerPos();
+        Node playerpos;// Player.INSTANCE.GetPlayerPos();
+        playerpos.X = 0.0f; //temp
+        playerpos.Y = 0.0f; //temp
+
         Debug.Log("Player pos: " + playerpos.X + ", " + playerpos.Y);
     }
 
@@ -197,23 +200,23 @@ public class ShipController : MonoBehaviour
                 if (t != null)
                 {
                     //find path from player current node (get player pos) to task node
-                    ship_graph.SetStartAndEnd(Player.INSTANCE.GetPlayerPrevNode(), t);
-                    Player.INSTANCE.SetPlayerPathAndTask(ship_graph.FindPath().ToList(), t);
+                    //ship_graph.SetStartAndEnd(Player.INSTANCE.GetPlayerPrevNode(), t);
+                    //Player.INSTANCE.SetPlayerPathAndTask(ship_graph.FindPath().ToList(), t);
                 }
             }
         }
 
-        if (Player.INSTANCE.PlayerHasPath())
-        {
-            Player.INSTANCE.LerpPlayer();
-        }
+        //if (Player.INSTANCE.PlayerHasPath())
+        //{
+        //    Player.INSTANCE.LerpPlayer();
+        //}
 
-        if (Player.INSTANCE.Current_Task != null && currentTasks.Contains(Player.INSTANCE.Current_Task))
-        {
-            Player.INSTANCE.Current_Task.DoWork(Time.deltaTime);
-        }
+        //if (Player.INSTANCE.Current_Task != null && currentTasks.Contains(Player.INSTANCE.Current_Task))
+        //{
+        //    Player.INSTANCE.Current_Task.DoWork(Time.deltaTime);
+        //}
 
-        ShipStressDisplay.text = "Ship stress: " + Player.INSTANCE.Stress.ToString("0.0");
+        //ShipStressDisplay.text = "Ship stress: " + Player.INSTANCE.Stress.ToString("0.0");
     }
 
     private void AddTask(Task t)

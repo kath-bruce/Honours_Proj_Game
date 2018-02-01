@@ -44,7 +44,7 @@ namespace HonsProj
             }
             else
             {
-                Player.INSTANCE.Stress += timeDecay;
+                //Player.INSTANCE.Stress += timeDecay;
             }
         }
 

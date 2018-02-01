@@ -9,9 +9,9 @@ public class PlayerGameObject : MonoBehaviour
 {
     void Awake()
     {
-        Player.INSTANCE.SetGameObjectPos_RegisterCallback(SetPlayerPos);
-        Player.INSTANCE.GetGameObjectPos_RegisterCallback(GetPlayerPos);
-        Player.INSTANCE.LerpGameObject_RegisterCallback(LerpPlayerToNode);
+        //Player.INSTANCE.SetGameObjectPos_RegisterCallback(SetPlayerPos);
+        //Player.INSTANCE.GetGameObjectPos_RegisterCallback(GetPlayerPos);
+        //Player.INSTANCE.LerpGameObject_RegisterCallback(LerpPlayerToNode);
     }
 
     void SetPlayerPos(float new_x, float new_y)
@@ -44,7 +44,7 @@ public class PlayerGameObject : MonoBehaviour
 
         if (gameObject.transform.position == end_vec)
         {
-            Player.INSTANCE.DequeueFromPath();
+            //Player.INSTANCE.DequeueFromPath();
         }
     }
 }

@@ -8,14 +8,14 @@ namespace HonsProj
 {
     public static class XmlDataLoader
     {
-        public static Dictionary<RoomType, List<TaskType>> 
+        public static Dictionary<RoomType, List<TaskType>>
             GetTasksForRoomType(string pathToXML)
         {
-            Dictionary<RoomType, List<TaskType>> tasks_for_room_type 
+            Dictionary<RoomType, List<TaskType>> tasks_for_room_type
                 = new Dictionary<RoomType, List<TaskType>>();
 
             XmlDocument xmlDoc = new XmlDocument();
-            
+
             if (!System.IO.File.Exists(pathToXML))
             {
                 return null;
@@ -28,9 +28,9 @@ namespace HonsProj
             foreach (XmlNode roomNode in rooms)
             {
                 //key
-                //find room type - switch case
-                RoomType currentRoom = (RoomType) Enum.Parse(typeof(RoomType), roomNode.Attributes["type"].Value, true);
-                
+                //find room type
+                RoomType currentRoom = (RoomType)Enum.Parse(typeof(RoomType), roomNode.Attributes["type"].Value, true);
+
                 //value
                 //find tasks associated with room type
 
