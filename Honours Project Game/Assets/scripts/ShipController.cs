@@ -14,11 +14,15 @@ public class ShipController : MonoBehaviour
 
     //make in editor snappable ship? - LATER!!!!
 
+    public static ShipController INSTANCE { get; private set; }
+
+    //todo serialize all the fields
+
     public GameObject RoomPrefab;
     public GameObject TaskPrefab;
     public Text ShipStressDisplay;
 
-    public GameObject PlayerPrefab;
+    //public GameObject PlayerPrefab;
 
     private TwoWayDictionary<Room> roomGoDict;
 
@@ -37,13 +41,25 @@ public class ShipController : MonoBehaviour
     //edges??? - draw with line renderers??? then do the same thing 
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
+        if (INSTANCE == null)
+        {
+            INSTANCE = this;
+        }
+        else
+        {
+            Debug.LogError("MORE THAN ONE SHIP CONTROLLER!!!!");
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+
         //instantiate prefabs and create rooms
         //rooms then start periodically spawning tasks
 
         taskGoDict = new TwoWayDictionary<Task>();
-        
+
         roomGoDict = new TwoWayDictionary<Room>();
 
         //temp - get room game objects already instantiated
@@ -109,14 +125,14 @@ public class ShipController : MonoBehaviour
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
 
         //set player in random room
-        Room player_room = GetRandomRoom();
+        //Room player_room = GetRandomRoom();
         //Player.INSTANCE.SetPlayerPos(player_room.Room_Info.X, player_room.Room_Info.Y);
 
-        Node playerpos;// Player.INSTANCE.GetPlayerPos();
-        playerpos.X = 0.0f; //temp
-        playerpos.Y = 0.0f; //temp
+        //Node playerpos;// Player.INSTANCE.GetPlayerPos();
+        //playerpos.X = 0.0f; //temp
+        //playerpos.Y = 0.0f; //temp
 
-        Debug.Log("Player pos: " + playerpos.X + ", " + playerpos.Y);
+        //Debug.Log("Player pos: " + playerpos.X + ", " + playerpos.Y);
     }
 
     private Node[] GetRandomPath()
@@ -126,9 +142,9 @@ public class ShipController : MonoBehaviour
         return ship_graph.FindPath();
     }
 
-    private Room GetRandomRoom()
+    public Room GetRandomRoom()
     {
-        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length)];
+        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length-1)];
 
         return roomGoDict.GetfType(go);
     }
@@ -184,7 +200,7 @@ public class ShipController : MonoBehaviour
             #endregion
         }
 
-        foreach (Task t in currentTasks.ToArray()) 
+        foreach (Task t in currentTasks.ToArray())
         {
             t.OnTick(Time.deltaTime);
         }
@@ -199,24 +215,21 @@ public class ShipController : MonoBehaviour
 
                 if (t != null)
                 {
-                    //find path from player current node (get player pos) to task node
-                    //ship_graph.SetStartAndEnd(Player.INSTANCE.GetPlayerPrevNode(), t);
-                    //Player.INSTANCE.SetPlayerPathAndTask(ship_graph.FindPath().ToList(), t);
+                    //find path from player current node to task node
+                    CrewMember random_crew_member = CrewController.INSTANCE.GetRandomCrewMember();
+
+                    ship_graph.SetStartAndEnd(random_crew_member.GetPrevNode(), t);
+                    random_crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
                 }
             }
         }
 
-        //if (Player.INSTANCE.PlayerHasPath())
-        //{
-        //    Player.INSTANCE.LerpPlayer();
-        //}
-
-        //if (Player.INSTANCE.Current_Task != null && currentTasks.Contains(Player.INSTANCE.Current_Task))
-        //{
-        //    Player.INSTANCE.Current_Task.DoWork(Time.deltaTime);
-        //}
-
         //ShipStressDisplay.text = "Ship stress: " + Player.INSTANCE.Stress.ToString("0.0");
+    }
+
+    public bool IsTaskInList(Task t)
+    {
+        return currentTasks.Contains(t);
     }
 
     private void AddTask(Task t)

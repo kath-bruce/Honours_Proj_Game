@@ -26,6 +26,8 @@ namespace HonsProj
         private Action<Task> addTaskToShipController;      //todo null checking on callbacks
         private Action<Task> removeTaskFromShipController;
 
+        //todo should probably include list of crew in room
+
         public Room(RoomType r_type, RoomInfo r_info)
         {
             Room_Type = r_type;
