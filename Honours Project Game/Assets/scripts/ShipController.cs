@@ -37,6 +37,7 @@ public class ShipController : MonoBehaviour
     private Graph ship_graph;
 
     private Dictionary<RoomType, List<TaskType>> tasks_for_room_type;
+    private Dictionary<CrewMemberRole, List<TaskType>> tasks_for_roles;
 
     //mark nodes in scene with empty game object
     //get game objects and add x,y to list of nodes
@@ -128,6 +129,7 @@ public class ShipController : MonoBehaviour
         currentTasks = new List<Task>();
 
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
+        tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"Assets/xml files/tasks_for_roles.xml");
 
         //set player in random room
         //Room player_room = GetRandomRoom();
@@ -149,7 +151,7 @@ public class ShipController : MonoBehaviour
 
     public Room GetRandomRoom()
     {
-        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length-1)];
+        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length - 1)];
 
         return roomGoDict.GetfType(go);
     }
@@ -223,8 +225,20 @@ public class ShipController : MonoBehaviour
                     //find path from player current node to task node
                     CrewMember random_crew_member = CrewController.INSTANCE.GetRandomCrewMember();
 
-                    ship_graph.SetStartAndEnd(random_crew_member.GetPrevNode(), t);
-                    random_crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                    //check if crew member can do task
+                    List<TaskType> tasks = new List<TaskType>();
+
+                    tasks_for_roles.TryGetValue(random_crew_member.Crew_Member_Role, out tasks);
+
+                    if (tasks.Contains(t.Task_Type))
+                    {
+                        ship_graph.SetStartAndEnd(random_crew_member.GetPrevNode(), t);
+                        random_crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                    }
+                    else
+                    {
+                        Debug.Log("wrong task type for crew member");
+                    }
                 }
             }
         }

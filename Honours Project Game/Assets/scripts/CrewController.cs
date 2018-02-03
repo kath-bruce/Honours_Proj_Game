@@ -29,10 +29,10 @@ public class CrewController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //add crew //temp - will use xml doc to populate crew
-        CrewMember maddy = new CrewMember("Maddy", CrewMemberRole.CAPTAIN);
-        CrewMember declan = new CrewMember("Declan", CrewMemberRole.SHIP_MEDIC);
-        CrewMember meshal = new CrewMember("Meshal", CrewMemberRole.WEAPONS_OFFICER);
+        //add crew with random roles //temp - will use xml doc to populate crew
+        CrewMember maddy = new CrewMember("Maddy", (CrewMemberRole)Random.Range(0, System.Enum.GetNames(typeof(CrewMemberRole)).Length));
+        CrewMember declan = new CrewMember("Declan", (CrewMemberRole)Random.Range(0, System.Enum.GetNames(typeof(CrewMemberRole)).Length));
+        CrewMember meshal = new CrewMember("Meshal", (CrewMemberRole)Random.Range(0, System.Enum.GetNames(typeof(CrewMemberRole)).Length));
 
         GameObject maddyGO = Instantiate(crewPrefab, transform);
         maddyGO.name = maddy.Crew_Member_Name;

@@ -1,0 +1,27 @@
+<roles>
+  <!--temp-->
+  <role type = "COMMS_OFFICER">
+    <task_type>TALK_TO_OTHER_SHIP</task_type>
+  </role>
+  <role type = "CAPTAIN">
+    <task_type>MAINTAIN_LIFE_SUPPORT</task_type>
+    <task_type>TALK_TO_OTHER_SHIP</task_type>
+  </role>
+  <role type = "ENGINEER">
+    <task_type>REPAIR</task_type>
+    <task_type>MAINTAIN_LIFE_SUPPORT</task_type>
+  </role>
+  <role type = "PILOT">
+    <task_type>STEER_SHIP</task_type>
+  </role>
+  <role type = "SHIP_MEDIC">
+    <task_type>HEAL_CREW_MEMBER</task_type>
+  </role>
+  <role type = "FIRST_OFFICER">
+    <task_type>CHARGE_SHIELDS</task_type>
+  </role>
+  <role type = "WEAPONS_OFFICER">
+    <task_type>LAUNCH_TORPEDO</task_type>
+    <task_type>REPAIR</task_type>
+  </role>
+</roles>

@@ -7,7 +7,8 @@ namespace HonsProj
 {
     public enum CrewMemberRole
     {
-        COMMS_OFFICER, CAPTAIN, ENGINEER, PILOT, SHIP_MEDIC, FIRST_OFFICER, WEAPONS_OFFICER
+        COMMS_OFFICER, CAPTAIN, ENGINEER, PILOT, SHIP_MEDIC,
+        FIRST_OFFICER, WEAPONS_OFFICER
     }
 
     public class CrewMember
