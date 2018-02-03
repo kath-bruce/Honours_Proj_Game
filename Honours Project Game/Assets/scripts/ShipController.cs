@@ -22,6 +22,8 @@ public class ShipController : MonoBehaviour
     public GameObject TaskPrefab;
     public Text ShipStressDisplay;
 
+    float ShipStress = 0.0f;
+
     //public GameObject PlayerPrefab;
 
     private TwoWayDictionary<Room> roomGoDict;
@@ -80,8 +82,8 @@ public class ShipController : MonoBehaviour
                     r_info
                     );
 
-            _room.AddTask_RegisterCallBack(AddTask);
-            _room.RemoveTask_RegisterCallBack(RemoveTask);
+            _room.AddTaskCallBack += AddTask;
+            _room.RemoveTaskCallBack += RemoveTask;
 
             child.gameObject.name = _room.ToString();
 
@@ -103,6 +105,9 @@ public class ShipController : MonoBehaviour
                     break;
                 case RoomType.COMMS:
                     s_rend.color = Color.yellow;
+                    break;
+                case RoomType.MED_BAY:
+                    s_rend.color = Color.cyan;
                     break;
                 default:
                     break;
@@ -224,7 +229,6 @@ public class ShipController : MonoBehaviour
             }
         }
 
-        //ShipStressDisplay.text = "Ship stress: " + Player.INSTANCE.Stress.ToString("0.0");
     }
 
     public bool IsTaskInList(Task t)
@@ -263,6 +267,9 @@ public class ShipController : MonoBehaviour
             case TaskType.MAINTAIN_LIFE_SUPPORT:
                 s_rend.color = Color.yellow;
                 break;
+            case TaskType.HEAL_CREW_MEMBER:
+                s_rend.color = Color.cyan;
+                break;
             default:
                 break;
         }
@@ -271,7 +278,15 @@ public class ShipController : MonoBehaviour
 
         t_text.text = t.ToStringTaskType();
 
+        t.IncreaseStressCallBack += IncreaseStress;
+
         taskGoDict.Add(t, t_go);
+    }
+
+    private void IncreaseStress(float timeDecay)
+    {
+        ShipStress += timeDecay;
+        ShipStressDisplay.text = "Ship stress: " + ShipStress.ToString("0.0");
     }
 
     private void RemoveTask(Task t)

@@ -19,4 +19,8 @@
 		<task_type>REPAIR</task_type>
 		<task_type>STEER_SHIP</task_type>
 	</room>
+  <room type = "MED_BAY">
+    <task_type>REPAIR</task_type>
+    <task_type>HEAL_CREW_MEMBER</task_type>
+  </room>
 </rooms>

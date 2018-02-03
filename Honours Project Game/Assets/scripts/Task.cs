@@ -14,7 +14,7 @@ namespace HonsProj
     {
         REPAIR, LAUNCH_TORPEDO,
         CHARGE_SHIELDS, MAINTAIN_LIFE_SUPPORT,
-        STEER_SHIP, TALK_TO_OTHER_SHIP
+        STEER_SHIP, TALK_TO_OTHER_SHIP, HEAL_CREW_MEMBER
     }
 
     public class Task
@@ -24,6 +24,8 @@ namespace HonsProj
         public float Time_Left { get; protected set; }
 
         public Room Parent_Room { get; protected set; }
+
+        public Action<float> IncreaseStressCallBack;
 
         float workNeeded;
 
@@ -45,6 +47,7 @@ namespace HonsProj
             else
             {
                 //Player.INSTANCE.Stress += timeDecay;
+                IncreaseStressCallBack(timeDecay);
             }
         }
 

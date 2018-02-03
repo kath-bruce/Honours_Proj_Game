@@ -8,7 +8,7 @@ namespace HonsProj
     public enum RoomType
     {
         COMMS, SHIELD_CHARGER,
-        LIFE_SUPPORT, TORPEDO_LAUNCHER, NAVIGATION
+        LIFE_SUPPORT, TORPEDO_LAUNCHER, NAVIGATION, MED_BAY
     }
 
     public struct RoomInfo
@@ -23,8 +23,8 @@ namespace HonsProj
 
         private List<Task> tasks;
 
-        private Action<Task> addTaskToShipController;      //todo null checking on callbacks
-        private Action<Task> removeTaskFromShipController;
+        public Action<Task> AddTaskCallBack;      //todo null checking on callbacks
+        public Action<Task> RemoveTaskCallBack;
 
         //todo should probably include list of crew in room
 
@@ -43,13 +43,13 @@ namespace HonsProj
         public void AddTask(Task t)
         {
             tasks.Add(t);
-            addTaskToShipController(t);
+            AddTaskCallBack(t);
         }
 
         public void RemoveTask(Task t)
         {
             tasks.Remove(t);
-            removeTaskFromShipController(t);
+            RemoveTaskCallBack(t);
         }
 
         public override string ToString()
@@ -68,25 +68,25 @@ namespace HonsProj
         }
 
         #region register and unregister call backs
-        public void AddTask_RegisterCallBack(Action<Task> cb)
-        {
-            addTaskToShipController += cb;
-        }
+        //public void AddTask_RegisterCallBack(Action<Task> cb)
+        //{
+        //    addTaskToShipController += cb;
+        //}
 
-        public void AddTask_UnregisterCallBack(Action<Task> cb)
-        {
-            addTaskToShipController -= cb;
-        }
+        //public void AddTask_UnregisterCallBack(Action<Task> cb)
+        //{
+        //    addTaskToShipController -= cb;
+        //}
 
-        public void RemoveTask_RegisterCallBack(Action<Task> cb)
-        {
-            removeTaskFromShipController += cb;
-        }
+        //public void RemoveTask_RegisterCallBack(Action<Task> cb)
+        //{
+        //    removeTaskFromShipController += cb;
+        //}
 
-        public void RemoveTask_UnregisterCallBack(Action<Task> cb)
-        {
-            removeTaskFromShipController -= cb;
-        }
+        //public void RemoveTask_UnregisterCallBack(Action<Task> cb)
+        //{
+        //    removeTaskFromShipController -= cb;
+        //}
         #endregion
     }
 }

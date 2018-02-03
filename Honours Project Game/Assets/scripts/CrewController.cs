@@ -30,9 +30,9 @@ public class CrewController : MonoBehaviour
         }
 
         //add crew //temp - will use xml doc to populate crew
-        CrewMember maddy = new CrewMember("Maddy");
-        CrewMember declan = new CrewMember("Declan");
-        CrewMember meshal = new CrewMember("Meshal");
+        CrewMember maddy = new CrewMember("Maddy", CrewMemberRole.CAPTAIN);
+        CrewMember declan = new CrewMember("Declan", CrewMemberRole.SHIP_MEDIC);
+        CrewMember meshal = new CrewMember("Meshal", CrewMemberRole.WEAPONS_OFFICER);
 
         GameObject maddyGO = Instantiate(crewPrefab, transform);
         maddyGO.name = maddy.Crew_Member_Name;
@@ -47,17 +47,17 @@ public class CrewController : MonoBehaviour
         crew.Add(declan, declanGO);
         crew.Add(meshal, meshalGO);
 
-        maddy.SetPos_RegisterCallback(SetCrewMemberPos);
-        declan.SetPos_RegisterCallback(SetCrewMemberPos);
-        meshal.SetPos_RegisterCallback(SetCrewMemberPos);
+        maddy.SetCrewMemberPosCallBack += SetCrewMemberPos;
+        declan.SetCrewMemberPosCallBack+= SetCrewMemberPos;
+        meshal.SetCrewMemberPosCallBack += SetCrewMemberPos;
 
-        maddy.GetPos_RegisterCallback(GetCrewMemberPos);
-        declan.GetPos_RegisterCallback(GetCrewMemberPos);
-        meshal.GetPos_RegisterCallback(GetCrewMemberPos);
+        maddy.GetCrewMemberPosCallBack += GetCrewMemberPos;
+        declan.GetCrewMemberPosCallBack += GetCrewMemberPos;
+        meshal.GetCrewMemberPosCallBack += GetCrewMemberPos;
 
-        maddy.Move_RegisterCallback(MoveCrewMember);
-        declan.Move_RegisterCallback(MoveCrewMember);
-        meshal.Move_RegisterCallback(MoveCrewMember);
+        maddy.MoveCrewMemberCallBack += MoveCrewMember;
+        declan.MoveCrewMemberCallBack += MoveCrewMember;
+        meshal.MoveCrewMemberCallBack += MoveCrewMember;
 
         Room maddyRoom = ShipController.INSTANCE.GetRandomRoom();
         Room declanRoom = ShipController.INSTANCE.GetRandomRoom();
@@ -66,6 +66,40 @@ public class CrewController : MonoBehaviour
         maddy.SetPos(maddyRoom.Room_Info.X, maddyRoom.Room_Info.Y);
         declan.SetPos(declanRoom.Room_Info.X, declanRoom.Room_Info.Y);
         meshal.SetPos(meshalRoom.Room_Info.X, meshalRoom.Room_Info.Y);
+
+        foreach (GameObject memberGo in crew.GetGOs().ToList())
+        {
+            SpriteRenderer s_rend = memberGo.GetComponent<SpriteRenderer>();
+
+            //todo null checking
+            
+            switch (crew.GetfType(memberGo).Crew_Member_Role)
+            {
+                case CrewMemberRole.CAPTAIN:
+                    s_rend.color = Color.blue;
+                    break;
+                case CrewMemberRole.COMMS_OFFICER:
+                    s_rend.color = Color.cyan;
+                    break;
+                case CrewMemberRole.ENGINEER:
+                    s_rend.color = Color.green;
+                    break;
+                case CrewMemberRole.FIRST_OFFICER:
+                    s_rend.color = Color.magenta;
+                    break;
+                case CrewMemberRole.PILOT:
+                    s_rend.color = Color.red;
+                    break;
+                case CrewMemberRole.SHIP_MEDIC:
+                    s_rend.color = Color.yellow;
+                    break;
+                case CrewMemberRole.WEAPONS_OFFICER:
+                    s_rend.color = Color.white;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     //note all of this methods will become lambdas in start method
