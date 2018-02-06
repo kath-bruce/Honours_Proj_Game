@@ -16,13 +16,22 @@ public class ShipController : MonoBehaviour
 
     public static ShipController INSTANCE { get; private set; }
 
+    public float HullIntegrity { get; private set; }
+    public float ShieldCapacity { get; private set; }
+    public float LifeSupportEfficiency { get; private set; }
+
     //todo serialize all the fields
 
     public GameObject RoomPrefab;
     public GameObject TaskPrefab;
+
+    //temp - use a UI manager script
+    public Text HullIntegrityDisplay;
+    public Text ShieldCapacityDisplay;
+    public Text LifeSupportEfficiencyDisplay;
     public Text ShipStressDisplay;
 
-    float ShipStress = 0.0f;
+    float ShipStress = 0.0f; //temp
 
     //public GameObject PlayerPrefab;
 
@@ -140,6 +149,10 @@ public class ShipController : MonoBehaviour
         //playerpos.Y = 0.0f; //temp
 
         //Debug.Log("Player pos: " + playerpos.X + ", " + playerpos.Y);
+
+        HullIntegrity = 100.0f;
+        ShieldCapacity = 100.0f;
+        LifeSupportEfficiency = 100.0f;
     }
 
     private Node[] GetRandomPath()
@@ -292,9 +305,64 @@ public class ShipController : MonoBehaviour
 
         t_text.text = t.ToStringTaskType();
 
-        t.IncreaseStressCallBack += IncreaseStress;
+        //switch case based on task type for which stress cb
+
+        switch (t.Task_Type)
+        {
+            case TaskType.CHARGE_SHIELDS:
+                t.IncreaseStressCallBack += DecreaseShieldCapacity;
+                break;
+            case TaskType.MAINTAIN_LIFE_SUPPORT:
+                t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
+                break;
+            case TaskType.REPAIR:
+                t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
+                break;
+            default:
+                t.IncreaseStressCallBack += IncreaseStress;
+                break;
+        }
 
         taskGoDict.Add(t, t_go);
+    }
+
+    private void DecreaseShipHullIntegrity(float timeDecay)
+    {
+        HullIntegrity -= timeDecay;
+
+        if (HullIntegrity <= 0.0f)
+        {
+            HullIntegrity = 0.0f;
+        }
+
+        //update text
+        HullIntegrityDisplay.text = "Hull Integrity: " + HullIntegrity.ToString("0") + "%";
+    }
+
+    private void DecreaseShieldCapacity(float timeDecay)
+    {
+        ShieldCapacity -= timeDecay;
+
+        if (ShieldCapacity <= 0.0f)
+        {
+            ShieldCapacity = 0.0f;
+        }
+
+        //update text
+        ShieldCapacityDisplay.text = "Shield Capacity: " + ShieldCapacity.ToString("0") + "%";
+    }
+
+    private void DecreaseLifeSupportEfficiency(float timeDecay)
+    {
+        LifeSupportEfficiency -= timeDecay;
+
+        if (LifeSupportEfficiency <= 0.0f)
+        {
+            LifeSupportEfficiency = 0.0f;
+        }
+
+        //update text
+        LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + LifeSupportEfficiency.ToString("0") + "%";
     }
 
     private void IncreaseStress(float timeDecay)
@@ -310,5 +378,7 @@ public class ShipController : MonoBehaviour
         Destroy(taskGoDict.GetGO(t));
 
         taskGoDict.RemovefType(t);
+
+        //todo remove callbacks????
     }
 }
