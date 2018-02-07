@@ -1,0 +1,30 @@
+<crew>
+  <crew_member>
+    <name>Krisi</name>
+    <role>SHIP_MEDIC</role>
+  </crew_member>
+  <crew_member>
+    <name>Declan</name>
+    <role>ENGINEER</role>
+  </crew_member>
+  <crew_member>
+    <name>Meshal</name>
+    <role>PILOT</role>
+  </crew_member>
+  <crew_member>
+    <name>Kathleen</name>
+    <role>CAPTAIN</role>
+  </crew_member>
+  <crew_member>
+    <name>Stuart</name>
+    <role>COMMS_OFFICER</role>
+  </crew_member>
+  <crew_member>
+    <name>Maddy</name>
+    <role>FIRST_OFFICER</role>
+  </crew_member>
+  <crew_member>
+    <name>Matteo</name>
+    <role>WEAPONS_OFFICER</role>
+  </crew_member>
+</crew>

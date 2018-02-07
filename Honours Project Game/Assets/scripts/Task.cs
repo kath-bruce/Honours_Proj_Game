@@ -26,6 +26,12 @@ namespace HonsProj
         public Room Parent_Room { get; protected set; }
 
         public Action<float> IncreaseStressCallBack;
+        //public Action<float> DoWorkCallBack;
+
+        //public crew member that is doing this task
+        public List<CrewMember> Current_Crew_Members { get; protected set; }
+
+        private int crew_member_limit = 1;
 
         float workNeeded;
 
@@ -36,6 +42,10 @@ namespace HonsProj
             Time_Left = 5f; //temp init time left
             workNeeded = w_needed;
             Parent_Room = rm;
+
+            Current_Crew_Members = new List<CrewMember>();
+
+            //todo - switch case on task type here to determine crew member limit
         }
 
         public void OnTick(float timeDecay)
@@ -46,18 +56,47 @@ namespace HonsProj
             }
             else
             {
-                //Player.INSTANCE.Stress += timeDecay;
-                IncreaseStressCallBack(timeDecay);
+                if (IncreaseStressCallBack != null && Current_Crew_Members == null)
+                {
+                    IncreaseStressCallBack(timeDecay);
+                }
             }
         }
 
-        public void DoWork(float workDone)
+        public bool DoWork(float workDone, CrewMember crewMember)
         {
-            Work += workDone;
-
-            if (Work >= workNeeded)
+            if (Current_Crew_Members.Count < crew_member_limit && !Current_Crew_Members.Contains(crewMember))
             {
-                Parent_Room.RemoveTask(this);
+                Current_Crew_Members.Add(crewMember);
+            }
+
+            if (Current_Crew_Members.Contains(crewMember))
+            {
+                Work += workDone;
+
+                //if (DoWorkCallBack != null)
+                //{
+                //    DoWorkCallBack(workDone);
+                //}
+
+                if (Work >= workNeeded)
+                {
+                    Parent_Room.RemoveTask(this);
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void RemoveCrewMember(CrewMember crewMember)
+        {
+            if (Current_Crew_Members.Contains(crewMember))
+            {
+                Current_Crew_Members.Remove(crewMember);
             }
         }
 

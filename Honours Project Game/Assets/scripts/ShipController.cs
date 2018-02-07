@@ -220,7 +220,7 @@ public class ShipController : MonoBehaviour
             #endregion
         }
 
-        foreach (Task t in currentTasks.ToArray())
+        foreach (Task t in currentTasks)
         {
             t.OnTick(Time.deltaTime);
         }
@@ -250,7 +250,7 @@ public class ShipController : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("wrong task type for crew member");
+                        //Debug.Log("wrong task type for crew member");
                     }
                 }
             }
@@ -306,6 +306,10 @@ public class ShipController : MonoBehaviour
         t_text.text = t.ToStringTaskType();
 
         //switch case based on task type for which stress cb
+        //maybe have a bool prop in this script
+        //that is checked every update on whether or not to 
+        //increase or decrease ship aspects
+        //maybe enum to allow different ways to change ship aspects????
 
         switch (t.Task_Type)
         {
@@ -316,7 +320,10 @@ public class ShipController : MonoBehaviour
                 t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
                 break;
             case TaskType.REPAIR:
-                t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
+                //if (t.Parent_Room.Room_Type == RoomType.LIFE_SUPPORT)
+                    //t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
+                //else 
+                    t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
                 break;
             default:
                 t.IncreaseStressCallBack += IncreaseStress;
@@ -330,7 +337,7 @@ public class ShipController : MonoBehaviour
     {
         HullIntegrity -= timeDecay;
 
-        if (HullIntegrity <= 0.0f)
+        if (HullIntegrity < 0.0f)
         {
             HullIntegrity = 0.0f;
         }
@@ -343,7 +350,7 @@ public class ShipController : MonoBehaviour
     {
         ShieldCapacity -= timeDecay;
 
-        if (ShieldCapacity <= 0.0f)
+        if (ShieldCapacity < 0.0f)
         {
             ShieldCapacity = 0.0f;
         }
@@ -356,7 +363,7 @@ public class ShipController : MonoBehaviour
     {
         LifeSupportEfficiency -= timeDecay;
 
-        if (LifeSupportEfficiency <= 0.0f)
+        if (LifeSupportEfficiency < 0.0f)
         {
             LifeSupportEfficiency = 0.0f;
         }
@@ -380,5 +387,48 @@ public class ShipController : MonoBehaviour
         taskGoDict.RemovefType(t);
 
         //todo remove callbacks????
+        switch(t.Task_Type)
+        {
+            case TaskType.CHARGE_SHIELDS:
+
+                ShieldCapacity += t.Work * 2;
+                if (ShieldCapacity > 100.0f)
+                {
+                    ShieldCapacity = 100.0f;
+                }
+                ShieldCapacityDisplay.text = "Shield Capacity: " + ShieldCapacity.ToString("0") + "%";
+
+                break;
+            case TaskType.REPAIR:
+
+                HullIntegrity += t.Work * 2;
+                if (HullIntegrity > 100.0f)
+                {
+                    HullIntegrity = 100.0f;
+                }
+                HullIntegrityDisplay.text = "Hull Integrity: " + HullIntegrity.ToString("0") + "%";
+
+                break;
+            case TaskType.MAINTAIN_LIFE_SUPPORT:
+
+                LifeSupportEfficiency += t.Work * 2;
+                if (LifeSupportEfficiency > 100.0f)
+                {
+                    LifeSupportEfficiency = 100.0f;
+                }
+                LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + LifeSupportEfficiency.ToString("0") + "%";
+
+                break;
+            default:
+
+                ShipStress -= t.Work * 2;
+                if (ShipStress < 0.0f)
+                {
+                    ShipStress = 0.0f;
+                }
+                ShipStressDisplay.text = "Ship Stress: " + ShipStress.ToString("0.0");
+
+                break;
+        }
     }
 }

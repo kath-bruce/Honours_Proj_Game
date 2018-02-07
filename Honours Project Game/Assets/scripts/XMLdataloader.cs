@@ -8,6 +8,53 @@ namespace HonsProj
 {
     public static class XmlDataLoader
     {
+        public static List<CrewMember> GetCrewFromXML(string pathToXML)
+        {
+            List<CrewMember> crew = new List<CrewMember>();
+
+            XmlDocument xmlDoc = new XmlDocument();
+
+            if (!System.IO.File.Exists(pathToXML))
+            {
+                return null;
+            }
+
+            xmlDoc.Load(pathToXML);
+
+            XmlNodeList crewList = xmlDoc.GetElementsByTagName("crew_member");
+
+            foreach (XmlNode crewMemberNode in crewList)
+            {
+                string crewName = null;
+                CrewMemberRole crewRole = CrewMemberRole.NULL;
+
+                foreach (XmlNode crewMemberInfo in crewMemberNode.ChildNodes)
+                {
+                    switch (crewMemberInfo.Name)
+                    {
+                        case "name":
+                            crewName = crewMemberInfo.InnerText;
+                            break;
+                        case "role":
+                            crewRole = (CrewMemberRole)Enum.Parse(typeof(CrewMemberRole), crewMemberInfo.InnerText, true);
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+
+                if (crewName == null || crewRole == CrewMemberRole.NULL)
+                {
+                    return null;
+                }
+
+                crew.Add(new CrewMember(crewName, crewRole));
+            }
+
+            return crew;
+        }
+
         public static Dictionary<RoomType, List<TaskType>>
             GetTasksForRoomType(string pathToXML)
         {

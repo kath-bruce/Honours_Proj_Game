@@ -7,7 +7,7 @@ namespace HonsProj
 {
     public enum CrewMemberRole
     {
-        COMMS_OFFICER, CAPTAIN, ENGINEER, PILOT, SHIP_MEDIC,
+        NULL, COMMS_OFFICER, CAPTAIN, ENGINEER, PILOT, SHIP_MEDIC,
         FIRST_OFFICER, WEAPONS_OFFICER
     }
 
@@ -15,11 +15,33 @@ namespace HonsProj
     {
         //public float Stress { get; set; }
         //public Room Current_Room { get; set; } //note probably don't need to know current room
-        public Task Current_Task { get; protected set; }
 
         public string Crew_Member_Name { get; protected set; }
 
         public CrewMemberRole Crew_Member_Role { get; protected set; }
+
+        private Task current_task;
+        public Task Current_Task
+        {
+            get
+            {                                                               //note only one crew member can do work on a task - check!!!
+                if (current_task != null && current_task.WorkLeft() <= 0.0f)// || !current_task.Current_Crew_Members.Contains(this)))
+                {
+                    current_task.RemoveCrewMember(this);
+                    current_task = null;
+                }
+
+                return current_task;
+            }
+
+            protected set
+            {
+                if (value == null && current_task != null)
+                    current_task.RemoveCrewMember(this);
+
+                current_task = value;
+            }
+        }
 
         Task target_task;
 

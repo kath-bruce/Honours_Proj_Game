@@ -16,6 +16,8 @@ public class CrewController : MonoBehaviour
 
     TwoWayDictionary<CrewMember> crew = new TwoWayDictionary<CrewMember>();
 
+    List<CrewMember> crewFromXml;
+
     // Use this for initialization
     void Start()
     {
@@ -29,51 +31,28 @@ public class CrewController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //add crew with random roles //temp - will use xml doc to populate crew
-        CrewMember maddy = new CrewMember("Maddy", (CrewMemberRole)Random.Range(0, System.Enum.GetNames(typeof(CrewMemberRole)).Length));
-        CrewMember declan = new CrewMember("Declan", (CrewMemberRole)Random.Range(0, System.Enum.GetNames(typeof(CrewMemberRole)).Length));
-        CrewMember meshal = new CrewMember("Meshal", (CrewMemberRole)Random.Range(0, System.Enum.GetNames(typeof(CrewMemberRole)).Length));
+        crewFromXml = XmlDataLoader.GetCrewFromXML(@"Assets/xml files/crew_members.xml");
 
-        GameObject maddyGO = Instantiate(crewPrefab, transform);
-        maddyGO.name = maddy.Crew_Member_Name;
-
-        GameObject declanGO = Instantiate(crewPrefab, transform);
-        declanGO.name = declan.Crew_Member_Name;
-
-        GameObject meshalGO = Instantiate(crewPrefab, transform);
-        meshalGO.name = meshal.Crew_Member_Name;
-
-        crew.Add(maddy, maddyGO);
-        crew.Add(declan, declanGO);
-        crew.Add(meshal, meshalGO);
-
-        maddy.SetCrewMemberPosCallBack += SetCrewMemberPos;
-        declan.SetCrewMemberPosCallBack+= SetCrewMemberPos;
-        meshal.SetCrewMemberPosCallBack += SetCrewMemberPos;
-
-        maddy.GetCrewMemberPosCallBack += GetCrewMemberPos;
-        declan.GetCrewMemberPosCallBack += GetCrewMemberPos;
-        meshal.GetCrewMemberPosCallBack += GetCrewMemberPos;
-
-        maddy.MoveCrewMemberCallBack += MoveCrewMember;
-        declan.MoveCrewMemberCallBack += MoveCrewMember;
-        meshal.MoveCrewMemberCallBack += MoveCrewMember;
-
-        Room maddyRoom = ShipController.INSTANCE.GetRandomRoom();
-        Room declanRoom = ShipController.INSTANCE.GetRandomRoom();
-        Room meshalRoom = ShipController.INSTANCE.GetRandomRoom();
-
-        maddy.SetPos(maddyRoom.Room_Info.X, maddyRoom.Room_Info.Y);
-        declan.SetPos(declanRoom.Room_Info.X, declanRoom.Room_Info.Y);
-        meshal.SetPos(meshalRoom.Room_Info.X, meshalRoom.Room_Info.Y);
-
-        foreach (GameObject memberGo in crew.GetGOs().ToList())
+        foreach (CrewMember crewMember in crewFromXml)
         {
-            SpriteRenderer s_rend = memberGo.GetComponent<SpriteRenderer>();
+            GameObject go = Instantiate(crewPrefab, transform);
+            go.name = crewMember.Crew_Member_Name;
+
+            crew.Add(crewMember, go);
+
+            crewMember.SetCrewMemberPosCallBack += SetCrewMemberPos;
+            crewMember.GetCrewMemberPosCallBack += GetCrewMemberPos;
+            crewMember.MoveCrewMemberCallBack += MoveCrewMember;
+
+            Room randomRoom = ShipController.INSTANCE.GetRandomRoom();
+
+            crewMember.SetPos(randomRoom.Room_Info.X, randomRoom.Room_Info.Y);
+
+            SpriteRenderer s_rend = go.GetComponent<SpriteRenderer>();
 
             //todo null checking
-            
-            switch (crew.GetfType(memberGo).Crew_Member_Role)
+
+            switch (crewMember.Crew_Member_Role)
             {
                 case CrewMemberRole.CAPTAIN:
                     s_rend.color = Color.blue;
@@ -135,6 +114,11 @@ public class CrewController : MonoBehaviour
         {
             //Player.INSTANCE.DequeueFromPath();
             crewMember.DequeueFromPath();
+
+            if (!crewMember.HasPath())
+            {
+                Debug.Log("crew member: " + crewMember.Crew_Member_Name + ", crew task: " + crewMember.Current_Task);
+            }
         }
     }
     #endregion
@@ -156,7 +140,10 @@ public class CrewController : MonoBehaviour
 
             if (crew_member.Current_Task != null && ShipController.INSTANCE.IsTaskInList(crew_member.Current_Task))
             {
-                crew_member.Current_Task.DoWork(Time.deltaTime);
+                if (crew_member.Current_Task.DoWork(Time.deltaTime, crew_member))
+                {
+                    Debug.Log("crew member: " + crew_member.Crew_Member_Name + " is doing " + crew_member.Current_Task + " at " + Time.deltaTime);
+                }
             }
         }
     }
