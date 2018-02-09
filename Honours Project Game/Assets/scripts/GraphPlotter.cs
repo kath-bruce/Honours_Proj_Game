@@ -27,14 +27,12 @@ namespace HonsProj
                 List<Node> nodesInRoom = new List<Node>();
 
                 Node n = new Node(rm.Room_Info.X, n.X = rm.Room_Info.Y);
-                //n.X = rm.Room_Info.X;
-                //n.Y = rm.Room_Info.Y;
                 nodes.Add(n);
                 nodesInRoom.Add(n);
 
                 //add nodes in corners - make edges
 
-                Node n_topLeft = new Node(rm.Room_Info.X - (rm.Room_Info.width/4), rm.Room_Info.Y + (rm.Room_Info.height/4));
+                Node n_topLeft = new Node(rm.Room_Info.X - (rm.Room_Info.width / 4), rm.Room_Info.Y + (rm.Room_Info.height / 4));
                 nodes.Add(n_topLeft);
                 nodesInRoom.Add(n_topLeft);
 
@@ -104,7 +102,7 @@ namespace HonsProj
 
                             edges.Add(edge);
                         }
-                        
+
                         //node is a door
 
                         List<Node> doors;
@@ -161,7 +159,7 @@ namespace HonsProj
                     }
                 }
             }
-            
+
             //also try and find out why player doesn't go straight from door (ne) to door (se) - is the edge even there??
             //edge was not there - find out what the other edge in edges is
             //todo debug
@@ -192,8 +190,6 @@ namespace HonsProj
             //else no door/node
 
             Node node = new Node(null, null);
-            //node.X = null;
-            //node.Y = null;
 
             if ((a.Room_Info.X + (a.Room_Info.width / 2)) == (b.Room_Info.X - (b.Room_Info.width / 2))
                 || (a.Room_Info.X - (a.Room_Info.width / 2)) == (b.Room_Info.X + (b.Room_Info.width / 2)))

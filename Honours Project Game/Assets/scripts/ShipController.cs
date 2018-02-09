@@ -275,7 +275,7 @@ public class ShipController : MonoBehaviour
 
                     if (tasks.Contains(t.Task_Type))
                     {
-                        if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t, crew_member))
+                        if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t))
                             crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
                         else
                             Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
@@ -298,7 +298,7 @@ public class ShipController : MonoBehaviour
                         {
                             crew_member = CrewController.INSTANCE.Selected_Crew_Member;
 
-                            if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode, crew_member))
+                            if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode))
                                 crew_member.SetPath(ship_graph.FindPath().ToList());
                             else
                                 Debug.LogError("Could not set path for "+crew_member.Crew_Member_Name);

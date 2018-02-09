@@ -75,12 +75,8 @@ namespace HonsProj
         public bool SetStartAndEnd(Room s, Room e)
         {
             Node n_s = new Node(s.Room_Info.X, s.Room_Info.Y);
-            //n_s.X = s.Room_Info.X;
-            //n_s.Y = s.Room_Info.Y;
 
             Node n_e = new Node(e.Room_Info.X, e.Room_Info.Y);
-            //n_e.X = e.Room_Info.X;
-            //n_e.Y = e.Room_Info.Y;
 
             return SetStartAndEnd(n_s, n_e);
         }
@@ -88,8 +84,6 @@ namespace HonsProj
         public bool SetStartAndEnd(Node s, Task e)
         {
             Node t_e = new Node(e.Parent_Room.Room_Info.X, e.Parent_Room.Room_Info.Y);
-            //t_e.X = e.Parent_Room.Room_Info.X;
-            //t_e.Y = e.Parent_Room.Room_Info.Y;
 
             return SetStartAndEnd(s, t_e);
         }
