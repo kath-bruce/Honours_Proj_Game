@@ -11,7 +11,7 @@ namespace HonsProj
             List<Node> nodes = new List<Node>();
             List<Edge> edges = new List<Edge>();
 
-            Dictionary<Room, Node> roomToNode = new Dictionary<Room, Node>();
+            Dictionary<Room, List<Node>> roomToNodes = new Dictionary<Room, List<Node>>();
 
             //todo possibly add edges between door nodes that share a room?
             //may need to implement a*
@@ -24,11 +24,48 @@ namespace HonsProj
 
             foreach (Room rm in rooms)
             {
+                List<Node> nodesInRoom = new List<Node>();
+
                 Node n;
                 n.X = rm.Room_Info.X;
                 n.Y = rm.Room_Info.Y;
                 nodes.Add(n);
-                roomToNode.Add(rm, n);
+                nodesInRoom.Add(n);
+
+                //add nodes in corners - make edges
+
+                Node n_topLeft = new Node(rm.Room_Info.X - (rm.Room_Info.width/4), rm.Room_Info.Y + (rm.Room_Info.height/4));
+                nodes.Add(n_topLeft);
+                nodesInRoom.Add(n_topLeft);
+
+                Node n_topRight = new Node(rm.Room_Info.X + (rm.Room_Info.width / 4), rm.Room_Info.Y + (rm.Room_Info.height / 4));
+                nodes.Add(n_topRight);
+                nodesInRoom.Add(n_topRight);
+
+                Node n_bottomLeft = new Node(rm.Room_Info.X - (rm.Room_Info.width / 4), rm.Room_Info.Y - (rm.Room_Info.height / 4));
+                nodes.Add(n_bottomLeft);
+                nodesInRoom.Add(n_bottomLeft);
+
+                Node n_bottomRight = new Node(rm.Room_Info.X + (rm.Room_Info.width / 4), rm.Room_Info.Y - (rm.Room_Info.height / 4));
+                nodes.Add(n_bottomRight);
+                nodesInRoom.Add(n_bottomRight);
+
+                //should have 5 nodes in each room (not counting door(s))
+
+                for (int i = 0; i < nodesInRoom.Count - 1; i++)
+                {
+                    for (int j = 1; j < nodesInRoom.Count; j++)
+                    {
+                        Edge edge;
+                        edge.to = nodesInRoom[i];
+                        edge.from = nodesInRoom[j];
+
+                        edges.Add(edge);
+                    }
+                }
+                roomToNodes.Add(rm, nodesInRoom);
+
+                //where to makes edges to door???
             }
 
             for (int i = 0; i < rooms.Count - 1; i++)
@@ -40,17 +77,34 @@ namespace HonsProj
                     {
                         nodes.Add(node);
 
-                        Edge edge1;
-                        roomToNode.TryGetValue(rooms[i], out edge1.to); //todo null checking
-                        edge1.from = node;
+                        List<Node> nodesInRoom = new List<Node>();
 
-                        Edge edge2;
-                        roomToNode.TryGetValue(rooms[j], out edge2.to); //todo null checking
-                        edge2.from = node;
+                        roomToNodes.TryGetValue(rooms[i], out nodesInRoom); //todo null checking
 
-                        edges.Add(edge1);
-                        edges.Add(edge2);
+                        foreach (Node n in nodesInRoom)
+                        {
+                            //make edge with door (the variable called node)
 
+                            Edge edge;
+                            edge.to = n;
+                            edge.from = node;
+
+                            edges.Add(edge);
+                        }
+
+                        roomToNodes.TryGetValue(rooms[j], out nodesInRoom); //todo null checking
+
+                        foreach (Node n in nodesInRoom)
+                        {
+                            //make edge with door (the variable called node)
+
+                            Edge edge;
+                            edge.to = n;
+                            edge.from = node;
+
+                            edges.Add(edge);
+                        }
+                        
                         //node is a door
 
                         List<Node> doors;
