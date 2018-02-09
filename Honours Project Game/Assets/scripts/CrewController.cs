@@ -8,11 +8,13 @@ public class CrewController : MonoBehaviour
 {
     public static CrewController INSTANCE { get; private set; }
 
-    [SerializeField]
-    int sizeOfCrew = 3;
+    //[SerializeField]
+    //int sizeOfCrew = 3;
 
     [SerializeField]
     GameObject crewPrefab;
+
+    public CrewMember Selected_Crew_Member { get; private set; }
 
     TwoWayDictionary<CrewMember> crew = new TwoWayDictionary<CrewMember>();
 
@@ -140,9 +142,64 @@ public class CrewController : MonoBehaviour
 
             if (crew_member.Current_Task != null && ShipController.INSTANCE.IsTaskInList(crew_member.Current_Task))
             {
-                if (crew_member.Current_Task.DoWork(Time.deltaTime, crew_member))
+                if (
+                    crew_member.Current_Task.DoWork(Time.deltaTime, crew_member)
+                    )
                 {
-                    Debug.Log("crew member: " + crew_member.Crew_Member_Name + " is doing " + crew_member.Current_Task + " at " + Time.deltaTime);
+                    //    Debug.Log("crew member: " + crew_member.Crew_Member_Name + " is doing " + crew_member.Current_Task + " at " + Time.deltaTime);
+                }
+            }
+        }
+        //todo make box colliders on sprite 2d???
+        if (Input.GetMouseButtonDown(0)) //temp - handling this here
+        {
+            //if (Selected_Crew_Member != null)
+            //{
+            //    GameObject crewGo = crew.GetGO(Selected_Crew_Member);
+
+            //    if (crewGo != null)
+            //    {
+            //        crewGo.GetComponent<cakeslice.Outline>().enabled = false;
+            //        Selected_Crew_Member = null;
+            //    }
+            //}
+
+            RaycastHit hit = new RaycastHit();
+            if (Physics.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, out hit))
+            {
+                GameObject go = hit.transform.gameObject;
+
+                CrewMember selectedMember = crew.GetfType(go);
+
+                if (selectedMember != null)
+                {
+                    if (Selected_Crew_Member != null)
+                    {
+                        GameObject crewGo = crew.GetGO(Selected_Crew_Member);
+
+                        if (crewGo != null)
+                        {
+                            crewGo.GetComponent<cakeslice.Outline>().enabled = false;
+                            Selected_Crew_Member = null;
+                        }
+                    }
+
+                    go.GetComponent<cakeslice.Outline>().enabled = true;
+                    Selected_Crew_Member = selectedMember;
+                }
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (Selected_Crew_Member != null)
+            {
+                GameObject crewGo = crew.GetGO(Selected_Crew_Member);
+
+                if (crewGo != null)
+                {
+                    crewGo.GetComponent<cakeslice.Outline>().enabled = false;
+                    Selected_Crew_Member = null;
                 }
             }
         }

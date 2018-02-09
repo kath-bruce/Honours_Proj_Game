@@ -56,7 +56,7 @@ namespace HonsProj
             }
             else
             {
-                if (IncreaseStressCallBack != null && Current_Crew_Members == null)
+                if (IncreaseStressCallBack != null && (Current_Crew_Members == null || Current_Crew_Members.Count == 0))
                 {
                     IncreaseStressCallBack(timeDecay);
                 }

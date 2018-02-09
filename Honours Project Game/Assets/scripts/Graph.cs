@@ -24,7 +24,7 @@ namespace HonsProj
 
         public bool IsNull()
         {
-            return (X == null && Y == null);
+            return (X == null || Y == null);
         }
 
         public void SetXandY(float new_x, float new_y)
@@ -54,6 +54,11 @@ namespace HonsProj
 
             start = nodes[0];
             end = nodes[nodes.Count - 1];
+        }
+
+        public List<Node> GetNodes()
+        {
+            return nodes;
         }
 
         public bool SetStartAndEnd(Node s, Node e)

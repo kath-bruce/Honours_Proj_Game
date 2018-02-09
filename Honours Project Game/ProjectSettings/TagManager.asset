@@ -41,8 +41,14 @@ TagManager:
   - name: Room
     uniqueID: 3529958973
     locked: 0
+  - name: ClickableNode
+    uniqueID: 3482996427
+    locked: 0
   - name: Task
     uniqueID: 3931289217
+    locked: 0
+  - name: Player
+    uniqueID: 3965224103
     locked: 0
   - name: Default
     uniqueID: 0

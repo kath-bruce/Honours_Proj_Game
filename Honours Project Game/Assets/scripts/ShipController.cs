@@ -24,6 +24,10 @@ public class ShipController : MonoBehaviour
 
     public GameObject RoomPrefab;
     public GameObject TaskPrefab;
+    public GameObject NodePrefab;
+    public GameObject NodeParent;
+
+    private TwoWayDictionary<Node> clickableNodesGoDict;
 
     //temp - use a UI manager script
     public Text HullIntegrityDisplay;
@@ -123,6 +127,7 @@ public class ShipController : MonoBehaviour
                     break;
             }
 
+            //todo replace with text mesh
             TextMesh rm_text = child.gameObject.GetComponentInChildren<TextMesh>();
 
             rm_text.text = _room.ToString();
@@ -134,6 +139,19 @@ public class ShipController : MonoBehaviour
         #endregion
 
         ship_graph = GraphPlotter.CreateGraph(roomGoDict.GetFs().ToList());
+
+        #region create clickable nodes
+
+        clickableNodesGoDict = new TwoWayDictionary<Node>();
+
+        foreach (Node node in ship_graph.GetNodes())
+        {
+            GameObject nodeGo = Instantiate(NodePrefab, NodeParent.transform);
+            nodeGo.transform.position = new Vector3((float)node.X, (float)node.Y, 0);
+            clickableNodesGoDict.Add(node, nodeGo);
+        }
+
+        #endregion
 
         currentTasks = new List<Task>();
 
@@ -231,26 +249,56 @@ public class ShipController : MonoBehaviour
             if (Physics.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, out hit))
             {
                 GameObject go = hit.transform.gameObject;
+
+                Debug.Log("clicked on " + go.name);
+
                 Task t = taskGoDict.GetfType(go);
 
                 if (t != null)
                 {
                     //find path from player current node to task node
-                    CrewMember random_crew_member = CrewController.INSTANCE.GetRandomCrewMember();
+                    CrewMember crew_member;
+
+                    if (CrewController.INSTANCE.Selected_Crew_Member == null)
+                    {
+                        crew_member = CrewController.INSTANCE.GetRandomCrewMember();
+                    }
+                    else
+                    {
+                        crew_member = CrewController.INSTANCE.Selected_Crew_Member;
+                    }
 
                     //check if crew member can do task
                     List<TaskType> tasks = new List<TaskType>();
 
-                    tasks_for_roles.TryGetValue(random_crew_member.Crew_Member_Role, out tasks);
+                    tasks_for_roles.TryGetValue(crew_member.Crew_Member_Role, out tasks);
 
                     if (tasks.Contains(t.Task_Type))
                     {
-                        ship_graph.SetStartAndEnd(random_crew_member.GetPrevNode(), t);
-                        random_crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                        ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t);
+                        crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
                     }
                     else
                     {
-                        //Debug.Log("wrong task type for crew member");
+                        Debug.Log("wrong task type for crew member " + crew_member.Crew_Member_Name);
+                    }
+                }
+                else
+                {
+                    Node clickedNode = clickableNodesGoDict.GetfType(go);
+
+                    if (!clickedNode.IsNull())
+                    {
+                        //Debug.Log("clicked node");
+                        CrewMember crew_member;
+
+                        if (CrewController.INSTANCE.Selected_Crew_Member != null)
+                        {
+                            crew_member = CrewController.INSTANCE.Selected_Crew_Member;
+
+                            ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode);
+                            crew_member.SetPath(ship_graph.FindPath().ToList());
+                        }
                     }
                 }
             }
@@ -301,6 +349,7 @@ public class ShipController : MonoBehaviour
                 break;
         }
 
+        //todo replace with text mesh
         TextMesh t_text = t_go.GetComponentInChildren<TextMesh>();
 
         t_text.text = t.ToStringTaskType();
@@ -321,9 +370,9 @@ public class ShipController : MonoBehaviour
                 break;
             case TaskType.REPAIR:
                 //if (t.Parent_Room.Room_Type == RoomType.LIFE_SUPPORT)
-                    //t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
+                //t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
                 //else 
-                    t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
+                t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
                 break;
             default:
                 t.IncreaseStressCallBack += IncreaseStress;
@@ -387,7 +436,7 @@ public class ShipController : MonoBehaviour
         taskGoDict.RemovefType(t);
 
         //todo remove callbacks????
-        switch(t.Task_Type)
+        switch (t.Task_Type)
         {
             case TaskType.CHARGE_SHIELDS:
 

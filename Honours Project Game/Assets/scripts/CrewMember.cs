@@ -66,6 +66,12 @@ namespace HonsProj
             Current_Task = null;
         }
 
+        public void SetPath(List<Node> new_q)
+        {
+            crew_member_path = new_q;
+            Current_Task = null;
+        }
+
         public Node GetPrevNode()
         {
             if (crew_member_path == null)
