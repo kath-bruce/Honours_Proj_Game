@@ -26,9 +26,9 @@ namespace HonsProj
             {
                 List<Node> nodesInRoom = new List<Node>();
 
-                Node n;
-                n.X = rm.Room_Info.X;
-                n.Y = rm.Room_Info.Y;
+                Node n = new Node(rm.Room_Info.X, n.X = rm.Room_Info.Y);
+                //n.X = rm.Room_Info.X;
+                //n.Y = rm.Room_Info.Y;
                 nodes.Add(n);
                 nodesInRoom.Add(n);
 
@@ -191,9 +191,9 @@ namespace HonsProj
             //
             //else no door/node
 
-            Node node;
-            node.X = null;
-            node.Y = null;
+            Node node = new Node(null, null);
+            //node.X = null;
+            //node.Y = null;
 
             if ((a.Room_Info.X + (a.Room_Info.width / 2)) == (b.Room_Info.X - (b.Room_Info.width / 2))
                 || (a.Room_Info.X - (a.Room_Info.width / 2)) == (b.Room_Info.X + (b.Room_Info.width / 2)))

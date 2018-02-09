@@ -173,12 +173,12 @@ public class ShipController : MonoBehaviour
         LifeSupportEfficiency = 100.0f;
     }
 
-    private Node[] GetRandomPath()
-    {
-        ship_graph.SetStartAndEnd(GetRandomRoom(), GetRandomRoom());
+    //private Node[] GetRandomPath()
+    //{
+    //    ship_graph.SetStartAndEnd(GetRandomRoom(), GetRandomRoom());
 
-        return ship_graph.FindPath();
-    }
+    //    return ship_graph.FindPath();
+    //}
 
     public Room GetRandomRoom()
     {
@@ -275,8 +275,10 @@ public class ShipController : MonoBehaviour
 
                     if (tasks.Contains(t.Task_Type))
                     {
-                        ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t);
-                        crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                        if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t, crew_member))
+                            crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                        else
+                            Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
                     }
                     else
                     {
@@ -296,8 +298,10 @@ public class ShipController : MonoBehaviour
                         {
                             crew_member = CrewController.INSTANCE.Selected_Crew_Member;
 
-                            ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode);
-                            crew_member.SetPath(ship_graph.FindPath().ToList());
+                            if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode, crew_member))
+                                crew_member.SetPath(ship_graph.FindPath().ToList());
+                            else
+                                Debug.LogError("Could not set path for "+crew_member.Crew_Member_Name);
                         }
                     }
                 }

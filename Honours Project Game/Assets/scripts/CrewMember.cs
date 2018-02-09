@@ -61,9 +61,8 @@ namespace HonsProj
 
         public void SetPathAndTask(List<Node> new_q, Task t)
         {
-            crew_member_path = new_q;
+            SetPath(new_q);
             target_task = t;
-            Current_Task = null;
         }
 
         public void SetPath(List<Node> new_q)
