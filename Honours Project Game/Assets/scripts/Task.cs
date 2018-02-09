@@ -32,16 +32,18 @@ namespace HonsProj
         public List<CrewMember> Current_Crew_Members { get; protected set; }
 
         private int crew_member_limit = 1;
+        public Node Task_Node { get; protected set; }
 
         float workNeeded;
 
-        public Task(TaskType t_type, int w_needed, Room rm)
+        public Task(TaskType t_type, int w_needed, Room rm, Node n)
         {
             Task_Type = t_type;
             Work = 0;
             Time_Left = 5f; //temp init time left
             workNeeded = w_needed;
             Parent_Room = rm;
+            Task_Node = n;
 
             Current_Crew_Members = new List<CrewMember>();
 

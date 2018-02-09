@@ -209,7 +209,7 @@ public class ShipController : MonoBehaviour
             foreach (GameObject r_go in roomGoDict.GetGOs())
             {
                 Room temp_rm = roomGoDict.GetfType(r_go);
-                if (!temp_rm.HasAnyTask())
+                if (temp_rm.NumberOfTasks() < 2)
                     r_go_w_no_task.Add(r_go);
             }
 
@@ -224,16 +224,22 @@ public class ShipController : MonoBehaviour
 
                 TaskType task_type = task_type_list[Random.Range(0, task_type_list.Count)];
 
+
+                Node n = ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
+
                 //temp random task
                 Task task =
                     new Task(
                         //(TaskType)Random.Range(0, System.Enum.GetNames(typeof(TaskType)).Length), //random task type
                         task_type,
                         Random.Range(1, 4),                                                       //random work needed
-                        rm                                                                        //the random room
+                        rm,                                                                         //the random room
+                        n
                         );
 
-                rm.AddTask(task);
+                ship_graph.AddTaskToNode(n, task);
+                
+                rm.AddTask(task, n);
             }
             #endregion
         }
@@ -315,7 +321,7 @@ public class ShipController : MonoBehaviour
         return currentTasks.Contains(t);
     }
 
-    private void AddTask(Task t)
+    private void AddTask(Task t, Node n)
     {
         currentTasks.Add(t);
 
@@ -325,6 +331,7 @@ public class ShipController : MonoBehaviour
         GameObject t_go = Instantiate(TaskPrefab, go.transform, false);
 
         t_go.name = t.Task_Type.ToString();
+        t_go.transform.position = new Vector3((float)n.X, (float)n.Y, 0.0f);
 
         //change colour of task sprites - temp - will have different sprites
         SpriteRenderer s_rend = t_go.GetComponent<SpriteRenderer>();
@@ -434,6 +441,7 @@ public class ShipController : MonoBehaviour
     private void RemoveTask(Task t)
     {
         currentTasks.Remove(t);
+        ship_graph.RemoveTaskFromNode(t.Task_Node);
 
         Destroy(taskGoDict.GetGO(t));
 

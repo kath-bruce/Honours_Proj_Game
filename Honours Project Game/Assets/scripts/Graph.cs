@@ -43,14 +43,20 @@ namespace HonsProj
     {
         private readonly List<Node> nodes;
         private readonly List<Edge> edges;
+        private readonly Dictionary<Room, List<Node>> roomToNodes;
+
+        private Dictionary<Node, Task> nodeToTask;
 
         private Node start;
         private Node end;
 
-        public Graph(List<Node> ns, List<Edge> es)
+        public Graph(List<Node> ns, List<Edge> es, Dictionary<Room, List<Node>> rToNs)
         {
             nodes = ns;
             edges = es;
+            roomToNodes = rToNs;
+
+            nodeToTask = new Dictionary<Node, Task>();
 
             start = nodes[0];
             end = nodes[nodes.Count - 1];
@@ -59,6 +65,42 @@ namespace HonsProj
         public List<Node> GetNodes()
         {
             return nodes;
+        }
+
+        public void AddTaskToNode(Node n, Task t)
+        {
+            nodeToTask.Add(n, t);
+        }
+
+        public void RemoveTaskFromNode(Node n)
+        {
+            nodeToTask.Remove(n);
+        }
+
+        public List<Node> GetNodesInRoom(Room rm)
+        {
+            List<Node> ns = new List<Node>();
+
+            if (roomToNodes.TryGetValue(rm, out ns))
+            {
+                //return new copy of list of nodes that don't appear in node to task
+                List<Node> ns_w_o_task = new List<Node>();
+
+                foreach (Node node in ns)
+                {
+                    Task t;
+                    if (!nodeToTask.TryGetValue(node, out t))
+                    {
+                        ns_w_o_task.Add(node);
+                    }
+                }
+
+                return ns_w_o_task;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public bool SetStartAndEnd(Node s, Node e)
@@ -83,7 +125,7 @@ namespace HonsProj
 
         public bool SetStartAndEnd(Node s, Task e)
         {
-            Node t_e = new Node(e.Parent_Room.Room_Info.X, e.Parent_Room.Room_Info.Y);
+            Node t_e = e.Task_Node;
 
             return SetStartAndEnd(s, t_e);
         }

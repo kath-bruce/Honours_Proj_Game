@@ -23,7 +23,7 @@ namespace HonsProj
 
         private List<Task> tasks;
 
-        public Action<Task> AddTaskCallBack;      //todo null checking on callbacks
+        public Action<Task, Node> AddTaskCallBack;      //todo null checking on callbacks
         public Action<Task> RemoveTaskCallBack;
 
         //todo should probably include list of crew in room
@@ -40,16 +40,21 @@ namespace HonsProj
             //todo use this method for task generation -- maybe??????
         }
 
-        public void AddTask(Task t)
+        public void AddTask(Task t, Node n)
         {
             tasks.Add(t);
-            AddTaskCallBack(t);
+            AddTaskCallBack(t, n);
         }
 
         public void RemoveTask(Task t)
         {
             tasks.Remove(t);
             RemoveTaskCallBack(t);
+        }
+
+        public int NumberOfTasks()
+        {
+            return tasks.Count;
         }
 
         public override string ToString()

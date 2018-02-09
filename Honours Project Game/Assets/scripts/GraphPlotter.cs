@@ -160,13 +160,28 @@ namespace HonsProj
                 }
             }
 
+            Dictionary<Node, Room> nodeToRoom = new Dictionary<Node, Room>();
+
+            foreach (Room rm in roomToNodes.Keys)
+            {
+                List<Node> ns = new List<Node>();
+
+                if (roomToNodes.TryGetValue(rm, out ns))
+                {
+                    foreach (Node n in ns)
+                    {
+                        nodeToRoom.Add(n, rm);
+                    }
+                }
+            }
+
             //also try and find out why player doesn't go straight from door (ne) to door (se) - is the edge even there??
             //edge was not there - find out what the other edge in edges is
             //todo debug
             //edge count should be 14 but it is 17
             //that said, it actually works pretty well, at least with the default house
             //note do i want player to move along wall to door?
-            return new Graph(nodes, edges); //note possible duplicates?? is it really a problem? use hashset instead???
+            return new Graph(nodes, edges, roomToNodes); //note possible duplicates?? is it really a problem? use hashset instead???
         }
 
         private static Node FindDoor(Room a, Room b)
