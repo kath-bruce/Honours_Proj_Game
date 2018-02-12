@@ -102,4 +102,19 @@ public class TwoWayDictionary<F>
         }
 
     }
+
+    public bool ContainsF(F f)
+    {
+        return FToGO.ContainsKey(f) && GOToF.ContainsValue(f);
+    }
+
+    public bool ContainsGO(GameObject go)
+    {
+        return GOToF.ContainsKey(go) && FToGO.ContainsValue(go);
+    }
+
+    public bool ContainsFandGo(F f, GameObject go)
+    {
+        return ContainsF(f) && ContainsGO(go);
+    }
 }

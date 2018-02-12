@@ -14,18 +14,21 @@ public class ShipController : MonoBehaviour
 
     //make in editor snappable ship? - LATER!!!!
 
-    public static ShipController INSTANCE { get; private set; }
+    public static ShipController INSTANCE { get; protected set; }
 
     public float HullIntegrity { get; private set; }
     public float ShieldCapacity { get; private set; }
     public float LifeSupportEfficiency { get; private set; }
 
     //todo serialize all the fields
-
-    public GameObject RoomPrefab;
-    public GameObject TaskPrefab;
-    public GameObject NodePrefab;
-    public GameObject NodeParent;
+    [SerializeField]
+    GameObject RoomPrefab;
+    [SerializeField]
+    GameObject TaskPrefab;
+    [SerializeField]
+    GameObject NodePrefab;
+    [SerializeField]
+    GameObject NodeParent;
 
     private TwoWayDictionary<Node> clickableNodesGoDict;
 

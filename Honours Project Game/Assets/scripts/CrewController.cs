@@ -78,8 +78,29 @@ public class CrewController : MonoBehaviour
                     s_rend.color = Color.white;
                     break;
                 default:
+                    s_rend.color = Color.black;
                     break;
             }
+        }
+    }
+
+    public void SelectCrewMember(CrewMember cm)
+    {
+        if (crew.ContainsF(cm))
+        {
+            if (Selected_Crew_Member != null)
+            {
+                GameObject crewGo = crew.GetGO(Selected_Crew_Member);
+
+                if (crewGo != null)
+                {
+                    crewGo.GetComponent<cakeslice.Outline>().enabled = false;
+                    Selected_Crew_Member = null;
+                }
+            }
+
+            crew.GetGO(cm).GetComponent<cakeslice.Outline>().enabled = true;
+            Selected_Crew_Member = cm;
         }
     }
 
@@ -114,13 +135,7 @@ public class CrewController : MonoBehaviour
 
         if (crewMemberGO.transform.position == end_vec)
         {
-            //Player.INSTANCE.DequeueFromPath();
             crewMember.DequeueFromPath();
-
-            if (!crewMember.HasPath())
-            {
-                Debug.Log("crew member: " + crewMember.Crew_Member_Name + ", crew task: " + crewMember.Current_Task);
-            }
         }
     }
     #endregion
@@ -128,6 +143,12 @@ public class CrewController : MonoBehaviour
     public CrewMember GetRandomCrewMember()
     {
         return crew.GetFs()[Random.Range(0, crew.GetCount())];
+    }
+
+    public List<CrewMember> GetCrewMembers()
+    {
+        //note return a copy????
+        return crew.GetFs().ToList();
     }
 
     // Update is called once per frame
@@ -150,43 +171,23 @@ public class CrewController : MonoBehaviour
                 }
             }
         }
+
         //todo make box colliders on sprite 2d???
         if (Input.GetMouseButtonDown(0)) //temp - handling this here
         {
-            //if (Selected_Crew_Member != null)
-            //{
-            //    GameObject crewGo = crew.GetGO(Selected_Crew_Member);
-
-            //    if (crewGo != null)
-            //    {
-            //        crewGo.GetComponent<cakeslice.Outline>().enabled = false;
-            //        Selected_Crew_Member = null;
-            //    }
-            //}
-
             RaycastHit hit = new RaycastHit();
             if (Physics.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, out hit))
             {
                 GameObject go = hit.transform.gameObject;
-
+                
                 CrewMember selectedMember = crew.GetfType(go);
 
                 if (selectedMember != null)
                 {
-                    if (Selected_Crew_Member != null)
-                    {
-                        GameObject crewGo = crew.GetGO(Selected_Crew_Member);
-
-                        if (crewGo != null)
-                        {
-                            crewGo.GetComponent<cakeslice.Outline>().enabled = false;
-                            Selected_Crew_Member = null;
-                        }
-                    }
-
-                    go.GetComponent<cakeslice.Outline>().enabled = true;
-                    Selected_Crew_Member = selectedMember;
+                    SelectCrewMember(selectedMember);
+                    UIManager.INSTANCE.SelectCrewMember(selectedMember);
                 }
+
             }
         }
 
@@ -200,6 +201,8 @@ public class CrewController : MonoBehaviour
                 {
                     crewGo.GetComponent<cakeslice.Outline>().enabled = false;
                     Selected_Crew_Member = null;
+
+                    UIManager.INSTANCE.SelectCrewMember(Selected_Crew_Member);
                 }
             }
         }
