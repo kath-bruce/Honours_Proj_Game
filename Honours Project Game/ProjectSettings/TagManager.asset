@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - EventOptions
+  - EventName
+  - EventText
+  - EventContinue
+  - EventFirstChoice
+  - EventSecondChoice
+  - EventThirdChoice
   layers:
   - Default
   - TransparentFX

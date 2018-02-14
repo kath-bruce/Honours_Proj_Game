@@ -8,17 +8,13 @@ using HonsProj;
 
 public class ShipController : MonoBehaviour
 {
-    //rooms are 3x3
-    //increments of 0.5
-    //tasks - pure c#? have method OnTick()? that is called from TaskController obj?
-
-    //make in editor snappable ship? - LATER!!!!
-
     public static ShipController INSTANCE { get; protected set; }
 
+    //todo set callback to ui manager in setter???
     public float HullIntegrity { get; private set; }
     public float ShieldCapacity { get; private set; }
     public float LifeSupportEfficiency { get; private set; }
+    public float ShipStress { get; private set; }
 
     //todo serialize all the fields
     [SerializeField]
@@ -33,14 +29,14 @@ public class ShipController : MonoBehaviour
     private TwoWayDictionary<Node> clickableNodesGoDict;
 
     //temp - use a UI manager script
-    public Text HullIntegrityDisplay;
-    public Text ShieldCapacityDisplay;
-    public Text LifeSupportEfficiencyDisplay;
-    public Text ShipStressDisplay;
-
-    float ShipStress = 0.0f; //temp
-
-    //public GameObject PlayerPrefab;
+    [SerializeField]
+    Text HullIntegrityDisplay;
+    [SerializeField]
+    Text ShieldCapacityDisplay;
+    [SerializeField]
+    Text LifeSupportEfficiencyDisplay;
+    [SerializeField]
+    Text ShipStressDisplay;
 
     private TwoWayDictionary<Room> roomGoDict;
 
@@ -54,10 +50,6 @@ public class ShipController : MonoBehaviour
 
     private Dictionary<RoomType, List<TaskType>> tasks_for_room_type;
     private Dictionary<CrewMemberRole, List<TaskType>> tasks_for_roles;
-
-    //mark nodes in scene with empty game object
-    //get game objects and add x,y to list of nodes
-    //edges??? - draw with line renderers??? then do the same thing 
 
     // Use this for initialization
     void Awake()
@@ -160,29 +152,13 @@ public class ShipController : MonoBehaviour
 
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"Assets/xml files/tasks_for_roles.xml");
-
-        //set player in random room
-        //Room player_room = GetRandomRoom();
-        //Player.INSTANCE.SetPlayerPos(player_room.Room_Info.X, player_room.Room_Info.Y);
-
-        //Node playerpos;// Player.INSTANCE.GetPlayerPos();
-        //playerpos.X = 0.0f; //temp
-        //playerpos.Y = 0.0f; //temp
-
-        //Debug.Log("Player pos: " + playerpos.X + ", " + playerpos.Y);
-
+        
         HullIntegrity = 100.0f;
         ShieldCapacity = 100.0f;
         LifeSupportEfficiency = 100.0f;
+        ShipStress = 0.0f;
     }
-
-    //private Node[] GetRandomPath()
-    //{
-    //    ship_graph.SetStartAndEnd(GetRandomRoom(), GetRandomRoom());
-
-    //    return ship_graph.FindPath();
-    //}
-
+    
     public Room GetRandomRoom()
     {
         GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length - 1)];
@@ -193,6 +169,9 @@ public class ShipController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+            return;
+
         //todo move this to room? and loop through rooms to OnTick()?
         //  is it alright if there are two separate loops for rooms and tasks??
         //  i guess because it would allow for the separation of dealing with tasks
@@ -205,8 +184,8 @@ public class ShipController : MonoBehaviour
         {
             timeTilNextTaskGeneration = taskGenerationTimer;
 
+            //todo potentially move to a separate controller script
             #region generate task in random room
-            //temp - only one task per room
             //todo when completing task, cooldown on room before a task can respawn
             List<GameObject> r_go_w_no_task = new List<GameObject>();
             foreach (GameObject r_go in roomGoDict.GetGOs())

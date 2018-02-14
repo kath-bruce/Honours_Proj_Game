@@ -8,9 +8,6 @@ public class CrewController : MonoBehaviour
 {
     public static CrewController INSTANCE { get; private set; }
 
-    //[SerializeField]
-    //int sizeOfCrew = 3;
-
     [SerializeField]
     GameObject crewPrefab;
 
@@ -86,6 +83,9 @@ public class CrewController : MonoBehaviour
 
     public void SelectCrewMember(CrewMember cm)
     {
+        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+            return;
+
         if (crew.ContainsF(cm))
         {
             if (Selected_Crew_Member != null)
@@ -154,6 +154,9 @@ public class CrewController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+            return;
+
         foreach (CrewMember crew_member in crew.GetFs())
         {
             if (crew_member.HasPath())

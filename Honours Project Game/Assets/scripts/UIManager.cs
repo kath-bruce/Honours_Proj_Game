@@ -46,11 +46,17 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+            return;
+
 
     }
 
     public void SelectCrewMember(GameObject go)
     {
+        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+            return;
+
         if (go == null)
         {
             SelectedCrewMemberHighlight.SetActive(false);
@@ -71,6 +77,9 @@ public class UIManager : MonoBehaviour
 
     public void SelectCrewMember(CrewMember cm)
     {
+        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+            return;
+
         if (cm == null)
         {
             SelectedCrewMemberHighlight.SetActive(false);
