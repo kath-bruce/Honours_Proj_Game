@@ -10,7 +10,7 @@ public class ShipController : MonoBehaviour
 {
     public static ShipController INSTANCE { get; protected set; }
 
-    //todo set callback to ui manager in setter???
+    //todo set call ui manager in setter???
     private float hull_integrity;
     public float Hull_Integrity
     {
@@ -22,6 +22,7 @@ public class ShipController : MonoBehaviour
         set
         {
             hull_integrity = value;
+            UIManager.INSTANCE.UpdateHullIntegrityDisplay(value);
         }
     }
 
@@ -36,6 +37,7 @@ public class ShipController : MonoBehaviour
         set
         {
             shield_capacity = value;
+            UIManager.INSTANCE.UpdateShieldCapacityDisplay(value);
         }
     }
 
@@ -50,6 +52,7 @@ public class ShipController : MonoBehaviour
         set
         {
             life_support_efficiency = value;
+            UIManager.INSTANCE.UpdateLifeSupportEfficiencyDisplay(value);
         }
     }
     
@@ -64,6 +67,7 @@ public class ShipController : MonoBehaviour
         set
         {
             ship_stress = value;
+            UIManager.INSTANCE.UpdateShipStressDisplay(value);
         }
     }
 
@@ -79,19 +83,7 @@ public class ShipController : MonoBehaviour
     GameObject NodeParent;
 
     private TwoWayDictionary<Node> clickableNodesGoDict;
-
-    //temp - use a UI manager script
-    [SerializeField]
-    Text HullIntegrityDisplay;
-    [SerializeField]
-    Text ShieldCapacityDisplay;
-    [SerializeField]
-    Text LifeSupportEfficiencyDisplay;
-    [SerializeField]
-    Text ShipStressDisplay;
-
     private TwoWayDictionary<Room> roomGoDict;
-
     private TwoWayDictionary<Task> taskGoDict;
     private List<Task> currentTasks; //note needed? since taskGoDict.GetFs() returns the same
 
@@ -116,8 +108,12 @@ public class ShipController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
 
+    }
+
+    void Start()
+    { 
         //instantiate prefabs and create rooms
         //rooms then start periodically spawning tasks
 
@@ -428,9 +424,6 @@ public class ShipController : MonoBehaviour
         {
             Hull_Integrity = 0.0f;
         }
-
-        //update text
-        HullIntegrityDisplay.text = "Hull Integrity: " + Hull_Integrity.ToString("0") + "%";
     }
 
     private void DecreaseShieldCapacity(float timeDecay)
@@ -441,9 +434,6 @@ public class ShipController : MonoBehaviour
         {
             Shield_Capacity = 0.0f;
         }
-
-        //update text
-        ShieldCapacityDisplay.text = "Shield Capacity: " + Shield_Capacity.ToString("0") + "%";
     }
 
     private void DecreaseLifeSupportEfficiency(float timeDecay)
@@ -454,15 +444,11 @@ public class ShipController : MonoBehaviour
         {
             Life_Support_Efficiency = 0.0f;
         }
-
-        //update text
-        LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + Life_Support_Efficiency.ToString("0") + "%";
     }
 
     private void IncreaseStress(float timeDecay)
     {
         Ship_Stress += timeDecay;
-        ShipStressDisplay.text = "Ship stress: " + Ship_Stress.ToString("0.0");
     }
 
     private void RemoveTask(Task t)
@@ -484,7 +470,6 @@ public class ShipController : MonoBehaviour
                 {
                     Shield_Capacity = 100.0f;
                 }
-                ShieldCapacityDisplay.text = "Shield Capacity: " + Shield_Capacity.ToString("0") + "%";
 
                 break;
             case TaskType.REPAIR:
@@ -494,7 +479,6 @@ public class ShipController : MonoBehaviour
                 {
                     Hull_Integrity = 100.0f;
                 }
-                HullIntegrityDisplay.text = "Hull Integrity: " + Hull_Integrity.ToString("0") + "%";
 
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
@@ -504,7 +488,6 @@ public class ShipController : MonoBehaviour
                 {
                     Life_Support_Efficiency = 100.0f;
                 }
-                LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + Life_Support_Efficiency.ToString("0") + "%";
 
                 break;
             default:
@@ -514,7 +497,6 @@ public class ShipController : MonoBehaviour
                 {
                     Ship_Stress = 0.0f;
                 }
-                ShipStressDisplay.text = "Ship Stress: " + Ship_Stress.ToString("0.0");
 
                 break;
         }

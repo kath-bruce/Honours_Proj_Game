@@ -18,7 +18,7 @@ public class CrewController : MonoBehaviour
     List<CrewMember> crewFromXml;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         if (INSTANCE == null)
         {
@@ -29,7 +29,10 @@ public class CrewController : MonoBehaviour
             Debug.LogError("MORE THAN ONE CREW CONTROLLER!!!!");
             Destroy(gameObject);
         }
+    }
 
+    void Start()
+    {
         crewFromXml = XmlDataLoader.GetCrewFromXML(@"Assets/xml files/crew_members.xml");
 
         foreach (CrewMember crewMember in crewFromXml)

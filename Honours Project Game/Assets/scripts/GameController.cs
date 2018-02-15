@@ -11,8 +11,21 @@ public class GameController : MonoBehaviour
     public static GameController INSTANCE { get; private set; }
 
     public GameState Game_State { get; protected set; }
+    
+    private float distance_to_earth;
+    public float Distance_To_Earth
+    {
+        get
+        {
+            return distance_to_earth;
+        }
 
-    public float Distance_To_Earth { get; protected set; } 
+        set
+        {
+            distance_to_earth = value;
+            UIManager.INSTANCE.UpdateDistanceToEarth(value);
+        }
+    }
 
     private bool finished_event = false;
 
@@ -28,9 +41,12 @@ public class GameController : MonoBehaviour
             Debug.LogError("MORE THAN ONE GAME CONTROLLER!!!!");
             Destroy(gameObject);
         }
+    }
 
+    void Start()
+    { 
         Game_State = GameState.IN_PLAY;
-        Distance_To_Earth = 300.0f; //light years
+        Distance_To_Earth = 5000.0f; //light years
     }
 
     public void LostHullIntegrity()
@@ -66,13 +82,11 @@ public class GameController : MonoBehaviour
             Game_State = GameState.IN_PLAY;
             finished_event = false;
         }
-
-        //connect to ui manager
+        
         Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
 
         if (Distance_To_Earth <= 0f)
         {
-            //connect to ui manager
             Game_State = GameState.WON;
         }
     }

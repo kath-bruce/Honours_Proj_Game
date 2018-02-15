@@ -9,6 +9,19 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager INSTANCE { get; protected set; }
 
+    //temp - use a UI manager script
+    [SerializeField]
+    Text Hull_Integrity_Display;
+    [SerializeField]
+    Text Shield_Capacity_Display;
+    [SerializeField]
+    Text Life_Support_Efficiency_Display;
+    [SerializeField]
+    Text Ship_Stress_Display;
+
+    [SerializeField]
+    Text Distance_To_Earth_Display;
+
     [SerializeField]
     GameObject CrewSelectionBar;
 
@@ -23,7 +36,7 @@ public class UIManager : MonoBehaviour
     private TwoWayDictionary<CrewMember> crewToUIsprite;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         if (INSTANCE == null)
         {
@@ -35,6 +48,10 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+    }
+
+    void Start()
+    {
         crewToUIsprite = new TwoWayDictionary<CrewMember>();
 
         foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
@@ -50,6 +67,31 @@ public class UIManager : MonoBehaviour
             return;
 
 
+    }
+
+    public void UpdateHullIntegrityDisplay(float new_value)
+    {
+        Hull_Integrity_Display.text = "Hull Integrity: " + new_value.ToString("0") + "%";
+    }
+
+    public void UpdateShieldCapacityDisplay(float new_value)
+    {
+        Shield_Capacity_Display.text = "Shield Capacity: " + new_value.ToString("0") + "%";
+    }
+
+    public void UpdateLifeSupportEfficiencyDisplay(float new_value)
+    {
+        Life_Support_Efficiency_Display.text = "Life Support Efficiency: " + new_value.ToString("0") + "%";
+    }
+
+    public void UpdateShipStressDisplay(float new_value)
+    {
+        Ship_Stress_Display.text = "Ship stress: " + new_value.ToString("0.0");
+    }
+
+    public void UpdateDistanceToEarth(float new_value)
+    {
+        Distance_To_Earth_Display.text = "Distance To Earth: " + '\n' + new_value.ToString("0.00") + '\n' + "light years";
     }
 
     public void SelectCrewMember(GameObject go)

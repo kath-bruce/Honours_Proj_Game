@@ -24,7 +24,7 @@ public class EventController : MonoBehaviour
     private HonsProj.Event current_event;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         if (INSTANCE == null)
         {
@@ -35,6 +35,11 @@ public class EventController : MonoBehaviour
             Debug.LogError("MORE THAN ONE EVENT CONTROLLER!!!!");
             Destroy(gameObject);
         }
+
+    }
+
+    void Start()
+    {
 
     }
 
