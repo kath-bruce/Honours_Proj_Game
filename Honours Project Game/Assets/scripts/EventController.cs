@@ -14,7 +14,7 @@ public class EventController : MonoBehaviour
 
     public static EventController INSTANCE { get; private set; }
 
-    private const float event_timer = 5.0f;
+    private const float event_timer = 10.0f;
     private float time_left_til_event = event_timer;
 
     [SerializeField]
@@ -60,9 +60,12 @@ public class EventController : MonoBehaviour
 
         current_event_go = Instantiate(eventPrefab, FindObjectOfType<Canvas>().transform);
 
-        current_event = new HonsProj.Event("dummy event");
+        current_event = new HonsProj.Event("Crew levels up!");
+
+        current_event.SetEventText("Level up the crew!");
 
         current_event.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
+        current_event.AddChoice(HonsProj.EventType.CONTINUE, LevelUpCrew, false, "+ (each crew member gains one level)");
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
     }
@@ -72,5 +75,15 @@ public class EventController : MonoBehaviour
         Destroy(current_event_go);
         current_event = null;
         GameController.INSTANCE.FinishedEvent();
+    }
+
+    void LevelUpCrew()
+    {
+        foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
+        {
+            cm.LevelUp();
+
+            //Debug.Log(cm.Crew_Member_Name + " leveled up to " + cm.Crew_Member_Level + "!");
+        }
     }
 }

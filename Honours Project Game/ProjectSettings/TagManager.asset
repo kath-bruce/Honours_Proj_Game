@@ -11,6 +11,10 @@ TagManager:
   - EventFirstChoice
   - EventSecondChoice
   - EventThirdChoice
+  - ClickableNode
+  - CrewMember
+  - CrewMemberUISprite
+  - Task
   layers:
   - Default
   - TransparentFX

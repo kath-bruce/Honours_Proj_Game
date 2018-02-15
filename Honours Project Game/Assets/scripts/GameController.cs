@@ -4,7 +4,7 @@ using UnityEngine;
 using HonsProj;
 
 //note not sure about this
-public enum GameState { IN_PLAY, PAUSED, EVENT }//, COMBAT }
+public enum GameState { IN_PLAY, PAUSED, EVENT, WON, LOST_HULL, LOST_LIFE_SUPPORT, LOST_STRESSED }//, COMBAT }
 
 public class GameController : MonoBehaviour
 {
@@ -12,8 +12,12 @@ public class GameController : MonoBehaviour
 
     public GameState Game_State { get; protected set; }
 
+    public float Distance_To_Earth { get; protected set; } 
+
+    private bool finished_event = false;
+
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         if (INSTANCE == null)
         {
@@ -26,6 +30,22 @@ public class GameController : MonoBehaviour
         }
 
         Game_State = GameState.IN_PLAY;
+        Distance_To_Earth = 300.0f; //light years
+    }
+
+    public void LostHullIntegrity()
+    {
+        Game_State = GameState.LOST_HULL;
+    }
+
+    public void LostLifeSupport()
+    {
+        Game_State = GameState.LOST_LIFE_SUPPORT;
+    }
+
+    public void LostSanity()
+    {
+        Game_State = GameState.LOST_STRESSED;
     }
 
     public void InEvent()
@@ -35,12 +55,25 @@ public class GameController : MonoBehaviour
 
     public void FinishedEvent()
     {
-        Game_State = GameState.IN_PLAY;
+        finished_event = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (finished_event)
+        {
+            Game_State = GameState.IN_PLAY;
+            finished_event = false;
+        }
 
+        //connect to ui manager
+        Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
+
+        if (Distance_To_Earth <= 0f)
+        {
+            //connect to ui manager
+            Game_State = GameState.WON;
+        }
     }
 }

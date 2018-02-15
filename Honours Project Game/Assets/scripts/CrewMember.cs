@@ -13,12 +13,11 @@ namespace HonsProj
 
     public class CrewMember
     {
-        //public float Stress { get; set; }
-        //public Room Current_Room { get; set; } //note probably don't need to know current room
-
         public string Crew_Member_Name { get; protected set; }
 
         public CrewMemberRole Crew_Member_Role { get; protected set; }
+
+        public int Crew_Member_Level { get; protected set; }
 
         private Task current_task;
         public Task Current_Task
@@ -44,20 +43,35 @@ namespace HonsProj
         }
 
         Task target_task;
+        List<Node> crew_member_path;
+        Node last_node;
 
         public Action<CrewMember, float, float> SetCrewMemberPosCallBack;    //todo null checking on callbacks
         public Func<CrewMember, Node> GetCrewMemberPosCallBack;
         public Action<CrewMember, Node> MoveCrewMemberCallBack;
-        
+
         //note crew members should have roles that define their tasks
         public CrewMember(string new_name, CrewMemberRole role)
         {
             Crew_Member_Name = new_name;
             Crew_Member_Role = role;
+            Crew_Member_Level = 1;
         }
 
-        List<Node> crew_member_path;
-        Node last_node;
+        public void LevelUp()
+        {
+            if (Crew_Member_Level < 10)
+                Crew_Member_Level++;
+            else
+            {
+                //do something else
+            }
+        }
+
+        public float GetWorkSpeed()
+        {
+            return (float)(Math.Pow(Crew_Member_Level, 2) * 0.1f) + 1;
+        }
 
         public void SetPathAndTask(List<Node> new_q, Task t)
         {
@@ -115,38 +129,5 @@ namespace HonsProj
         {
             MoveCrewMemberCallBack(this, crew_member_path[0]);
         }
-
-        #region register and unregister callbacks
-        //public void SetPos_RegisterCallback(Action<CrewMember, float, float> cb)
-        //{
-        //    SetCrewMemberPos += cb;
-        //}
-
-        //public void SetPos_UnregisterCallback(Action<CrewMember, float, float> cb)
-        //{
-        //    SetCrewMemberPos -= cb;
-        //}
-
-        //public void GetPos_RegisterCallback(Func<CrewMember, Node> cb)
-        //{
-        //    GetCrewMemberPos += cb;
-        //}
-
-        //public void GetPos_UnregisterCallback(Func<CrewMember, Node> cb)
-        //{
-        //    GetCrewMemberPos -= cb;
-        //}
-
-        //public void Move_RegisterCallback(Action<CrewMember, Node> cb)
-        //{
-        //    MoveCrewMember += cb;
-        //}
-
-        //public void Move_UnregisterCallback(Action<CrewMember, Node> cb)
-        //{
-        //    MoveCrewMember -= cb;
-        //}
-
-        #endregion
     }
 }

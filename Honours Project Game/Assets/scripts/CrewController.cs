@@ -167,46 +167,38 @@ public class CrewController : MonoBehaviour
             if (crew_member.Current_Task != null && ShipController.INSTANCE.IsTaskInList(crew_member.Current_Task))
             {
                 if (
-                    crew_member.Current_Task.DoWork(Time.deltaTime, crew_member)
+                    crew_member.Current_Task.DoWork(Time.deltaTime * crew_member.GetWorkSpeed(), crew_member)
                     )
                 {
                     //    Debug.Log("crew member: " + crew_member.Crew_Member_Name + " is doing " + crew_member.Current_Task + " at " + Time.deltaTime);
                 }
             }
         }
+    }
 
-        //todo make box colliders on sprite 2d???
-        if (Input.GetMouseButtonDown(0)) //temp - handling this here
+    public void OnCrewMemberClick(GameObject cm_go)
+    {
+        CrewMember selectedMember = crew.GetfType(cm_go);
+
+        if (selectedMember != null)
         {
-            RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, out hit))
-            {
-                GameObject go = hit.transform.gameObject;
-                
-                CrewMember selectedMember = crew.GetfType(go);
-
-                if (selectedMember != null)
-                {
-                    SelectCrewMember(selectedMember);
-                    UIManager.INSTANCE.SelectCrewMember(selectedMember);
-                }
-
-            }
+            SelectCrewMember(selectedMember);
+            UIManager.INSTANCE.SelectCrewMember(selectedMember);
         }
+    }
 
-        if (Input.GetMouseButtonDown(1))
+    public void DeselectCrewMember()
+    {
+        if (Selected_Crew_Member != null)
         {
-            if (Selected_Crew_Member != null)
+            GameObject crewGo = crew.GetGO(Selected_Crew_Member);
+
+            if (crewGo != null)
             {
-                GameObject crewGo = crew.GetGO(Selected_Crew_Member);
+                crewGo.GetComponent<cakeslice.Outline>().enabled = false;
+                Selected_Crew_Member = null;
 
-                if (crewGo != null)
-                {
-                    crewGo.GetComponent<cakeslice.Outline>().enabled = false;
-                    Selected_Crew_Member = null;
-
-                    UIManager.INSTANCE.SelectCrewMember(Selected_Crew_Member);
-                }
+                UIManager.INSTANCE.SelectCrewMember(Selected_Crew_Member);
             }
         }
     }

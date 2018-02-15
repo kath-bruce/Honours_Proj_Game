@@ -11,12 +11,64 @@ public class ShipController : MonoBehaviour
     public static ShipController INSTANCE { get; protected set; }
 
     //todo set callback to ui manager in setter???
-    public float HullIntegrity { get; private set; }
-    public float ShieldCapacity { get; private set; }
-    public float LifeSupportEfficiency { get; private set; }
-    public float ShipStress { get; private set; }
+    private float hull_integrity;
+    public float Hull_Integrity
+    {
+        get
+        {
+            return hull_integrity;
+        }
 
-    //todo serialize all the fields
+        set
+        {
+            hull_integrity = value;
+        }
+    }
+
+    private float shield_capacity;
+    public float Shield_Capacity
+    {
+        get
+        {
+            return shield_capacity;
+        }
+
+        set
+        {
+            shield_capacity = value;
+        }
+    }
+
+    private float life_support_efficiency;
+    public float Life_Support_Efficiency
+    {
+        get
+        {
+            return life_support_efficiency;
+        }
+
+        set
+        {
+            life_support_efficiency = value;
+        }
+    }
+    
+    private float ship_stress;
+    public float Ship_Stress
+    {
+        get
+        {
+            return ship_stress;
+        }
+
+        set
+        {
+            ship_stress = value;
+        }
+    }
+
+    public float Ship_Speed { get; private set; }
+    
     [SerializeField]
     GameObject RoomPrefab;
     [SerializeField]
@@ -152,13 +204,14 @@ public class ShipController : MonoBehaviour
 
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"Assets/xml files/tasks_for_roles.xml");
-        
-        HullIntegrity = 100.0f;
-        ShieldCapacity = 100.0f;
-        LifeSupportEfficiency = 100.0f;
-        ShipStress = 0.0f;
+
+        Hull_Integrity = 100.0f;
+        Shield_Capacity = 100.0f;
+        Life_Support_Efficiency = 100.0f;
+        Ship_Stress = 0.0f;
+        Ship_Speed = 10.0f;
     }
-    
+
     public Room GetRandomRoom()
     {
         GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length - 1)];
@@ -220,7 +273,7 @@ public class ShipController : MonoBehaviour
                         );
 
                 ship_graph.AddTaskToNode(n, task);
-                
+
                 rm.AddTask(task, n);
             }
             #endregion
@@ -230,72 +283,64 @@ public class ShipController : MonoBehaviour
         {
             t.OnTick(Time.deltaTime);
         }
+    }
 
-        if (Input.GetMouseButtonDown(0)) //temp - handling this here
+    public void OnNodeClick(GameObject n_go)
+    {
+        Node clickedNode = clickableNodesGoDict.GetfType(n_go);
+
+        if (!clickedNode.IsNull())
         {
-            RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, out hit))
+            //Debug.Log("clicked node");
+            CrewMember crew_member;
+
+            if (CrewController.INSTANCE.Selected_Crew_Member != null)
             {
-                GameObject go = hit.transform.gameObject;
+                crew_member = CrewController.INSTANCE.Selected_Crew_Member;
 
-                Debug.Log("clicked on " + go.name);
-
-                Task t = taskGoDict.GetfType(go);
-
-                if (t != null)
-                {
-                    //find path from player current node to task node
-                    CrewMember crew_member;
-
-                    if (CrewController.INSTANCE.Selected_Crew_Member == null)
-                    {
-                        crew_member = CrewController.INSTANCE.GetRandomCrewMember();
-                    }
-                    else
-                    {
-                        crew_member = CrewController.INSTANCE.Selected_Crew_Member;
-                    }
-
-                    //check if crew member can do task
-                    List<TaskType> tasks = new List<TaskType>();
-
-                    tasks_for_roles.TryGetValue(crew_member.Crew_Member_Role, out tasks);
-
-                    if (tasks.Contains(t.Task_Type))
-                    {
-                        if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t))
-                            crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
-                        else
-                            Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
-                    }
-                    else
-                    {
-                        Debug.Log("wrong task type for crew member " + crew_member.Crew_Member_Name);
-                    }
-                }
+                if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode))
+                    crew_member.SetPath(ship_graph.FindPath().ToList());
                 else
-                {
-                    Node clickedNode = clickableNodesGoDict.GetfType(go);
-
-                    if (!clickedNode.IsNull())
-                    {
-                        //Debug.Log("clicked node");
-                        CrewMember crew_member;
-
-                        if (CrewController.INSTANCE.Selected_Crew_Member != null)
-                        {
-                            crew_member = CrewController.INSTANCE.Selected_Crew_Member;
-
-                            if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode))
-                                crew_member.SetPath(ship_graph.FindPath().ToList());
-                            else
-                                Debug.LogError("Could not set path for "+crew_member.Crew_Member_Name);
-                        }
-                    }
-                }
+                    Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
             }
         }
+    }
 
+    public void OnTaskClick(GameObject t_go)
+    {
+        Task t = taskGoDict.GetfType(t_go);
+
+        if (t != null)
+        {
+            //find path from player current node to task node
+            CrewMember crew_member;
+
+            if (CrewController.INSTANCE.Selected_Crew_Member == null)
+            {
+                crew_member = CrewController.INSTANCE.GetRandomCrewMember();
+            }
+            else
+            {
+                crew_member = CrewController.INSTANCE.Selected_Crew_Member;
+            }
+
+            //check if crew member can do task
+            List<TaskType> tasks = new List<TaskType>();
+
+            tasks_for_roles.TryGetValue(crew_member.Crew_Member_Role, out tasks);
+
+            if (tasks.Contains(t.Task_Type))
+            {
+                if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t))
+                    crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                else
+                    Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
+            }
+            else
+            {
+                Debug.Log("wrong task type for crew member " + crew_member.Crew_Member_Name);
+            }
+        }
     }
 
     public bool IsTaskInList(Task t)
@@ -377,47 +422,47 @@ public class ShipController : MonoBehaviour
 
     private void DecreaseShipHullIntegrity(float timeDecay)
     {
-        HullIntegrity -= timeDecay;
+        Hull_Integrity -= timeDecay;
 
-        if (HullIntegrity < 0.0f)
+        if (Hull_Integrity < 0.0f)
         {
-            HullIntegrity = 0.0f;
+            Hull_Integrity = 0.0f;
         }
 
         //update text
-        HullIntegrityDisplay.text = "Hull Integrity: " + HullIntegrity.ToString("0") + "%";
+        HullIntegrityDisplay.text = "Hull Integrity: " + Hull_Integrity.ToString("0") + "%";
     }
 
     private void DecreaseShieldCapacity(float timeDecay)
     {
-        ShieldCapacity -= timeDecay;
+        Shield_Capacity -= timeDecay;
 
-        if (ShieldCapacity < 0.0f)
+        if (Shield_Capacity < 0.0f)
         {
-            ShieldCapacity = 0.0f;
+            Shield_Capacity = 0.0f;
         }
 
         //update text
-        ShieldCapacityDisplay.text = "Shield Capacity: " + ShieldCapacity.ToString("0") + "%";
+        ShieldCapacityDisplay.text = "Shield Capacity: " + Shield_Capacity.ToString("0") + "%";
     }
 
     private void DecreaseLifeSupportEfficiency(float timeDecay)
     {
-        LifeSupportEfficiency -= timeDecay;
+        Life_Support_Efficiency -= timeDecay;
 
-        if (LifeSupportEfficiency < 0.0f)
+        if (Life_Support_Efficiency < 0.0f)
         {
-            LifeSupportEfficiency = 0.0f;
+            Life_Support_Efficiency = 0.0f;
         }
 
         //update text
-        LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + LifeSupportEfficiency.ToString("0") + "%";
+        LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + Life_Support_Efficiency.ToString("0") + "%";
     }
 
     private void IncreaseStress(float timeDecay)
     {
-        ShipStress += timeDecay;
-        ShipStressDisplay.text = "Ship stress: " + ShipStress.ToString("0.0");
+        Ship_Stress += timeDecay;
+        ShipStressDisplay.text = "Ship stress: " + Ship_Stress.ToString("0.0");
     }
 
     private void RemoveTask(Task t)
@@ -434,42 +479,42 @@ public class ShipController : MonoBehaviour
         {
             case TaskType.CHARGE_SHIELDS:
 
-                ShieldCapacity += t.Work * 2;
-                if (ShieldCapacity > 100.0f)
+                Shield_Capacity += t.Work * 2;
+                if (Shield_Capacity > 100.0f)
                 {
-                    ShieldCapacity = 100.0f;
+                    Shield_Capacity = 100.0f;
                 }
-                ShieldCapacityDisplay.text = "Shield Capacity: " + ShieldCapacity.ToString("0") + "%";
+                ShieldCapacityDisplay.text = "Shield Capacity: " + Shield_Capacity.ToString("0") + "%";
 
                 break;
             case TaskType.REPAIR:
 
-                HullIntegrity += t.Work * 2;
-                if (HullIntegrity > 100.0f)
+                Hull_Integrity += t.Work * 2;
+                if (Hull_Integrity > 100.0f)
                 {
-                    HullIntegrity = 100.0f;
+                    Hull_Integrity = 100.0f;
                 }
-                HullIntegrityDisplay.text = "Hull Integrity: " + HullIntegrity.ToString("0") + "%";
+                HullIntegrityDisplay.text = "Hull Integrity: " + Hull_Integrity.ToString("0") + "%";
 
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
 
-                LifeSupportEfficiency += t.Work * 2;
-                if (LifeSupportEfficiency > 100.0f)
+                Life_Support_Efficiency += t.Work * 2;
+                if (Life_Support_Efficiency > 100.0f)
                 {
-                    LifeSupportEfficiency = 100.0f;
+                    Life_Support_Efficiency = 100.0f;
                 }
-                LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + LifeSupportEfficiency.ToString("0") + "%";
+                LifeSupportEfficiencyDisplay.text = "Life Support Efficiency: " + Life_Support_Efficiency.ToString("0") + "%";
 
                 break;
             default:
 
-                ShipStress -= t.Work * 2;
-                if (ShipStress < 0.0f)
+                Ship_Stress -= t.Work * 2;
+                if (Ship_Stress < 0.0f)
                 {
-                    ShipStress = 0.0f;
+                    Ship_Stress = 0.0f;
                 }
-                ShipStressDisplay.text = "Ship Stress: " + ShipStress.ToString("0.0");
+                ShipStressDisplay.text = "Ship Stress: " + Ship_Stress.ToString("0.0");
 
                 break;
         }

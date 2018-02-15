@@ -16,7 +16,7 @@ namespace HonsProj
         public string Event_First_Choice_Text { get; protected set; }
         public string Event_Second_Choice_Text { get; protected set; }
         public string Event_Third_Choice_Text { get; protected set; }
-        
+
         public delegate void EventOption(/*params object[] args*/); //note not sure what args would be needed
 
         private Dictionary<EventType, EventOption> event_choices;
@@ -52,7 +52,8 @@ namespace HonsProj
             return new Dictionary<EventType, EventOption>(event_choices);
         }
 
-        public void AddChoice(EventType type, EventOption option, bool override_previous_option, string option_text)
+        public void AddChoice(EventType type, EventOption option, bool override_previous_option,
+            string option_text = null)
         {
             if (event_choices.ContainsKey(type))
             {
@@ -70,25 +71,48 @@ namespace HonsProj
                 event_choices.Add(type, option);
             }
 
-            switch (type)
+            if (option_text != null)
             {
-                case EventType.CONTINUE:
-                    Event_Continue_Text = option_text;
-                    break;
-                case EventType.FIRST_CHOICE:
-                    Event_First_Choice_Text = option_text;
-                    break;
-                case EventType.SECOND_CHOICE:
-                    Event_Second_Choice_Text = option_text;
-                    break;
-                case EventType.THIRD_CHOICE:
-                    Event_Third_Choice_Text = option_text;
-                    break;
-                default:
-                    break;
+                switch (type)
+                {
+                    case EventType.CONTINUE:
+                        if (option_text.StartsWith("+"))
+                            Event_Continue_Text += option_text.Remove(0,1);
+                        else
+                            Event_Continue_Text = option_text;
+
+                        break;
+
+                    case EventType.FIRST_CHOICE:
+                        if (option_text.StartsWith("+"))
+                            Event_First_Choice_Text += option_text.Remove(0,1);
+                        else
+                            Event_First_Choice_Text = option_text;
+
+                        break;
+
+                    case EventType.SECOND_CHOICE:
+                        if (option_text.StartsWith("+"))
+                            Event_Second_Choice_Text += option_text.Remove(0,1);
+                        else
+                            Event_Second_Choice_Text = option_text;
+
+                        break;
+
+                    case EventType.THIRD_CHOICE:
+                        if (option_text.StartsWith("+"))
+                            Event_Third_Choice_Text += option_text.Remove(0,1);
+                        else
+                            Event_Third_Choice_Text = option_text;
+
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
-        
+
         public void RemoveChoice(EventType type, EventOption option)
         {
             if (event_choices.ContainsKey(type))

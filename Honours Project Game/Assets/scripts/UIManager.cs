@@ -61,6 +61,7 @@ public class UIManager : MonoBehaviour
         {
             SelectedCrewMemberHighlight.SetActive(false);
             Selected_Crew_Sprite = null;
+            return;
         }
 
         if (crewToUIsprite.ContainsGO(go))
@@ -84,6 +85,7 @@ public class UIManager : MonoBehaviour
         {
             SelectedCrewMemberHighlight.SetActive(false);
             Selected_Crew_Sprite = null;
+            return;
         }
 
         if (crewToUIsprite.ContainsF(cm))
