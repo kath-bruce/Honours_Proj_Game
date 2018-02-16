@@ -10,7 +10,10 @@ public class GameController : MonoBehaviour
 {
     public static GameController INSTANCE { get; private set; }
 
-    public GameState Game_State { get; protected set; }
+    public delegate void RestartGame();
+    public event RestartGame OnRestartGame;
+
+    public GameState Current_Game_State { get; protected set; }
     
     private float distance_to_earth;
     public float Distance_To_Earth
@@ -45,28 +48,31 @@ public class GameController : MonoBehaviour
 
     void Start()
     { 
-        Game_State = GameState.IN_PLAY;
-        Distance_To_Earth = 5000.0f; //light years
+        Current_Game_State = GameState.IN_PLAY;
+        Distance_To_Earth = 2000.0f; //light years - cause she's 2000 light years away
     }
 
     public void LostHullIntegrity()
     {
-        Game_State = GameState.LOST_HULL;
+        Current_Game_State = GameState.LOST_HULL;
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
     }
 
     public void LostLifeSupport()
     {
-        Game_State = GameState.LOST_LIFE_SUPPORT;
+        Current_Game_State = GameState.LOST_LIFE_SUPPORT;
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
     }
 
     public void LostSanity()
     {
-        Game_State = GameState.LOST_STRESSED;
+        Current_Game_State = GameState.LOST_STRESSED;
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
     }
 
     public void InEvent()
     {
-        Game_State = GameState.EVENT;
+        Current_Game_State = GameState.EVENT;
     }
 
     public void FinishedEvent()
@@ -77,17 +83,26 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            //OnRestartGame();
+        }
+
         if (finished_event)
         {
-            Game_State = GameState.IN_PLAY;
+            Current_Game_State = GameState.IN_PLAY;
             finished_event = false;
         }
-        
-        Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
 
-        if (Distance_To_Earth <= 0f)
+        if (Current_Game_State == GameState.IN_PLAY)
         {
-            Game_State = GameState.WON;
+            Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
+
+            if (Distance_To_Earth <= 0f)
+            {
+                Current_Game_State = GameState.WON;
+                UIManager.INSTANCE.ShowWinDisplay();
+            }
         }
     }
 }

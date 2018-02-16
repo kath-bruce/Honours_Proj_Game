@@ -9,7 +9,12 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager INSTANCE { get; protected set; }
 
-    //temp - use a UI manager script
+    [SerializeField]
+    GameObject Win_Display;
+
+    [SerializeField]
+    GameObject Loss_Display;
+
     [SerializeField]
     Text Hull_Integrity_Display;
     [SerializeField]
@@ -17,7 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     Text Life_Support_Efficiency_Display;
     [SerializeField]
-    Text Ship_Stress_Display;
+    Text Crew_Stress_Display;
 
     [SerializeField]
     Text Distance_To_Earth_Display;
@@ -63,9 +68,45 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
+
+    }
+
+    void Restart()
+    {
+        //todo
+        Win_Display.SetActive(false);
+        Loss_Display.SetActive(false);
+    }
+
+    public void ShowWinDisplay()
+    {
+        Win_Display.SetActive(true);
+    }
+
+    public void ShowLossDisplay(GameState state)
+    {
+        Loss_Display.SetActive(true);
+
+        TMPro.TextMeshProUGUI loss_text = Loss_Display.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+
+        switch (state)
+        {
+            case GameState.LOST_HULL:
+                loss_text.text =
+                    "Hull Destroyed!\n\nThe <color=white>ship hull integrity</color> has reached 0%!\n\nPress 'r' to try again";
+                break;
+            case GameState.LOST_LIFE_SUPPORT:
+                loss_text.text =
+                    "Life Support Failure!\n\nThe <color=white>life support efficiency</color> has reached 0%!\n\nPress 'r' to try again";
+                break;
+            case GameState.LOST_STRESSED:
+                loss_text.text =
+                    "Crew Too Stressed!\n\nThe <color=white>crew stress</color> has reached 500!\n\nPress 'r' to try again";
+                break;
+        }
 
     }
 
@@ -84,9 +125,9 @@ public class UIManager : MonoBehaviour
         Life_Support_Efficiency_Display.text = "Life Support Efficiency: " + new_value.ToString("0") + "%";
     }
 
-    public void UpdateShipStressDisplay(float new_value)
+    public void UpdateCrewStressDisplay(float new_value)
     {
-        Ship_Stress_Display.text = "Ship stress: " + new_value.ToString("0.0");
+        Crew_Stress_Display.text = "Crew Stress: " + new_value.ToString("0.0");
     }
 
     public void UpdateDistanceToEarth(float new_value)
@@ -96,7 +137,7 @@ public class UIManager : MonoBehaviour
 
     public void SelectCrewMember(GameObject go)
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
         if (go == null)
@@ -120,7 +161,7 @@ public class UIManager : MonoBehaviour
 
     public void SelectCrewMember(CrewMember cm)
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
         if (cm == null)

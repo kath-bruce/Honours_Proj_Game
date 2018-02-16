@@ -33,6 +33,22 @@ public class CrewController : MonoBehaviour
 
     void Start()
     {
+        GameController.INSTANCE.OnRestartGame += RestartCrew;
+
+        InitialiseCrew();
+    }
+
+    void RestartCrew()
+    {
+        Selected_Crew_Member = null;
+        crew.Clear();
+        crewFromXml.Clear();
+
+        InitialiseCrew();
+    }
+
+    void InitialiseCrew()
+    {
         crewFromXml = XmlDataLoader.GetCrewFromXML(@"Assets/xml files/crew_members.xml");
 
         foreach (CrewMember crewMember in crewFromXml)
@@ -46,6 +62,7 @@ public class CrewController : MonoBehaviour
             crewMember.GetCrewMemberPosCallBack += GetCrewMemberPos;
             crewMember.MoveCrewMemberCallBack += MoveCrewMember;
 
+            //todo start crew member in random node in random room - should hopefully spread out crew
             Room randomRoom = ShipController.INSTANCE.GetRandomRoom();
 
             crewMember.SetPos(randomRoom.Room_Info.X, randomRoom.Room_Info.Y);
@@ -86,7 +103,7 @@ public class CrewController : MonoBehaviour
 
     public void SelectCrewMember(CrewMember cm)
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
         if (crew.ContainsF(cm))
@@ -157,7 +174,7 @@ public class CrewController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
         foreach (CrewMember crew_member in crew.GetFs())

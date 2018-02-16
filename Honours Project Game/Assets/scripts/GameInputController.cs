@@ -22,7 +22,7 @@ public class GameInputController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (GameController.INSTANCE.Game_State == GameState.EVENT)
+            if (GameController.INSTANCE.Current_Game_State == GameState.EVENT)
             {
                 Debug.Log("clicked on event");
                 return;

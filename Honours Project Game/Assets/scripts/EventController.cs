@@ -46,7 +46,7 @@ public class EventController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
         time_left_til_event -= Time.deltaTime;

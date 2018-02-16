@@ -23,8 +23,22 @@ public class TwoWayDictionary<F>
 
     public void Clear()
     {
+        DestroyGOs();
         FToGO.Clear();
         GOToF.Clear();
+    }
+
+    private void DestroyGOs()
+    {
+        foreach (GameObject go in FToGO.Values)
+        {
+            UnityEngine.Object.Destroy(go);
+        }
+
+        foreach(GameObject go in GOToF.Keys)
+        {
+            UnityEngine.Object.Destroy(go);
+        }
     }
 
     public F GetfType(GameObject go)

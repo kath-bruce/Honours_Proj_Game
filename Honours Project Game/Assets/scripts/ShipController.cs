@@ -56,18 +56,18 @@ public class ShipController : MonoBehaviour
         }
     }
     
-    private float ship_stress;
-    public float Ship_Stress
+    private float crew_stress;
+    public float Crew_Stress
     {
         get
         {
-            return ship_stress;
+            return crew_stress;
         }
 
         set
         {
-            ship_stress = value;
-            UIManager.INSTANCE.UpdateShipStressDisplay(value);
+            crew_stress = value;
+            UIManager.INSTANCE.UpdateCrewStressDisplay(value);
         }
     }
 
@@ -204,7 +204,7 @@ public class ShipController : MonoBehaviour
         Hull_Integrity = 100.0f;
         Shield_Capacity = 100.0f;
         Life_Support_Efficiency = 100.0f;
-        Ship_Stress = 0.0f;
+        Crew_Stress = 0.0f;
         Ship_Speed = 10.0f;
     }
 
@@ -218,7 +218,7 @@ public class ShipController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameController.INSTANCE.Game_State != GameState.IN_PLAY)
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
         //todo move this to room? and loop through rooms to OnTick()?
@@ -403,9 +403,6 @@ public class ShipController : MonoBehaviour
                 t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
                 break;
             case TaskType.REPAIR:
-                //if (t.Parent_Room.Room_Type == RoomType.LIFE_SUPPORT)
-                //t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
-                //else 
                 t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
                 break;
             default:
@@ -420,9 +417,10 @@ public class ShipController : MonoBehaviour
     {
         Hull_Integrity -= timeDecay;
 
-        if (Hull_Integrity < 0.0f)
+        if (Hull_Integrity <= 0.0f)
         {
             Hull_Integrity = 0.0f;
+            GameController.INSTANCE.LostHullIntegrity();
         }
     }
 
@@ -430,7 +428,7 @@ public class ShipController : MonoBehaviour
     {
         Shield_Capacity -= timeDecay;
 
-        if (Shield_Capacity < 0.0f)
+        if (Shield_Capacity <= 0.0f)
         {
             Shield_Capacity = 0.0f;
         }
@@ -440,15 +438,22 @@ public class ShipController : MonoBehaviour
     {
         Life_Support_Efficiency -= timeDecay;
 
-        if (Life_Support_Efficiency < 0.0f)
+        if (Life_Support_Efficiency <= 0.0f)
         {
             Life_Support_Efficiency = 0.0f;
+            GameController.INSTANCE.LostLifeSupport();
         }
     }
 
     private void IncreaseStress(float timeDecay)
     {
-        Ship_Stress += timeDecay;
+        Crew_Stress += timeDecay;
+
+        if (Crew_Stress >= 500.0f)
+        {
+            Crew_Stress = 500.0f;
+            GameController.INSTANCE.LostSanity();
+        }
     }
 
     private void RemoveTask(Task t)
@@ -492,10 +497,10 @@ public class ShipController : MonoBehaviour
                 break;
             default:
 
-                Ship_Stress -= t.Work * 2;
-                if (Ship_Stress < 0.0f)
+                Crew_Stress -= t.Work * 2;
+                if (Crew_Stress < 0.0f)
                 {
-                    Ship_Stress = 0.0f;
+                    Crew_Stress = 0.0f;
                 }
 
                 break;
