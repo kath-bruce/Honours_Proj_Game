@@ -198,14 +198,21 @@ public class ShipController : MonoBehaviour
 
         currentTasks = new List<Task>();
 
+#if DEBUG
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"Assets/xml files/tasks_for_roles.xml");
+#else
+        tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"xml files/tasks_for_room_type.xml");
+        tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"xml files/tasks_for_roles.xml");
+#endif
+
 
         Hull_Integrity = 100.0f;
         Shield_Capacity = 100.0f;
         Life_Support_Efficiency = 100.0f;
         Crew_Stress = 0.0f;
         Ship_Speed = 10.0f;
+
     }
 
     public Room GetRandomRoom()
@@ -234,7 +241,7 @@ public class ShipController : MonoBehaviour
             timeTilNextTaskGeneration = taskGenerationTimer;
 
             //todo potentially move to a separate controller script
-            #region generate task in random room
+#region generate task in random room
             //todo when completing task, cooldown on room before a task can respawn
             List<GameObject> r_go_w_no_task = new List<GameObject>();
             foreach (GameObject r_go in roomGoDict.GetGOs())
@@ -272,7 +279,7 @@ public class ShipController : MonoBehaviour
 
                 rm.AddTask(task, n);
             }
-            #endregion
+#endregion
         }
 
         foreach (Task t in currentTasks)

@@ -49,8 +49,11 @@ public class CrewController : MonoBehaviour
 
     void InitialiseCrew()
     {
+#if DEBUG
         crewFromXml = XmlDataLoader.GetCrewFromXML(@"Assets/xml files/crew_members.xml");
-
+#else
+        crewFromXml = XmlDataLoader.GetCrewFromXML(@"xml files/crew_members.xml");
+#endif
         foreach (CrewMember crewMember in crewFromXml)
         {
             GameObject go = Instantiate(crewPrefab, transform);
@@ -125,7 +128,7 @@ public class CrewController : MonoBehaviour
     }
 
     //note all of this methods will become lambdas in start method
-    #region temp methods
+#region temp methods
     void SetCrewMemberPos(CrewMember crewMember, float x, float y)
     {
         Vector3 vec = crew.GetGO(crewMember).transform.position;
@@ -158,7 +161,7 @@ public class CrewController : MonoBehaviour
             crewMember.DequeueFromPath();
         }
     }
-    #endregion
+#endregion
 
     public CrewMember GetRandomCrewMember()
     {
