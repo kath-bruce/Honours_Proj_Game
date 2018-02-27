@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
 
     private GameObject Selected_Crew_Sprite = null;
 
-    private TwoWayDictionary<CrewMember> crewToUIsprite;
+    private TwoWayDictionary<CrewMember> crewToUIsprite = new TwoWayDictionary<CrewMember>();
 
     // Use this for initialization
     void Awake()
@@ -57,8 +57,13 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        crewToUIsprite = new TwoWayDictionary<CrewMember>();
+        GameController.INSTANCE.OnRestartGame += RestartUI;
 
+        InitialiseUI();
+    }
+
+    void InitialiseUI()
+    {
         foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
         {
             UpdateCrewSelectionBar(cm);
@@ -74,11 +79,17 @@ public class UIManager : MonoBehaviour
 
     }
 
-    void Restart()
+    void RestartUI()
     {
         //todo
         Win_Display.SetActive(false);
         Loss_Display.SetActive(false);
+        Selected_Crew_Sprite = null;
+        SelectedCrewMemberHighlight.SetActive(false);
+
+        crewToUIsprite.Clear();
+
+        InitialiseUI();
     }
 
     public void ShowWinDisplay()

@@ -62,6 +62,15 @@ namespace HonsProj
             end = nodes[nodes.Count - 1];
         }
 
+        public void Clear()
+        {
+            nodes.Clear();
+            edges.Clear();
+            roomToNodes.Clear();
+
+            nodeToTask.Clear();
+        }
+
         public List<Node> GetNodes()
         {
             return nodes;

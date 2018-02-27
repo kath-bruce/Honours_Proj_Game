@@ -9,8 +9,7 @@ using HonsProj;
 public class ShipController : MonoBehaviour
 {
     public static ShipController INSTANCE { get; protected set; }
-
-    //todo set call ui manager in setter???
+    
     private float hull_integrity;
     public float Hull_Integrity
     {
@@ -84,8 +83,8 @@ public class ShipController : MonoBehaviour
 
     private TwoWayDictionary<Node> clickableNodesGoDict;
     private TwoWayDictionary<Room> roomGoDict;
-    private TwoWayDictionary<Task> taskGoDict;
-    private List<Task> currentTasks; //note needed? since taskGoDict.GetFs() returns the same
+    private TwoWayDictionary<Task> taskGoDict = new TwoWayDictionary<Task>();
+    private List<Task> currentTasks = new List<Task>(); //note needed? since taskGoDict.GetFs() returns the same
 
     private const float taskGenerationTimer = 4.0f;
     private float timeTilNextTaskGeneration = taskGenerationTimer;
@@ -112,12 +111,46 @@ public class ShipController : MonoBehaviour
 
     }
 
+    void RestartShip()
+    {
+        //clear things
+        taskGoDict.Clear();
+
+        roomGoDict = null;
+
+        ship_graph.Clear();
+        ship_graph = null;
+
+        clickableNodesGoDict.Clear();
+        clickableNodesGoDict = null;
+
+        currentTasks.Clear();
+
+        tasks_for_roles.Clear();
+        tasks_for_roles = null;
+
+        tasks_for_room_type.Clear();
+        tasks_for_room_type = null;
+
+        timeTilNextTaskGeneration = taskGenerationTimer;
+        
+        InitialiseShip();
+    }
+
     void Start()
-    { 
+    {
+        GameController.INSTANCE.OnRestartGame += RestartShip;
+
+        InitialiseShip();
+
+    }
+
+    void InitialiseShip()
+    {
         //instantiate prefabs and create rooms
         //rooms then start periodically spawning tasks
 
-        taskGoDict = new TwoWayDictionary<Task>();
+        //taskGoDict = new TwoWayDictionary<Task>();
 
         roomGoDict = new TwoWayDictionary<Room>();
 
@@ -196,7 +229,7 @@ public class ShipController : MonoBehaviour
 
         #endregion
 
-        currentTasks = new List<Task>();
+        //currentTasks = new List<Task>();
 
 #if DEBUG
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
@@ -205,14 +238,12 @@ public class ShipController : MonoBehaviour
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"xml files/tasks_for_room_type.xml");
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"xml files/tasks_for_roles.xml");
 #endif
-
-
+        
         Hull_Integrity = 100.0f;
         Shield_Capacity = 100.0f;
         Life_Support_Efficiency = 100.0f;
         Crew_Stress = 0.0f;
         Ship_Speed = 10.0f;
-
     }
 
     public Room GetRandomRoom()
@@ -220,6 +251,11 @@ public class ShipController : MonoBehaviour
         GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length - 1)];
 
         return roomGoDict.GetfType(go);
+    }
+
+    public Node GetRandomNodeInRoom(Room rm)
+    {
+        return ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
     }
 
     // Update is called once per frame

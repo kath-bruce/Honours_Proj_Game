@@ -11,5 +11,7 @@ public class CrewUISelection : MonoBehaviour, ISelectHandler
             return;
 
         UIManager.INSTANCE.SelectCrewMember(eventData.selectedObject);
+
+        Debug.Log("clicked on selection bar: " + eventData.selectedObject.name);
     }
 }

@@ -40,7 +40,14 @@ public class EventController : MonoBehaviour
 
     void Start()
     {
+        GameController.INSTANCE.OnRestartGame += RestartEvents;
+    }
 
+    void RestartEvents()
+    {
+        Destroy(current_event_go);
+        current_event = null;
+        time_left_til_event = event_timer;
     }
 
     // Update is called once per frame

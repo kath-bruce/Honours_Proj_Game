@@ -41,8 +41,11 @@ public class CrewController : MonoBehaviour
     void RestartCrew()
     {
         Selected_Crew_Member = null;
+
         crew.Clear();
+        //crew = null;
         crewFromXml.Clear();
+        crewFromXml = null;
 
         InitialiseCrew();
     }
@@ -64,11 +67,10 @@ public class CrewController : MonoBehaviour
             crewMember.SetCrewMemberPosCallBack += SetCrewMemberPos;
             crewMember.GetCrewMemberPosCallBack += GetCrewMemberPos;
             crewMember.MoveCrewMemberCallBack += MoveCrewMember;
+            
+            Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom());
 
-            //todo start crew member in random node in random room - should hopefully spread out crew
-            Room randomRoom = ShipController.INSTANCE.GetRandomRoom();
-
-            crewMember.SetPos(randomRoom.Room_Info.X, randomRoom.Room_Info.Y);
+            crewMember.SetPos((float)randomNode.X, (float)randomNode.Y);
 
             SpriteRenderer s_rend = go.GetComponent<SpriteRenderer>();
 

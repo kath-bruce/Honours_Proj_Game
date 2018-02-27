@@ -85,7 +85,9 @@ public class GameController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            //OnRestartGame();
+            OnRestartGame();
+            Current_Game_State = GameState.IN_PLAY;
+            Distance_To_Earth = 2000.0f; //light years - cause she's 2000 light years away
         }
 
         if (finished_event)
