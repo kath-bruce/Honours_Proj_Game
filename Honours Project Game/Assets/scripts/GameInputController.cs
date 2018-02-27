@@ -61,6 +61,7 @@ public class GameInputController : MonoBehaviour
 
         //if right click 
         //probably just wanting to deselect crew member - call crew controller function
+        //note possible bug where crew member isn't properly deselected??? - probably not but be on lookout
         if (Input.GetMouseButtonDown(1))
         {
             CrewController.INSTANCE.DeselectCrewMember();

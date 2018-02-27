@@ -124,6 +124,11 @@ public class ShipController : MonoBehaviour
         clickableNodesGoDict.Clear();
         clickableNodesGoDict = null;
 
+        //had a weird thing where if i reinstantiated the clickable nodes then the raycast on click
+        //would hit the clickable node before a task that was there
+        //no idea why that would be
+        //instead i just amended the box colliders on the clickable node, task and crew member prefabs
+
         currentTasks.Clear();
 
         tasks_for_roles.Clear();
