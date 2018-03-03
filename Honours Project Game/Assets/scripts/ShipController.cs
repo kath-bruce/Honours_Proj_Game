@@ -388,9 +388,13 @@ public class ShipController : MonoBehaviour
                 rm.AddTask(task, n);
          */
 
-        Node n = ship_graph.GetNodesInRoom(room)[Random.Range(0, ship_graph.GetNodesInRoom(room).Count)];
+        Node n = ship_graph.GetNodesInRoom(room)[Random.Range(0, ship_graph.GetNodesInRoom(room).Count-1)];
 
         Task task = new Task(type, Random.Range(1, 4), room, n);
+
+        ship_graph.AddTaskToNode(n, task);
+
+        room.AddTask(task, n);
     }
 
     public void OnNodeClick(GameObject n_go)

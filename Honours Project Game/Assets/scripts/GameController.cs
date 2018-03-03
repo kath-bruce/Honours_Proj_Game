@@ -5,6 +5,8 @@ using HonsProj;
 
 //note not sure about this
 public enum GameState { IN_PLAY, PAUSED, EVENT, WON, LOST_HULL, LOST_LIFE_SUPPORT, LOST_STRESSED }//, COMBAT }
+public enum GamePhase { FIRST_PHASE, MIDDLE_PHASE, FINAL_PHASE }
+public enum GameDifficulty { EASY, MEDIUM, HARD }
 
 public class GameController : MonoBehaviour
 {
@@ -14,7 +16,9 @@ public class GameController : MonoBehaviour
     public event RestartGame OnRestartGame;
 
     public GameState Current_Game_State { get; protected set; }
-    
+    public GamePhase Current_Game_Phase { get; protected set; }
+    public GameDifficulty Current_Game_Difficulty { get; set; }
+
     private float distance_to_earth;
     public float Distance_To_Earth
     {
@@ -47,9 +51,31 @@ public class GameController : MonoBehaviour
     }
 
     void Start()
-    { 
+    {
         Current_Game_State = GameState.IN_PLAY;
+        Current_Game_Phase = GamePhase.FIRST_PHASE;
+        Current_Game_Difficulty = GameDifficulty.EASY;
         Distance_To_Earth = 2000.0f; //light years - cause she's 2000 light years away
+    }
+
+    public void ChangeDistanceToEarth(float deltaDistance)
+    {
+        Distance_To_Earth += deltaDistance;
+
+        if (Distance_To_Earth <= 2000.0f * (1.0f / 3.0f))
+        {
+            Current_Game_Phase = GamePhase.FINAL_PHASE;
+        }
+        else if (Distance_To_Earth <= 2000.0f * (2.0f/3.0f))
+        {
+            Current_Game_Phase = GamePhase.MIDDLE_PHASE;
+        }
+
+        if (Distance_To_Earth <= 0)
+        {
+            Current_Game_State = GameState.WON;
+            UIManager.INSTANCE.ShowWinDisplay();
+        }
     }
 
     public void LostHullIntegrity()
@@ -87,6 +113,7 @@ public class GameController : MonoBehaviour
         {
             OnRestartGame();
             Current_Game_State = GameState.IN_PLAY;
+            Current_Game_Phase = GamePhase.FIRST_PHASE;
             Distance_To_Earth = 2000.0f; //light years - cause she's 2000 light years away
         }
 
@@ -98,13 +125,15 @@ public class GameController : MonoBehaviour
 
         if (Current_Game_State == GameState.IN_PLAY)
         {
-            Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
+            //Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
 
-            if (Distance_To_Earth <= 0f)
-            {
-                Current_Game_State = GameState.WON;
-                UIManager.INSTANCE.ShowWinDisplay();
-            }
+            //if (Distance_To_Earth <= 0f)
+            //{
+            //    Current_Game_State = GameState.WON;
+            //    UIManager.INSTANCE.ShowWinDisplay();
+            //}
+
+            ChangeDistanceToEarth(-Time.deltaTime * ShipController.INSTANCE.Ship_Speed);
         }
     }
 }

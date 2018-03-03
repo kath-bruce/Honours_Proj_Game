@@ -167,7 +167,7 @@ public class CrewController : MonoBehaviour
 
     public CrewMember GetRandomCrewMember()
     {
-        return crew.GetFs()[Random.Range(0, crew.GetCount())];
+        return crew.GetFs()[Random.Range(0, crew.GetCount()-1)];
     }
 
     public List<CrewMember> GetCrewMembers()
