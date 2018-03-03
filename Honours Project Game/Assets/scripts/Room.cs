@@ -22,6 +22,9 @@ namespace HonsProj
         public RoomInfo Room_Info { get; protected set; }
 
         private List<Task> tasks;
+        private bool isFull = false;
+
+        private const int TASK_LIMIT = 5;
 
         public Action<Task, Node> AddTaskCallBack;      //todo null checking on callbacks
         public Action<Task> RemoveTaskCallBack;
@@ -42,14 +45,24 @@ namespace HonsProj
 
         public void AddTask(Task t, Node n)
         {
-            tasks.Add(t);
-            AddTaskCallBack(t, n);
+            if (!isFull)
+            {
+                tasks.Add(t);
+                AddTaskCallBack(t, n);
+            }
+
+            if (tasks.Count == TASK_LIMIT) //note hardcoded value
+            {
+                isFull = true;
+            }
         }
 
         public void RemoveTask(Task t)
         {
             tasks.Remove(t);
             RemoveTaskCallBack(t);
+
+            isFull = false;
         }
 
         public int NumberOfTasks()

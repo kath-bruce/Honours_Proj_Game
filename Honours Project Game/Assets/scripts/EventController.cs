@@ -89,7 +89,7 @@ public class EventController : MonoBehaviour
         GameController.INSTANCE.FinishedEvent();
     }
 
-    void LevelUpCrew()
+    public void LevelUpCrew()
     {
         foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
         {
@@ -98,4 +98,108 @@ public class EventController : MonoBehaviour
             //Debug.Log(cm.Crew_Member_Name + " leveled up to " + cm.Crew_Member_Level + "!");
         }
     }
+
+    public void LevelUpRandomCrewMember()
+    {
+        CrewController.INSTANCE.GetRandomCrewMember().LevelUp();
+    }
+
+    public void LevelUpCrewMember(CrewMemberRole role)
+    {
+        foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
+        {
+            if (cm.Crew_Member_Role == role && cm.Crew_Member_Level < 10)
+            {
+                cm.LevelUp();
+                break;
+            }
+        }
+    }
+
+    public void LevelDownCrew()
+    {
+        foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
+        {
+            cm.LevelDown();
+        }
+    }
+
+    public void LevelDownRandomCrewMember()
+    {
+        CrewController.INSTANCE.GetRandomCrewMember().LevelDown();
+    }
+
+    public void LevelDownCrewMember(CrewMemberRole role)
+    {
+        foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
+        {
+            if (cm.Crew_Member_Role == role && cm.Crew_Member_Level > 1)
+            {
+                cm.LevelDown();
+                break;
+            }
+        }
+    }
+
+    public void GenerateTask(TaskType task_type)
+    {
+        Room r = ShipController.INSTANCE.GetRoomByTaskType(task_type);
+
+        if (r != null)
+        {
+            ShipController.INSTANCE.AddTask(r, task_type);
+        }
+    }
+
+    public void IncreaseShipHullIntegrity()
+    {
+        ShipController.INSTANCE.IncreaseShipHullIntegrity(20.0f);
+    }
+
+    public void DecreaseShipHullIntegrity()
+    {
+        ShipController.INSTANCE.DecreaseShipHullIntegrity(20.0f);
+    }
+
+    public void IncreaseShieldCapacity()
+    {
+        ShipController.INSTANCE.IncreaseShieldCapacity(20.0f);
+    }
+
+    public void DecreaseShieldCapacity()
+    {
+        ShipController.INSTANCE.DecreaseShieldCapacity(20.0f);
+    }
+
+    public void IncreaseLifeSupportEfficiency()
+    {
+        ShipController.INSTANCE.IncreaseLifeSupportEfficiency(20.0f);
+    }
+
+    public void DecreaseLifeSupportEfficiency()
+    {
+        ShipController.INSTANCE.DecreaseLifeSupportEfficiency(20.0f);
+    }
+
+    public void DecreaseCrewStress()
+    {
+        ShipController.INSTANCE.DecreaseCrewStress(20.0f);
+    }
+
+    public void IncreaseCrewStress()
+    {
+        ShipController.INSTANCE.IncreaseCrewStress(20.0f);
+    }
+
+    public void IncreaseShipSpeed()
+    {
+        ShipController.INSTANCE.ChangeShipSpeed(5.0f);
+    }
+
+    public void DecreaseShipSpeed()
+    {
+        ShipController.INSTANCE.ChangeShipSpeed(-5.0f);
+    }
+
+
 }

@@ -61,7 +61,21 @@ namespace HonsProj
         public void LevelUp()
         {
             if (Crew_Member_Level < 10)
+            {
                 Crew_Member_Level++;
+            }
+            else
+            {
+                //do something else
+            }
+        }
+
+        public void LevelDown()
+        {
+            if (Crew_Member_Level > 1)
+            {
+                Crew_Member_Level--;
+            }
             else
             {
                 //do something else

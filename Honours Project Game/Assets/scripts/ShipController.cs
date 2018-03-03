@@ -9,7 +9,7 @@ using HonsProj;
 public class ShipController : MonoBehaviour
 {
     public static ShipController INSTANCE { get; protected set; }
-    
+
     private float hull_integrity;
     public float Hull_Integrity
     {
@@ -54,7 +54,7 @@ public class ShipController : MonoBehaviour
             UIManager.INSTANCE.UpdateLifeSupportEfficiencyDisplay(value);
         }
     }
-    
+
     private float crew_stress;
     public float Crew_Stress
     {
@@ -71,7 +71,7 @@ public class ShipController : MonoBehaviour
     }
 
     public float Ship_Speed { get; private set; }
-    
+
     [SerializeField]
     GameObject RoomPrefab;
     [SerializeField]
@@ -138,7 +138,7 @@ public class ShipController : MonoBehaviour
         tasks_for_room_type = null;
 
         timeTilNextTaskGeneration = taskGenerationTimer;
-        
+
         InitialiseShip();
     }
 
@@ -243,7 +243,7 @@ public class ShipController : MonoBehaviour
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"xml files/tasks_for_room_type.xml");
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"xml files/tasks_for_roles.xml");
 #endif
-        
+
         Hull_Integrity = 100.0f;
         Shield_Capacity = 100.0f;
         Life_Support_Efficiency = 100.0f;
@@ -258,9 +258,36 @@ public class ShipController : MonoBehaviour
         return roomGoDict.GetfType(go);
     }
 
+    public Room GetRoom(RoomType type)
+    {
+        foreach (Room r in roomGoDict.GetFs())
+        {
+            if (r.Room_Type == type)
+            {
+                return r;
+            }
+        }
+
+        return null;
+    }
+
     public Node GetRandomNodeInRoom(Room rm)
     {
         return ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
+    }
+
+    public void ChangeShipSpeed(float deltaSpeed)
+    {
+        Ship_Speed += deltaSpeed;
+
+        if (Ship_Speed < 0.0f)
+        {
+            Ship_Speed = 0.0f; //!!!!!NOTE!!!!!! - if ship speed is zero something is wrong
+        }
+        else if (Ship_Speed > 50.0f)
+        {
+            Ship_Speed = 50.0f; //todo fix all the hard coded values
+        }
     }
 
     // Update is called once per frame
@@ -281,30 +308,70 @@ public class ShipController : MonoBehaviour
         {
             timeTilNextTaskGeneration = taskGenerationTimer;
 
-            //todo potentially move to a separate controller script
-#region generate task in random room
-            //todo when completing task, cooldown on room before a task can respawn
-            List<GameObject> r_go_w_no_task = new List<GameObject>();
-            foreach (GameObject r_go in roomGoDict.GetGOs())
+            #region generate task in random room
+            //List<GameObject> r_go_w_no_task = new List<GameObject>();
+            //foreach (GameObject r_go in roomGoDict.GetGOs())
+            //{
+            //    Room temp_rm = roomGoDict.GetfType(r_go);
+            //    if (temp_rm.NumberOfTasks() < 2)
+            //        r_go_w_no_task.Add(r_go);
+            //}
+
+            //if (r_go_w_no_task.Count > 0)
+            //{
+            //GameObject random_room_w_no_task = r_go_w_no_task[Random.Range(0, r_go_w_no_task.Count)];
+
+            Room rm = GetRandomRoom();
+
+            List<TaskType> task_type_list = new List<TaskType>();
+            tasks_for_room_type.TryGetValue(rm.Room_Type, out task_type_list);
+
+            TaskType task_type = task_type_list[Random.Range(0, task_type_list.Count)];
+
+            AddTask(rm, task_type);
+
+            //Node n = ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
+
+            ////temp random task
+            //Task task =
+            //    new Task(
+            //        //(TaskType)Random.Range(0, System.Enum.GetNames(typeof(TaskType)).Length), //random task type
+            //        task_type,
+            //        Random.Range(1, 4),                                                       //random work needed
+            //        rm,                                                                         //the random room
+            //        n
+            //        );
+
+            //ship_graph.AddTaskToNode(n, task);
+
+            //rm.AddTask(task, n);
+            //}
+            #endregion
+        }
+
+        foreach (Task t in currentTasks)
+        {
+            t.OnTick(Time.deltaTime);
+        }
+    }
+
+    public Room GetRoomByTaskType(TaskType type)
+    {
+        foreach (RoomType r_type in tasks_for_room_type.Keys)
+        {
+            if (tasks_for_room_type[r_type].Contains(type))
             {
-                Room temp_rm = roomGoDict.GetfType(r_go);
-                if (temp_rm.NumberOfTasks() < 2)
-                    r_go_w_no_task.Add(r_go);
+                // AddTask(GetRoom(r_type), type);
+                return GetRoom(r_type);
             }
+        }
+        return null;
+    }
 
-            if (r_go_w_no_task.Count > 0)
-            {
-                GameObject random_room_w_no_task = r_go_w_no_task[Random.Range(0, r_go_w_no_task.Count)];
-
-                Room rm = roomGoDict.GetfType(random_room_w_no_task);
-
-                List<TaskType> task_type_list = new List<TaskType>();
-                tasks_for_room_type.TryGetValue(rm.Room_Type, out task_type_list);
-
-                TaskType task_type = task_type_list[Random.Range(0, task_type_list.Count)];
-
-
-                Node n = ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
+    public void AddTask(Room room, TaskType type)
+    {
+        /*
+         * Node n = ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
 
                 //temp random task
                 Task task =
@@ -319,14 +386,11 @@ public class ShipController : MonoBehaviour
                 ship_graph.AddTaskToNode(n, task);
 
                 rm.AddTask(task, n);
-            }
-#endregion
-        }
+         */
 
-        foreach (Task t in currentTasks)
-        {
-            t.OnTick(Time.deltaTime);
-        }
+        Node n = ship_graph.GetNodesInRoom(room)[Random.Range(0, ship_graph.GetNodesInRoom(room).Count)];
+
+        Task task = new Task(type, Random.Range(1, 4), room, n);
     }
 
     public void OnNodeClick(GameObject n_go)
@@ -454,14 +518,14 @@ public class ShipController : MonoBehaviour
                 t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
                 break;
             default:
-                t.IncreaseStressCallBack += IncreaseStress;
+                t.IncreaseStressCallBack += IncreaseCrewStress;
                 break;
         }
 
         taskGoDict.Add(t, t_go);
     }
 
-    private void DecreaseShipHullIntegrity(float timeDecay)
+    public void DecreaseShipHullIntegrity(float timeDecay)
     {
         Hull_Integrity -= timeDecay;
 
@@ -472,7 +536,17 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    private void DecreaseShieldCapacity(float timeDecay)
+    public void IncreaseShipHullIntegrity(float timeDecay)
+    {
+        Hull_Integrity += timeDecay;
+
+        if (Hull_Integrity > 100.0f)
+        {
+            Hull_Integrity = 100.0f;
+        }
+    }
+
+    public void DecreaseShieldCapacity(float timeDecay)
     {
         Shield_Capacity -= timeDecay;
 
@@ -482,7 +556,17 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    private void DecreaseLifeSupportEfficiency(float timeDecay)
+    public void IncreaseShieldCapacity(float timeDecay)
+    {
+        Shield_Capacity += timeDecay;
+
+        if (Shield_Capacity > 100.0f)
+        {
+            Shield_Capacity = 100.0f;
+        }
+    }
+
+    public void DecreaseLifeSupportEfficiency(float timeDecay)
     {
         Life_Support_Efficiency -= timeDecay;
 
@@ -493,7 +577,17 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    private void IncreaseStress(float timeDecay)
+    public void IncreaseLifeSupportEfficiency(float timeDecay)
+    {
+        Life_Support_Efficiency += timeDecay;
+
+        if (Life_Support_Efficiency > 100.0f)
+        {
+            Life_Support_Efficiency = 100.0f;
+        }
+    }
+
+    public void IncreaseCrewStress(float timeDecay)
     {
         Crew_Stress += timeDecay;
 
@@ -501,6 +595,16 @@ public class ShipController : MonoBehaviour
         {
             Crew_Stress = 500.0f;
             GameController.INSTANCE.LostSanity();
+        }
+    }
+
+    public void DecreaseCrewStress(float timeDecay)
+    {
+        Crew_Stress -= timeDecay;
+
+        if (Crew_Stress < 0.0f)
+        {
+            Crew_Stress = 0.0f;
         }
     }
 
