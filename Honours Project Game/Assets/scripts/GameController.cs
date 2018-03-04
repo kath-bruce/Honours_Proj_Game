@@ -36,6 +36,12 @@ public class GameController : MonoBehaviour
 
     private bool finished_event = false;
 
+    private const float EASY_DISTANCE = 2000.0f;
+    private const float MED_DISTANCE = 3000.0f;
+    private const float HARD_DISTANCE = 4000.0f;
+
+    private float initial_distance;
+
     // Use this for initialization
     void Awake()
     {
@@ -55,24 +61,27 @@ public class GameController : MonoBehaviour
         Current_Game_State = GameState.IN_PLAY;
         Current_Game_Phase = GamePhase.FIRST_PHASE;
         Current_Game_Difficulty = GameDifficulty.EASY;
-        Distance_To_Earth = 2000.0f; //light years - cause she's 2000 light years away
+
+        Distance_To_Earth = EASY_DISTANCE;
+        initial_distance = Distance_To_Earth;
     }
 
     public void ChangeDistanceToEarth(float deltaDistance)
     {
         Distance_To_Earth += deltaDistance;
 
-        if (Distance_To_Earth <= 2000.0f * (1.0f / 3.0f))
+        if (Distance_To_Earth <= initial_distance * (1.0f / 3.0f))
         {
-            Current_Game_Phase = GamePhase.FINAL_PHASE;
+            Current_Game_Phase = GamePhase.FINAL_PHASE; //todo let player know
         }
-        else if (Distance_To_Earth <= 2000.0f * (2.0f/3.0f))
+        else if (Distance_To_Earth <= initial_distance * (2.0f / 3.0f))
         {
             Current_Game_Phase = GamePhase.MIDDLE_PHASE;
         }
 
         if (Distance_To_Earth <= 0)
         {
+            Distance_To_Earth = 0.0f;
             Current_Game_State = GameState.WON;
             UIManager.INSTANCE.ShowWinDisplay();
         }
@@ -114,7 +123,9 @@ public class GameController : MonoBehaviour
             OnRestartGame();
             Current_Game_State = GameState.IN_PLAY;
             Current_Game_Phase = GamePhase.FIRST_PHASE;
-            Distance_To_Earth = 2000.0f; //light years - cause she's 2000 light years away
+
+            Distance_To_Earth = EASY_DISTANCE;
+            initial_distance = Distance_To_Earth;
         }
 
         if (finished_event)
@@ -125,14 +136,6 @@ public class GameController : MonoBehaviour
 
         if (Current_Game_State == GameState.IN_PLAY)
         {
-            //Distance_To_Earth -= Time.deltaTime * ShipController.INSTANCE.Ship_Speed;
-
-            //if (Distance_To_Earth <= 0f)
-            //{
-            //    Current_Game_State = GameState.WON;
-            //    UIManager.INSTANCE.ShowWinDisplay();
-            //}
-
             ChangeDistanceToEarth(-Time.deltaTime * ShipController.INSTANCE.Ship_Speed);
         }
     }

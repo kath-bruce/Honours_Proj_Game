@@ -27,9 +27,7 @@ namespace HonsProj
         private const int TASK_LIMIT = 5;
 
         public Action<Task, Node> AddTaskCallBack;      //todo null checking on callbacks
-        public Action<Task> RemoveTaskCallBack;
-
-        //todo should probably include list of crew in room
+        public Action<Task, CrewMember> RemoveTaskCallBack;
 
         public Room(RoomType r_type, RoomInfo r_info)
         {
@@ -37,12 +35,7 @@ namespace HonsProj
             Room_Info = r_info;
             tasks = new List<Task>();
         }
-
-        public void OnTick(float timeDecay)
-        {
-            //todo use this method for task generation -- maybe??????
-        }
-
+        
         public void AddTask(Task t, Node n)
         {
             if (!isFull)
@@ -51,16 +44,16 @@ namespace HonsProj
                 AddTaskCallBack(t, n);
             }
 
-            if (tasks.Count == TASK_LIMIT) //note hardcoded value
+            if (tasks.Count == TASK_LIMIT)
             {
                 isFull = true;
             }
         }
 
-        public void RemoveTask(Task t)
+        public void RemoveTask(Task t, CrewMember cm)
         {
             tasks.Remove(t);
-            RemoveTaskCallBack(t);
+            RemoveTaskCallBack(t, cm);
 
             isFull = false;
         }
@@ -85,26 +78,29 @@ namespace HonsProj
             return tasks.Count > 0;
         }
 
-        #region register and unregister call backs
-        //public void AddTask_RegisterCallBack(Action<Task> cb)
-        //{
-        //    addTaskToShipController += cb;
-        //}
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
 
-        //public void AddTask_UnregisterCallBack(Action<Task> cb)
-        //{
-        //    addTaskToShipController -= cb;
-        //}
+            Room other = (Room)obj;
+            
+            return (Room_Type == other.Room_Type 
+                && Room_Info.X == other.Room_Info.X 
+                && Room_Info.Y == other.Room_Info.Y 
+                && Room_Info.width == other.Room_Info.width 
+                && Room_Info.height == other.Room_Info.height);
+        }
 
-        //public void RemoveTask_RegisterCallBack(Action<Task> cb)
-        //{
-        //    removeTaskFromShipController += cb;
-        //}
-
-        //public void RemoveTask_UnregisterCallBack(Action<Task> cb)
-        //{
-        //    removeTaskFromShipController -= cb;
-        //}
-        #endregion
+        public override int GetHashCode()
+        {
+            return Room_Type.GetHashCode() 
+                ^ Room_Info.X.GetHashCode() 
+                ^ Room_Info.Y.GetHashCode() 
+                ^ Room_Info.width.GetHashCode() 
+                ^ Room_Info.height.GetHashCode();
+        }
     }
 }

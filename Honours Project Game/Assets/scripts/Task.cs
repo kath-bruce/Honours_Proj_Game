@@ -12,26 +12,27 @@ namespace HonsProj
     //  idk
     public enum TaskType
     {
-        REPAIR, LAUNCH_TORPEDO,
+        REPAIR, TORPEDO_ASTEROIDS,
         CHARGE_SHIELDS, MAINTAIN_LIFE_SUPPORT,
-        STEER_SHIP, TALK_TO_OTHER_SHIP, HEAL_CREW_MEMBER
+        STEER_SHIP, TALK_TO_OTHER_SHIP, HEAL_CREW_MEMBER, MAINTAIN_COMMS
     }
 
     public class Task
     {
         public TaskType Task_Type { get; protected set; }
         public float Work { get; protected set; }
-        public float Time_Left { get; protected set; }
+        //public float Time_Left { get; protected set; }
 
         public Room Parent_Room { get; protected set; }
 
-        public Action<float> IncreaseStressCallBack;
-        //public Action<float> DoWorkCallBack;
+        public Action<float> UncompletedCallBack;
 
-        //public crew member that is doing this task
-        public List<CrewMember> Current_Crew_Members { get; protected set; }
+        //crew member(s) that is doing this task
+        //public List<CrewMember> Current_Crew_Members { get; protected set; }
 
-        private int crew_member_limit = 1;
+        //private int crew_member_limit = 1;
+
+        //private CrewMember current_crew_member = null;
         public Node Task_Node { get; protected set; }
 
         float workNeeded;
@@ -40,67 +41,72 @@ namespace HonsProj
         {
             Task_Type = t_type;
             Work = 0;
-            Time_Left = 5f; //temp init time left
+            //Time_Left = 5f; 
             workNeeded = w_needed;
             Parent_Room = rm;
             Task_Node = n;
 
-            Current_Crew_Members = new List<CrewMember>();
-
-            //todo - switch case on task type here to determine crew member limit
+            //Current_Crew_Members = new List<CrewMember>();
         }
+
+        //public void SetCurrentCrewMember(CrewMember cm)
+        //{
+        //    current_crew_member = cm;
+        //}
+
+        //public CrewMember GetCurrentCrewMember()
+        //{
+        //    return current_crew_member;
+        //}
 
         public void OnTick(float timeDecay)
         {
-            if (Time_Left > 0)
-            {
-                Time_Left -= timeDecay;
-            }
-            else
-            {
-                if (IncreaseStressCallBack != null && (Current_Crew_Members == null || Current_Crew_Members.Count == 0))
+            //if (Time_Left > 0)
+            //{
+            //    Time_Left -= timeDecay;
+            //}
+            //else
+            //{
+                if (UncompletedCallBack != null)// && (Current_Crew_Members == null || Current_Crew_Members.Count == 0))
                 {
-                    IncreaseStressCallBack(timeDecay);
+                    UncompletedCallBack(timeDecay);
                 }
-            }
+            //}
         }
 
-        public bool DoWork(float workDone, CrewMember crewMember)
+        public bool DoWork(float workDone, CrewMember cm)
         {
-            if (Current_Crew_Members.Count < crew_member_limit && !Current_Crew_Members.Contains(crewMember))
-            {
-                Current_Crew_Members.Add(crewMember);
-            }
+            //if (Current_Crew_Members.Count < crew_member_limit && !Current_Crew_Members.Contains(crewMember))
+            //{
+            //    Current_Crew_Members.Add(crewMember);
+            //}
 
-            if (Current_Crew_Members.Contains(crewMember))
-            {
+            //if (Current_Crew_Members.Contains(crewMember))
+            //{
+
+            //if (crewMember.Current_Task)
                 Work += workDone;
-
-                //if (DoWorkCallBack != null)
-                //{
-                //    DoWorkCallBack(workDone);
-                //}
-
+                
                 if (Work >= workNeeded)
                 {
-                    Parent_Room.RemoveTask(this);
+                    Parent_Room.RemoveTask(this, cm);
                 }
-            }
-            else
-            {
-                return false;
-            }
+            //}
+            //else
+            //{
+            //    return false;
+            //}
 
             return true;
         }
 
-        public void RemoveCrewMember(CrewMember crewMember)
-        {
-            if (Current_Crew_Members.Contains(crewMember))
-            {
-                Current_Crew_Members.Remove(crewMember);
-            }
-        }
+        //public void RemoveCrewMember(CrewMember crewMember)
+        //{
+        //    if (Current_Crew_Members.Contains(crewMember))
+        //    {
+        //        Current_Crew_Members.Remove(crewMember);
+        //    }
+        //}
 
         public float WorkLeft()
         {

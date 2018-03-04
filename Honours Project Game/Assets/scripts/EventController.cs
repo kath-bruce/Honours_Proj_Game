@@ -57,10 +57,13 @@ public class EventController : MonoBehaviour
     private void AddPositiveEvents()
     {
         //-------------------------------low---------------------------------
-        CrewMember cm = CrewController.INSTANCE.GetRandomCrewMember();
-        HonsProj.Event randomLevelUp = new HonsProj.Event(cm.Crew_Member_Name + " leveled up!", cm.Crew_Member_Name + "gained a level!");
+        HonsProj.Event randomLevelUp = new HonsProj.Event("Crew member leveled up!", "A crew member gained a level - allowing them to complete tasks faster!");
         randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
-        randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, () => { cm.LevelUp(); }, false);
+        randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, () => 
+        {
+            CrewMember cm = CrewController.INSTANCE.GetRandomCrewMember();
+            cm.LevelUp(); //todo have a pop up on who leveled up
+        }, false);
 
         positive_events_low.Add(randomLevelUp);
         //positive_events_low.Add();
@@ -96,11 +99,11 @@ public class EventController : MonoBehaviour
         HonsProj.Event repairNeeded = new HonsProj.Event("Repair Needed!", "Something has malfunctioned and needs repair");
         repairNeeded.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
 
-        Room rm = ShipController.INSTANCE.GetRandomRoom();
-        repairNeeded.AddChoice(HonsProj.EventType.CONTINUE, () => 
+        repairNeeded.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
+            Room rm = ShipController.INSTANCE.GetRandomRoom();
             ShipController.INSTANCE.AddTask(rm, TaskType.REPAIR);
-        }, false, "+ (REPAIR "+rm.ToString()+")");
+        }, false, "+ (REPAIR task is generated)");
 
         negative_events_low.Add(repairNeeded);
         //negative_events_low.Add();
@@ -110,22 +113,40 @@ public class EventController : MonoBehaviour
         HonsProj.Event fightBrokeOut = new HonsProj.Event("Fight broke out!", "Two crew members have had a fight and will need to be healed and leveled down");
 
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
-
-        CrewMember cm1 = CrewController.INSTANCE.GetRandomCrewMember();
-        CrewMember cm2 = CrewController.INSTANCE.GetRandomCrewMember();
-
+        
         Room med_bay = ShipController.INSTANCE.GetRoomByTaskType(TaskType.HEAL_CREW_MEMBER);
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
+            CrewMember cm1 = CrewController.INSTANCE.GetRandomCrewMember();
+            CrewMember cm2;
+
+            List<CrewMember> crew = CrewController.INSTANCE.GetCrewMembers();
+            crew.Remove(cm1);
+
+            cm2 = crew[Random.Range(0, crew.Count)];
+
             cm1.LevelDown();
             cm2.LevelDown();
 
             ShipController.INSTANCE.AddTask(med_bay, TaskType.HEAL_CREW_MEMBER);
             ShipController.INSTANCE.AddTask(med_bay, TaskType.HEAL_CREW_MEMBER);
-        }, false, "+ (HEAL CREW MEMBERS and level down "+cm1.Crew_Member_Name+ " & "+cm2.Crew_Member_Name+")");
+        }, false, "+ (HEAL CREW MEMBERS and level down 2 crew members)");
 
         negative_events_med.Add(fightBrokeOut);
-        //negative_events_med.Add();
+
+        //
+
+        HonsProj.Event asteroidHit = new HonsProj.Event("Asteroid incoming!", "An asteroid is on course to hit the ship! "
+            +"How much damage we take depends on how much the shields are charged");
+
+        asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
+        asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, () =>
+        {
+            ShipController.INSTANCE.DecreaseShipHullIntegrity((1-(ShipController.INSTANCE.Shield_Capacity/100.0f)) * 50.0f);
+        }, false, "+ (take hull damage based on shield capacity)");
+
+        negative_events_med.Add(asteroidHit);
+
         //negative_events_med.Add();
 
         //-------------------------high----------------------------------------
@@ -133,10 +154,10 @@ public class EventController : MonoBehaviour
            " - either the ship speed will need to decrease or an explosion will damage the hull");
 
         engineMalfunction.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
-        engineMalfunction.AddChoice(HonsProj.EventType.FIRST_CHOICE, DecreaseShipSpeed, false, "Decrease the ship speed");
+        engineMalfunction.AddChoice(HonsProj.EventType.FIRST_CHOICE, DecreaseShipSpeed, false, "1. Decrease the ship speed");
 
         engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false);
-        engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DecreaseShipHullIntegrity, false, "An explosion damages the ship hull");
+        engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DecreaseShipHullIntegrity, false, "2. An explosion damages the ship hull");
 
         negative_events_high.Add(engineMalfunction);
         //negative_events_high.Add();
@@ -179,11 +200,11 @@ public class EventController : MonoBehaviour
 
                 if (goodEventChance >= 0.5f)
                 {
-                    current_event = positive_events_low[Random.Range(0, positive_events_low.Count-1)];
+                    current_event = positive_events_low[Random.Range(0, positive_events_low.Count)];
                 }
                 else
                 {
-                    current_event = negative_events_low[Random.Range(0, negative_events_low.Count - 1)];
+                    current_event = negative_events_low[Random.Range(0, negative_events_low.Count)];
                 }
 
                 break;
@@ -191,11 +212,11 @@ public class EventController : MonoBehaviour
 
                 if (goodEventChance >= 0.5f)
                 {
-                    current_event = positive_events_med[Random.Range(0, positive_events_med.Count - 1)];
+                    current_event = positive_events_med[Random.Range(0, positive_events_med.Count)];
                 }
                 else
                 {
-                    current_event = negative_events_med[Random.Range(0, negative_events_med.Count - 1)];
+                    current_event = negative_events_med[Random.Range(0, negative_events_med.Count)];
                 }
 
                 break;
@@ -203,11 +224,11 @@ public class EventController : MonoBehaviour
 
                 if (goodEventChance >= 0.5f)
                 {
-                    current_event = positive_events_high[Random.Range(0, positive_events_high.Count - 1)];
+                    current_event = positive_events_high[Random.Range(0, positive_events_high.Count)];
                 }
                 else
                 {
-                    current_event = negative_events_high[Random.Range(0, negative_events_high.Count - 1)];
+                    current_event = negative_events_high[Random.Range(0, negative_events_high.Count)];
                 }
 
                 break;

@@ -2,6 +2,7 @@
 	<room type = "COMMS">
 		<task_type>REPAIR</task_type>
 		<task_type>TALK_TO_OTHER_SHIP</task_type>
+    <task_type>MAINTAIN_COMMS</task_type>
 	</room>
 	<room type = "SHIELD_CHARGER">
 		<task_type>REPAIR</task_type>
@@ -13,7 +14,7 @@
 	</room>
 	<room type = "TORPEDO_LAUNCHER">
 		<task_type>REPAIR</task_type>
-		<task_type>LAUNCH_TORPEDO</task_type>
+		<task_type>TORPEDO_ASTEROIDS</task_type>
 	</room>
 	<room type = "NAVIGATION">
 		<task_type>REPAIR</task_type>

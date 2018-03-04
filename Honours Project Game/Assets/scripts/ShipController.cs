@@ -155,12 +155,11 @@ public class ShipController : MonoBehaviour
         //instantiate prefabs and create rooms
         //rooms then start periodically spawning tasks
 
-        //taskGoDict = new TwoWayDictionary<Task>();
-
         roomGoDict = new TwoWayDictionary<Room>();
 
-        //temp - get room game objects already instantiated
         #region get rooms
+        List<string> roomTypes = System.Enum.GetNames(typeof(RoomType)).ToList();
+
         foreach (Transform child in transform)
         {
             SpriteRenderer s_rend = child.gameObject.GetComponent<SpriteRenderer>();
@@ -173,16 +172,18 @@ public class ShipController : MonoBehaviour
 
             Room _room
                 = new Room(
-                    (RoomType)Random.Range(0, System.Enum.GetNames(typeof(RoomType)).Length), //random room type
+                    (RoomType)System.Enum.Parse(typeof(RoomType), roomTypes[0], false),
                     r_info
                     );
+
+            roomTypes.RemoveAt(0);
 
             _room.AddTaskCallBack += AddTask;
             _room.RemoveTaskCallBack += RemoveTask;
 
             child.gameObject.name = _room.ToString();
 
-            //change colour of room sprites - temp - will have different sprites
+            //change colour of room sprites
 
             switch (_room.Room_Type)
             {
@@ -234,8 +235,6 @@ public class ShipController : MonoBehaviour
 
         #endregion
 
-        //currentTasks = new List<Task>();
-
 #if DEBUG
         tasks_for_room_type = XmlDataLoader.GetTasksForRoomType(@"Assets/xml files/tasks_for_room_type.xml");
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"Assets/xml files/tasks_for_roles.xml");
@@ -244,16 +243,42 @@ public class ShipController : MonoBehaviour
         tasks_for_roles = XmlDataLoader.GetTasksForRoles(@"xml files/tasks_for_roles.xml");
 #endif
 
-        Hull_Integrity = 100.0f;
-        Shield_Capacity = 100.0f;
-        Life_Support_Efficiency = 100.0f;
-        Crew_Stress = 0.0f;
+        switch (GameController.INSTANCE.Current_Game_Difficulty)
+        {
+            case GameDifficulty.EASY:
+
+                Hull_Integrity = 100.0f;
+                Shield_Capacity = 100.0f;
+                Life_Support_Efficiency = 100.0f;
+                Crew_Stress = 0.0f;
+
+                break;
+            case GameDifficulty.MEDIUM:
+
+                Hull_Integrity = 60.0f;
+                Shield_Capacity = 60.0f;
+                Life_Support_Efficiency = 60.0f;
+                Crew_Stress = 100.0f;
+
+                break;
+            case GameDifficulty.HARD:
+
+                Hull_Integrity = 40.0f;
+                Shield_Capacity = 40.0f;
+                Life_Support_Efficiency = 40.0f;
+                Crew_Stress = 200.0f;
+
+                break;
+            default:
+                break;
+        }
+        
         Ship_Speed = 10.0f;
     }
 
     public Room GetRandomRoom()
     {
-        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length - 1)];
+        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length)];
 
         return roomGoDict.GetfType(go);
     }
@@ -273,6 +298,11 @@ public class ShipController : MonoBehaviour
 
     public Node GetRandomNodeInRoom(Room rm)
     {
+        if (ship_graph.GetNodesInRoom(rm) == null)
+        {
+            Debug.LogError("the ship graph is null for some reason");
+        }
+
         return ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
     }
 
@@ -282,7 +312,7 @@ public class ShipController : MonoBehaviour
 
         if (Ship_Speed < 0.0f)
         {
-            Ship_Speed = 0.0f; //!!!!!NOTE!!!!!! - if ship speed is zero something is wrong
+            Ship_Speed = 1.0f; //!!!!!NOTE!!!!!! - if ship speed is zero something is wrong
         }
         else if (Ship_Speed > 50.0f)
         {
@@ -296,10 +326,6 @@ public class ShipController : MonoBehaviour
         if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
-        //todo move this to room? and loop through rooms to OnTick()?
-        //  is it alright if there are two separate loops for rooms and tasks??
-        //  i guess because it would allow for the separation of dealing with tasks
-        //  and rooms generating tasks??
         if (timeTilNextTaskGeneration > 0f)
         {
             timeTilNextTaskGeneration -= Time.deltaTime;
@@ -309,17 +335,6 @@ public class ShipController : MonoBehaviour
             timeTilNextTaskGeneration = taskGenerationTimer;
 
             #region generate task in random room
-            //List<GameObject> r_go_w_no_task = new List<GameObject>();
-            //foreach (GameObject r_go in roomGoDict.GetGOs())
-            //{
-            //    Room temp_rm = roomGoDict.GetfType(r_go);
-            //    if (temp_rm.NumberOfTasks() < 2)
-            //        r_go_w_no_task.Add(r_go);
-            //}
-
-            //if (r_go_w_no_task.Count > 0)
-            //{
-            //GameObject random_room_w_no_task = r_go_w_no_task[Random.Range(0, r_go_w_no_task.Count)];
 
             Room rm = GetRandomRoom();
 
@@ -330,22 +345,6 @@ public class ShipController : MonoBehaviour
 
             AddTask(rm, task_type);
 
-            //Node n = ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
-
-            ////temp random task
-            //Task task =
-            //    new Task(
-            //        //(TaskType)Random.Range(0, System.Enum.GetNames(typeof(TaskType)).Length), //random task type
-            //        task_type,
-            //        Random.Range(1, 4),                                                       //random work needed
-            //        rm,                                                                         //the random room
-            //        n
-            //        );
-
-            //ship_graph.AddTaskToNode(n, task);
-
-            //rm.AddTask(task, n);
-            //}
             #endregion
         }
 
@@ -388,9 +387,9 @@ public class ShipController : MonoBehaviour
                 rm.AddTask(task, n);
          */
 
-        Node n = ship_graph.GetNodesInRoom(room)[Random.Range(0, ship_graph.GetNodesInRoom(room).Count-1)];
+        Node n = GetRandomNodeInRoom(room);
 
-        Task task = new Task(type, Random.Range(1, 4), room, n);
+        Task task = new Task(type, Random.Range(1, 6), room, n); //note work needed has been increased -> (1,6)
 
         ship_graph.AddTaskToNode(n, task);
 
@@ -401,20 +400,14 @@ public class ShipController : MonoBehaviour
     {
         Node clickedNode = clickableNodesGoDict.GetfType(n_go);
 
-        if (!clickedNode.IsNull())
+        if (!clickedNode.IsNull() && CrewController.INSTANCE.Selected_Crew_Member != null)
         {
-            //Debug.Log("clicked node");
-            CrewMember crew_member;
-
-            if (CrewController.INSTANCE.Selected_Crew_Member != null)
+            if (ship_graph.SetStartAndEnd(CrewController.INSTANCE.Selected_Crew_Member.GetPrevNode(), clickedNode))
             {
-                crew_member = CrewController.INSTANCE.Selected_Crew_Member;
-
-                if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), clickedNode))
-                    crew_member.SetPath(ship_graph.FindPath().ToList());
-                else
-                    Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
+                CrewController.INSTANCE.Selected_Crew_Member.SetPath(ship_graph.FindPath().ToList());
             }
+            else
+                Debug.LogError("Could not set path for " + CrewController.INSTANCE.Selected_Crew_Member.Crew_Member_Name);
         }
     }
 
@@ -422,35 +415,27 @@ public class ShipController : MonoBehaviour
     {
         Task t = taskGoDict.GetfType(t_go);
 
-        if (t != null)
+        if (t != null && CrewController.INSTANCE.Selected_Crew_Member != null)
         {
             //find path from player current node to task node
-            CrewMember crew_member;
-
-            if (CrewController.INSTANCE.Selected_Crew_Member == null)
-            {
-                crew_member = CrewController.INSTANCE.GetRandomCrewMember();
-            }
-            else
-            {
-                crew_member = CrewController.INSTANCE.Selected_Crew_Member;
-            }
 
             //check if crew member can do task
             List<TaskType> tasks = new List<TaskType>();
 
-            tasks_for_roles.TryGetValue(crew_member.Crew_Member_Role, out tasks);
+            tasks_for_roles.TryGetValue(CrewController.INSTANCE.Selected_Crew_Member.Crew_Member_Role, out tasks);
 
-            if (tasks.Contains(t.Task_Type))
+            if (CrewController.INSTANCE.Selected_Crew_Member.Crew_Member_Role == CrewMemberRole.CAPTAIN || tasks.Contains(t.Task_Type))
             {
-                if (ship_graph.SetStartAndEnd(crew_member.GetPrevNode(), t))
-                    crew_member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                if (ship_graph.SetStartAndEnd(CrewController.INSTANCE.Selected_Crew_Member.GetPrevNode(), t))
+                {
+                    CrewController.INSTANCE.Selected_Crew_Member.SetPathAndTask(ship_graph.FindPath().ToList(), t);
+                }
                 else
-                    Debug.LogError("Could not set path for " + crew_member.Crew_Member_Name);
+                    Debug.LogError("Could not set path for " + CrewController.INSTANCE.Selected_Crew_Member.Crew_Member_Name);
             }
             else
             {
-                Debug.Log("wrong task type for crew member " + crew_member.Crew_Member_Name);
+                Debug.Log("wrong task type for crew member " + CrewController.INSTANCE.Selected_Crew_Member.Crew_Member_Name);
             }
         }
     }
@@ -472,12 +457,12 @@ public class ShipController : MonoBehaviour
         t_go.name = t.Task_Type.ToString();
         t_go.transform.position = new Vector3((float)n.X, (float)n.Y, 0.0f);
 
-        //change colour of task sprites - temp - will have different sprites
+        //change colour of task sprites
         SpriteRenderer s_rend = t_go.GetComponent<SpriteRenderer>();
 
         switch (t.Task_Type)
         {
-            case TaskType.LAUNCH_TORPEDO:
+            case TaskType.TORPEDO_ASTEROIDS:
                 s_rend.color = Color.magenta;
                 break;
             case TaskType.REPAIR:
@@ -494,6 +479,9 @@ public class ShipController : MonoBehaviour
                 break;
             case TaskType.HEAL_CREW_MEMBER:
                 s_rend.color = Color.cyan;
+                break;
+            case TaskType.MAINTAIN_COMMS:
+                s_rend.color = Color.black;
                 break;
             default:
                 break;
@@ -513,20 +501,34 @@ public class ShipController : MonoBehaviour
         switch (t.Task_Type)
         {
             case TaskType.CHARGE_SHIELDS:
-                t.IncreaseStressCallBack += DecreaseShieldCapacity;
+                t.UncompletedCallBack += DecreaseShieldCapacity;
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
-                t.IncreaseStressCallBack += DecreaseLifeSupportEfficiency;
+                t.UncompletedCallBack += DecreaseLifeSupportEfficiency;
                 break;
             case TaskType.REPAIR:
-                t.IncreaseStressCallBack += DecreaseShipHullIntegrity;
+                t.UncompletedCallBack += DecreaseShipHullIntegrity;
+                break;
+            case TaskType.TORPEDO_ASTEROIDS:
+                t.UncompletedCallBack += AsteroidHittingShield;
                 break;
             default:
-                t.IncreaseStressCallBack += IncreaseCrewStress;
+                t.UncompletedCallBack += IncreaseCrewStress;
                 break;
         }
 
         taskGoDict.Add(t, t_go);
+    }
+
+    private void AsteroidHittingShield(float timeDecay)
+    {
+        Shield_Capacity -= timeDecay;
+
+        if (Shield_Capacity <= 0.0f)
+        {
+            Shield_Capacity = 0.0f;
+            DecreaseShipHullIntegrity(timeDecay);
+        }
     }
 
     public void DecreaseShipHullIntegrity(float timeDecay)
@@ -595,9 +597,9 @@ public class ShipController : MonoBehaviour
     {
         Crew_Stress += timeDecay;
 
-        if (Crew_Stress >= 500.0f)
+        if (Crew_Stress >= 300.0f)
         {
-            Crew_Stress = 500.0f;
+            Crew_Stress = 300.0f;
             GameController.INSTANCE.LostSanity();
         }
     }
@@ -612,7 +614,7 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    private void RemoveTask(Task t)
+    private void RemoveTask(Task t, CrewMember cm)
     {
         currentTasks.Remove(t);
         ship_graph.RemoveTaskFromNode(t.Task_Node);
@@ -621,12 +623,23 @@ public class ShipController : MonoBehaviour
 
         taskGoDict.RemovefType(t);
 
+        Debug.Log("Finished task: " + t.ToStringTaskType());
+
+        //int totalLevels = 0;
+
+        //foreach (CrewMember cm in t.Current_Crew_Members)
+        //{
+            //totalLevels += t.;
+        //}
+
+        //totalLevels /= 2;
+
         //todo remove callbacks????
         switch (t.Task_Type)
         {
             case TaskType.CHARGE_SHIELDS:
-
-                Shield_Capacity += t.Work * 2;
+                
+                Shield_Capacity += t.Work * cm.Crew_Member_Level;
                 if (Shield_Capacity > 100.0f)
                 {
                     Shield_Capacity = 100.0f;
@@ -635,7 +648,7 @@ public class ShipController : MonoBehaviour
                 break;
             case TaskType.REPAIR:
 
-                Hull_Integrity += t.Work * 2;
+                Hull_Integrity += t.Work * cm.Crew_Member_Level;
                 if (Hull_Integrity > 100.0f)
                 {
                     Hull_Integrity = 100.0f;
@@ -644,7 +657,7 @@ public class ShipController : MonoBehaviour
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
 
-                Life_Support_Efficiency += t.Work * 2;
+                Life_Support_Efficiency += t.Work * cm.Crew_Member_Level;
                 if (Life_Support_Efficiency > 100.0f)
                 {
                     Life_Support_Efficiency = 100.0f;
@@ -653,7 +666,7 @@ public class ShipController : MonoBehaviour
                 break;
             default:
 
-                Crew_Stress -= t.Work * 2;
+                Crew_Stress -= t.Work * cm.Crew_Member_Level;
                 if (Crew_Stress < 0.0f)
                 {
                     Crew_Stress = 0.0f;

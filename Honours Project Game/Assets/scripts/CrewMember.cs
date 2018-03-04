@@ -26,7 +26,7 @@ namespace HonsProj
             {                                                               //note only one crew member can do work on a task - check!!!
                 if (current_task != null && current_task.WorkLeft() <= 0.0f)// || !current_task.Current_Crew_Members.Contains(this)))
                 {
-                    current_task.RemoveCrewMember(this);
+                    //current_task.RemoveCrewMember(this);
                     current_task = null;
                 }
 
@@ -35,8 +35,13 @@ namespace HonsProj
 
             protected set
             {
-                if (value == null && current_task != null)
-                    current_task.RemoveCrewMember(this);
+                //if (current_task != null)
+                //{
+                //    if (value != null)
+                //        current_task.SetCurrentCrewMember(this);
+                //    else
+                //        current_task.SetCurrentCrewMember(null);
+                //}
 
                 current_task = value;
             }
@@ -82,6 +87,22 @@ namespace HonsProj
             }
         }
 
+        public void SetLevel(int level)
+        {
+            if (level > 10)
+            {
+                Crew_Member_Level = 10;
+            }
+            else if (level < 1)
+            {
+                Crew_Member_Level = 1;
+            }
+            else
+            {
+                Crew_Member_Level = level;
+            }
+        }
+
         public float GetWorkSpeed()
         {
             return (float)(Math.Pow(Crew_Member_Level, 2) * 0.1f) + 1;
@@ -97,6 +118,7 @@ namespace HonsProj
         {
             crew_member_path = new_q;
             Current_Task = null;
+            target_task = null;
         }
 
         public Node GetPrevNode()

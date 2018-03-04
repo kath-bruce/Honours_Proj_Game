@@ -62,12 +62,28 @@ public class CrewController : MonoBehaviour
             GameObject go = Instantiate(crewPrefab, transform);
             go.name = crewMember.Crew_Member_Name;
 
+            switch (GameController.INSTANCE.Current_Game_Difficulty)
+            {
+                case GameDifficulty.EASY:
+                    crewMember.SetLevel(7);
+                    break;
+                case GameDifficulty.MEDIUM:
+                    crewMember.SetLevel(4);
+                    break;
+                case GameDifficulty.HARD:
+                    crewMember.SetLevel(2);
+                    break;
+                default:
+                    break;
+            }
+
+
             crew.Add(crewMember, go);
 
             crewMember.SetCrewMemberPosCallBack += SetCrewMemberPos;
             crewMember.GetCrewMemberPosCallBack += GetCrewMemberPos;
             crewMember.MoveCrewMemberCallBack += MoveCrewMember;
-            
+
             Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom());
 
             crewMember.SetPos((float)randomNode.X, (float)randomNode.Y);
@@ -130,7 +146,7 @@ public class CrewController : MonoBehaviour
     }
 
     //note all of this methods will become lambdas in start method
-#region temp methods
+    #region temp methods
     void SetCrewMemberPos(CrewMember crewMember, float x, float y)
     {
         Vector3 vec = crew.GetGO(crewMember).transform.position;
@@ -163,11 +179,11 @@ public class CrewController : MonoBehaviour
             crewMember.DequeueFromPath();
         }
     }
-#endregion
+    #endregion
 
     public CrewMember GetRandomCrewMember()
     {
-        return crew.GetFs()[Random.Range(0, crew.GetCount()-1)];
+        return crew.GetFs()[Random.Range(0, crew.GetCount())];
     }
 
     public List<CrewMember> GetCrewMembers()
@@ -191,11 +207,9 @@ public class CrewController : MonoBehaviour
 
             if (crew_member.Current_Task != null && ShipController.INSTANCE.IsTaskInList(crew_member.Current_Task))
             {
-                if (
-                    crew_member.Current_Task.DoWork(Time.deltaTime * crew_member.GetWorkSpeed(), crew_member)
-                    )
+                if (crew_member.Current_Task.DoWork(Time.deltaTime * crew_member.GetWorkSpeed(), crew_member))
                 {
-                    //    Debug.Log("crew member: " + crew_member.Crew_Member_Name + " is doing " + crew_member.Current_Task + " at " + Time.deltaTime);
+                    //Debug.Log("crew member: " + crew_member.Crew_Member_Name + " is doing " + crew_member.Current_Task + " at " + Time.deltaTime);
                 }
             }
         }
