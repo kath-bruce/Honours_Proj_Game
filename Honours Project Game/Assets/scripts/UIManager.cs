@@ -36,6 +36,12 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     GameObject SelectedCrewMemberHighlight;
 
+    [SerializeField]
+    TMPro.TextMeshProUGUI Current_Phase_Display;
+
+    [SerializeField]
+    TMPro.TextMeshProUGUI Current_Difficulty_Display;
+
     private GameObject Selected_Crew_Sprite = null;
 
     private TwoWayDictionary<CrewMember> crewToUIsprite = new TwoWayDictionary<CrewMember>();
@@ -90,6 +96,42 @@ public class UIManager : MonoBehaviour
         crewToUIsprite.Clear();
 
         InitialiseUI();
+    }
+
+    public void UpdatePhaseDisplay(GamePhase phase)
+    {
+        switch (phase)
+        {
+            case GamePhase.FIRST_PHASE:
+                Current_Phase_Display.text = "Phase: <color=green>1st</color>";
+                break;
+            case GamePhase.MIDDLE_PHASE:
+                Current_Phase_Display.text = "Phase: <color=yellow>2nd</color>";
+                break;
+            case GamePhase.FINAL_PHASE:
+                Current_Phase_Display.text = "Phase: <color=red>3rd</color>";
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void UpdateDifficultyDisplay(GameDifficulty diff)
+    {
+        switch (diff)
+        {
+            case GameDifficulty.EASY:
+                Current_Difficulty_Display.text = "Difficulty: <color=green>Easy</color>";
+                break;
+            case GameDifficulty.MEDIUM:
+                Current_Difficulty_Display.text = "Difficulty: <color=yellow>Med</color>";
+                break;
+            case GameDifficulty.HARD:
+                Current_Difficulty_Display.text = "Difficulty: <color=red>Hard</color>";
+                break;
+            default:
+                break;
+        }
     }
 
     public void ShowWinDisplay()

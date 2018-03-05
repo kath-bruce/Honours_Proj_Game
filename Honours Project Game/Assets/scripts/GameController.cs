@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HonsProj;
 
-//note not sure about this
-public enum GameState { IN_PLAY, PAUSED, EVENT, WON, LOST_HULL, LOST_LIFE_SUPPORT, LOST_STRESSED }//, COMBAT }
+public enum GameState { IN_PLAY, PAUSED, EVENT, WON, LOST_HULL, LOST_LIFE_SUPPORT, LOST_STRESSED }
 public enum GamePhase { FIRST_PHASE, MIDDLE_PHASE, FINAL_PHASE }
 public enum GameDifficulty { EASY, MEDIUM, HARD }
 
@@ -16,8 +15,36 @@ public class GameController : MonoBehaviour
     public event RestartGame OnRestartGame;
 
     public GameState Current_Game_State { get; protected set; }
-    public GamePhase Current_Game_Phase { get; protected set; }
-    public GameDifficulty Current_Game_Difficulty { get; set; }
+
+    private GamePhase current_game_phase;
+    public GamePhase Current_Game_Phase
+    {
+        get
+        {
+            return current_game_phase;
+        }
+
+        protected set
+        {
+            current_game_phase = value;
+            UIManager.INSTANCE.UpdatePhaseDisplay(current_game_phase);
+        }
+    }
+
+    private GameDifficulty current_game_difficulty;
+    public GameDifficulty Current_Game_Difficulty
+    {
+        get
+        {
+            return current_game_difficulty;
+        }
+
+        protected set
+        {
+            current_game_difficulty = value;
+            UIManager.INSTANCE.UpdateDifficultyDisplay(current_game_difficulty);
+        }
+    }
 
     private float distance_to_earth;
     public float Distance_To_Earth
@@ -27,7 +54,7 @@ public class GameController : MonoBehaviour
             return distance_to_earth;
         }
 
-        set
+        protected set
         {
             distance_to_earth = value;
             UIManager.INSTANCE.UpdateDistanceToEarth(value);

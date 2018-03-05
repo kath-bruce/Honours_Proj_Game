@@ -57,6 +57,7 @@ public class EventController : MonoBehaviour
     private void AddPositiveEvents()
     {
         //-------------------------------low---------------------------------
+        #region low positive events
         HonsProj.Event randomLevelUp = new HonsProj.Event("Crew member leveled up!", "A crew member gained a level - allowing them to complete tasks faster!");
         randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
         randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, () => 
@@ -68,8 +69,10 @@ public class EventController : MonoBehaviour
         positive_events_low.Add(randomLevelUp);
         //positive_events_low.Add();
         //positive_events_low.Add();
+        #endregion
 
         //-------------------------medium------------------------------------
+        #region medium positive events
         HonsProj.Event shipSpeedIncrease = new HonsProj.Event("Ship Engine Improved!", 
             "A crew member has managed to improve the engine and the ship speed has increased!");
 
@@ -79,8 +82,10 @@ public class EventController : MonoBehaviour
         positive_events_med.Add(shipSpeedIncrease);
         //positive_events_med.Add();
         //positive_events_med.Add();
+        #endregion
 
         //-------------------------high----------------------------------------
+        #region highly positive events
         HonsProj.Event wholeCrewLevelsUp = new HonsProj.Event("Crew levels up!");
 
         wholeCrewLevelsUp.SetEventText("Level up the crew!");
@@ -91,11 +96,13 @@ public class EventController : MonoBehaviour
         positive_events_high.Add(wholeCrewLevelsUp);
         //positive_events_high.Add();
         //positive_events_high.Add();
+        #endregion
     }
 
     private void AddNegativeEvents()
     {
         //-------------------------------low---------------------------------
+        #region low negative events
         HonsProj.Event repairNeeded = new HonsProj.Event("Repair Needed!", "Something has malfunctioned and needs repair");
         repairNeeded.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
 
@@ -106,10 +113,13 @@ public class EventController : MonoBehaviour
         }, false, "+ (REPAIR task is generated)");
 
         negative_events_low.Add(repairNeeded);
+        
         //negative_events_low.Add();
         //negative_events_low.Add();
+        #endregion
 
         //-------------------------medium------------------------------------
+        #region medium negative events
         HonsProj.Event fightBrokeOut = new HonsProj.Event("Fight broke out!", "Two crew members have had a fight and will need to be healed and leveled down");
 
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
@@ -148,8 +158,10 @@ public class EventController : MonoBehaviour
         negative_events_med.Add(asteroidHit);
 
         //negative_events_med.Add();
+        #endregion
 
         //-------------------------high----------------------------------------
+        #region highly negative events
         HonsProj.Event engineMalfunction = new HonsProj.Event("Engine Malfunction!", "The engine has malfunctioned " +
            " - either the ship speed will need to decrease or an explosion will damage the hull");
 
@@ -162,6 +174,7 @@ public class EventController : MonoBehaviour
         negative_events_high.Add(engineMalfunction);
         //negative_events_high.Add();
         //negative_events_high.Add();
+        #endregion
     }
 
     void RestartEvents()

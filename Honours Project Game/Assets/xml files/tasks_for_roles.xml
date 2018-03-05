@@ -23,7 +23,6 @@
   <role type = "FIRST_OFFICER">
     <task_type>CHARGE_SHIELDS</task_type>
     <task_type>MAINTAIN_LIFE_SUPPORT</task_type>
-    <task_type>STEER_SHIP</task_type>
     <task_type>TALK_TO_OTHER_SHIP</task_type>
   </role>
   <role type = "WEAPONS_OFFICER">
