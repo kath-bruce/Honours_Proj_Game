@@ -122,6 +122,16 @@ public class CrewController : MonoBehaviour
         }
     }
 
+    public void RandomiseCrewPositions()
+    {
+        foreach(CrewMember cm in crew.GetFs())
+        {
+            Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom());
+
+            cm.SetPos((float)randomNode.X, (float)randomNode.Y);
+        }
+    }
+
     public void SelectCrewMember(CrewMember cm)
     {
         if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)

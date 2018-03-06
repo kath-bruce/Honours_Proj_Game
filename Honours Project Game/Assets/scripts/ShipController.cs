@@ -18,7 +18,7 @@ public class ShipController : MonoBehaviour
             return hull_integrity;
         }
 
-        set
+        private set
         {
             hull_integrity = value;
             UIManager.INSTANCE.UpdateHullIntegrityDisplay(value);
@@ -33,7 +33,7 @@ public class ShipController : MonoBehaviour
             return shield_capacity;
         }
 
-        set
+        private set
         {
             shield_capacity = value;
             UIManager.INSTANCE.UpdateShieldCapacityDisplay(value);
@@ -48,7 +48,7 @@ public class ShipController : MonoBehaviour
             return life_support_efficiency;
         }
 
-        set
+        private set
         {
             life_support_efficiency = value;
             UIManager.INSTANCE.UpdateLifeSupportEfficiencyDisplay(value);
@@ -63,14 +63,27 @@ public class ShipController : MonoBehaviour
             return crew_stress;
         }
 
-        set
+        private set
         {
             crew_stress = value;
             UIManager.INSTANCE.UpdateCrewStressDisplay(value);
         }
     }
 
-    public float Ship_Speed { get; private set; }
+    private float ship_speed;
+    public float Ship_Speed
+    {
+        get
+        {
+            return ship_speed;
+        }
+
+        private set
+        {
+            ship_speed = value;
+            UIManager.INSTANCE.UpdateShipSpeedDisplay(value);
+        }
+    }
 
     [SerializeField]
     GameObject RoomPrefab;
@@ -86,8 +99,12 @@ public class ShipController : MonoBehaviour
     private TwoWayDictionary<Task> taskGoDict = new TwoWayDictionary<Task>();
     private List<Task> currentTasks = new List<Task>(); //note needed? since taskGoDict.GetFs() returns the same
 
-    private const float taskGenerationTimer = 4.0f;
-    private float timeTilNextTaskGeneration = taskGenerationTimer;
+    private const float EASY_TASK_GENERATION_TIMER = 4.0f;
+    private const float MED_TASK_GENERATION_TIMER = 3.5f;
+    private const float HARD_TASK_GENERATION_TIMER = 3.0f;
+
+    private float timeTilNextTaskGeneration;// = taskGenerationTimer;
+    private float current_task_timer;
 
     private Graph ship_graph;
 
@@ -137,8 +154,6 @@ public class ShipController : MonoBehaviour
         tasks_for_room_type.Clear();
         tasks_for_room_type = null;
 
-        timeTilNextTaskGeneration = taskGenerationTimer;
-
         InitialiseShip();
     }
 
@@ -170,13 +185,15 @@ public class ShipController : MonoBehaviour
             r_info.width = s_rend.size.x;
             r_info.height = s_rend.size.y;
 
+            int randomRoomTypeIndex = Random.Range(0, roomTypes.Count);
+
             Room _room
                 = new Room(
-                    (RoomType)System.Enum.Parse(typeof(RoomType), roomTypes[0], false),
+                    (RoomType)System.Enum.Parse(typeof(RoomType), roomTypes[randomRoomTypeIndex], false),
                     r_info
                     );
 
-            roomTypes.RemoveAt(0);
+            roomTypes.RemoveAt(randomRoomTypeIndex);
 
             _room.AddTaskCallBack += AddTask;
             _room.RemoveTaskCallBack += RemoveTask;
@@ -251,6 +268,7 @@ public class ShipController : MonoBehaviour
                 Shield_Capacity = 100.0f;
                 Life_Support_Efficiency = 100.0f;
                 Crew_Stress = 0.0f;
+                current_task_timer = EASY_TASK_GENERATION_TIMER;
 
                 break;
             case GameDifficulty.MEDIUM:
@@ -259,21 +277,25 @@ public class ShipController : MonoBehaviour
                 Shield_Capacity = 60.0f;
                 Life_Support_Efficiency = 60.0f;
                 Crew_Stress = 100.0f;
+                current_task_timer = MED_TASK_GENERATION_TIMER;
 
                 break;
             case GameDifficulty.HARD:
 
-                Hull_Integrity = 40.0f;
-                Shield_Capacity = 40.0f;
-                Life_Support_Efficiency = 40.0f;
+                Hull_Integrity = 50.0f;
+                Shield_Capacity = 50.0f;
+                Life_Support_Efficiency = 50.0f;
                 Crew_Stress = 200.0f;
+                current_task_timer = HARD_TASK_GENERATION_TIMER;
 
                 break;
             default:
                 break;
         }
-        
+
         Ship_Speed = 10.0f;
+        timeTilNextTaskGeneration = current_task_timer;
+
     }
 
     public Room GetRandomRoom()
@@ -294,6 +316,11 @@ public class ShipController : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void HighlightTask(Task t, bool isHighlighted)
+    {
+        taskGoDict.GetGO(t).GetComponent<cakeslice.Outline>().enabled = isHighlighted;
     }
 
     public Node GetRandomNodeInRoom(Room rm)
@@ -332,7 +359,7 @@ public class ShipController : MonoBehaviour
         }
         else
         {
-            timeTilNextTaskGeneration = taskGenerationTimer;
+            timeTilNextTaskGeneration = current_task_timer;
 
             #region generate task in random room
 
@@ -517,6 +544,8 @@ public class ShipController : MonoBehaviour
                 break;
         }
 
+        t.WorkedOnCallback += HighlightTask;
+
         taskGoDict.Add(t, t_go);
     }
 
@@ -629,7 +658,7 @@ public class ShipController : MonoBehaviour
 
         //foreach (CrewMember cm in t.Current_Crew_Members)
         //{
-            //totalLevels += t.;
+        //totalLevels += t.;
         //}
 
         //totalLevels /= 2;
@@ -638,39 +667,54 @@ public class ShipController : MonoBehaviour
         switch (t.Task_Type)
         {
             case TaskType.CHARGE_SHIELDS:
-                
-                Shield_Capacity += t.Work * cm.Crew_Member_Level;
-                if (Shield_Capacity > 100.0f)
-                {
-                    Shield_Capacity = 100.0f;
-                }
+
+                //Shield_Capacity += t.Work * cm.Crew_Member_Level;
+                //if (Shield_Capacity > 100.0f)
+                //{
+                //    Shield_Capacity = 100.0f;
+                //}
+
+                IncreaseShieldCapacity(t.Work * cm.Crew_Member_Level);
 
                 break;
             case TaskType.REPAIR:
 
-                Hull_Integrity += t.Work * cm.Crew_Member_Level;
-                if (Hull_Integrity > 100.0f)
-                {
-                    Hull_Integrity = 100.0f;
-                }
+                //Hull_Integrity += t.Work * cm.Crew_Member_Level;
+                //if (Hull_Integrity > 100.0f)
+                //{
+                //    Hull_Integrity = 100.0f;
+                //}
+
+                IncreaseShipHullIntegrity(t.Work * cm.Crew_Member_Level);
 
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
 
-                Life_Support_Efficiency += t.Work * cm.Crew_Member_Level;
-                if (Life_Support_Efficiency > 100.0f)
-                {
-                    Life_Support_Efficiency = 100.0f;
-                }
+                //Life_Support_Efficiency += t.Work * cm.Crew_Member_Level;
+                //if (Life_Support_Efficiency > 100.0f)
+                //{
+                //    Life_Support_Efficiency = 100.0f;
+                //}
+
+                IncreaseLifeSupportEfficiency(t.Work * cm.Crew_Member_Level);
 
                 break;
+            case TaskType.TORPEDO_ASTEROIDS:
+
+                IncreaseShieldCapacity(t.Work * cm.Crew_Member_Level);
+                IncreaseShipHullIntegrity((t.Work * cm.Crew_Member_Level)*0.5f);
+
+                break;
+
             default:
 
-                Crew_Stress -= t.Work * cm.Crew_Member_Level;
-                if (Crew_Stress < 0.0f)
-                {
-                    Crew_Stress = 0.0f;
-                }
+                //Crew_Stress -= t.Work * cm.Crew_Member_Level;
+                //if (Crew_Stress < 0.0f)
+                //{
+                //    Crew_Stress = 0.0f;
+                //}
+
+                DecreaseCrewStress(t.Work * cm.Crew_Member_Level);
 
                 break;
         }

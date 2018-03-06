@@ -42,6 +42,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     TMPro.TextMeshProUGUI Current_Difficulty_Display;
 
+    [SerializeField]
+    TMPro.TextMeshProUGUI Current_Ship_Speed_Display;
+
     private GameObject Selected_Crew_Sprite = null;
 
     private TwoWayDictionary<CrewMember> crewToUIsprite = new TwoWayDictionary<CrewMember>();
@@ -87,7 +90,6 @@ public class UIManager : MonoBehaviour
 
     void RestartUI()
     {
-        //todo
         Win_Display.SetActive(false);
         Loss_Display.SetActive(false);
         Selected_Crew_Sprite = null;
@@ -98,18 +100,23 @@ public class UIManager : MonoBehaviour
         InitialiseUI();
     }
 
+    public void UpdateShipSpeedDisplay(float ship_speed)
+    {
+        Current_Ship_Speed_Display.text = "Warp Speed: \n<color=#00ffff>" +ship_speed+ "</color>";
+    }
+
     public void UpdatePhaseDisplay(GamePhase phase)
     {
         switch (phase)
         {
             case GamePhase.FIRST_PHASE:
-                Current_Phase_Display.text = "Phase: <color=green>1st</color>";
+                Current_Phase_Display.text = "Phase: <color=green>1/3</color>";
                 break;
             case GamePhase.MIDDLE_PHASE:
-                Current_Phase_Display.text = "Phase: <color=yellow>2nd</color>";
+                Current_Phase_Display.text = "Phase: <color=yellow>2/3</color>";
                 break;
             case GamePhase.FINAL_PHASE:
-                Current_Phase_Display.text = "Phase: <color=red>3rd</color>";
+                Current_Phase_Display.text = "Phase: <color=red>3/3</color>";
                 break;
             default:
                 break;

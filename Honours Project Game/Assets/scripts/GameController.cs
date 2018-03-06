@@ -63,9 +63,9 @@ public class GameController : MonoBehaviour
 
     private bool finished_event = false;
 
-    private const float EASY_DISTANCE = 2000.0f;
+    private const float EASY_DISTANCE = 2500.0f;
     private const float MED_DISTANCE = 3000.0f;
-    private const float HARD_DISTANCE = 4000.0f;
+    private const float HARD_DISTANCE = 3500.0f;
 
     private float initial_distance;
 

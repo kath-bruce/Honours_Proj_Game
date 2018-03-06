@@ -23,10 +23,9 @@ namespace HonsProj
         public Task Current_Task
         {
             get
-            {                                                               //note only one crew member can do work on a task - check!!!
-                if (current_task != null && current_task.WorkLeft() <= 0.0f)// || !current_task.Current_Crew_Members.Contains(this)))
+            {                                                               
+                if (current_task != null && current_task.WorkLeft() <= 0.0f)
                 {
-                    //current_task.RemoveCrewMember(this);
                     current_task = null;
                 }
 
@@ -35,14 +34,6 @@ namespace HonsProj
 
             protected set
             {
-                //if (current_task != null)
-                //{
-                //    if (value != null)
-                //        current_task.SetCurrentCrewMember(this);
-                //    else
-                //        current_task.SetCurrentCrewMember(null);
-                //}
-
                 current_task = value;
             }
         }
@@ -117,6 +108,10 @@ namespace HonsProj
         public void SetPath(List<Node> new_q)
         {
             crew_member_path = new_q;
+
+            if (Current_Task != null)
+                Current_Task.WorkedOnCallback(Current_Task, false);
+
             Current_Task = null;
             target_task = null;
         }

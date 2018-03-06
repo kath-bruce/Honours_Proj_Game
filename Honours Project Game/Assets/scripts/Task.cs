@@ -26,13 +26,8 @@ namespace HonsProj
         public Room Parent_Room { get; protected set; }
 
         public Action<float> UncompletedCallBack;
-
-        //crew member(s) that is doing this task
-        //public List<CrewMember> Current_Crew_Members { get; protected set; }
-
-        //private int crew_member_limit = 1;
-
-        //private CrewMember current_crew_member = null;
+        public Action<Task, bool> WorkedOnCallback;
+        
         public Node Task_Node { get; protected set; }
 
         float workNeeded;
@@ -45,68 +40,26 @@ namespace HonsProj
             workNeeded = w_needed;
             Parent_Room = rm;
             Task_Node = n;
-
-            //Current_Crew_Members = new List<CrewMember>();
         }
-
-        //public void SetCurrentCrewMember(CrewMember cm)
-        //{
-        //    current_crew_member = cm;
-        //}
-
-        //public CrewMember GetCurrentCrewMember()
-        //{
-        //    return current_crew_member;
-        //}
 
         public void OnTick(float timeDecay)
         {
-            //if (Time_Left > 0)
-            //{
-            //    Time_Left -= timeDecay;
-            //}
-            //else
-            //{
-                if (UncompletedCallBack != null)// && (Current_Crew_Members == null || Current_Crew_Members.Count == 0))
-                {
-                    UncompletedCallBack(timeDecay);
-                }
-            //}
+            //if (UncompletedCallBack != null)
+                UncompletedCallBack(timeDecay);
         }
 
         public bool DoWork(float workDone, CrewMember cm)
         {
-            //if (Current_Crew_Members.Count < crew_member_limit && !Current_Crew_Members.Contains(crewMember))
-            //{
-            //    Current_Crew_Members.Add(crewMember);
-            //}
+            WorkedOnCallback(this, true);
+            Work += workDone;
 
-            //if (Current_Crew_Members.Contains(crewMember))
-            //{
-
-            //if (crewMember.Current_Task)
-                Work += workDone;
-                
-                if (Work >= workNeeded)
-                {
-                    Parent_Room.RemoveTask(this, cm);
-                }
-            //}
-            //else
-            //{
-            //    return false;
-            //}
+            if (Work >= workNeeded)
+            {
+                Parent_Room.RemoveTask(this, cm);
+            }
 
             return true;
         }
-
-        //public void RemoveCrewMember(CrewMember crewMember)
-        //{
-        //    if (Current_Crew_Members.Contains(crewMember))
-        //    {
-        //        Current_Crew_Members.Remove(crewMember);
-        //    }
-        //}
 
         public float WorkLeft()
         {

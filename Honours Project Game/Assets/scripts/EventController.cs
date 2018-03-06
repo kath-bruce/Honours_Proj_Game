@@ -58,29 +58,62 @@ public class EventController : MonoBehaviour
     {
         //-------------------------------low---------------------------------
         #region low positive events
-        HonsProj.Event randomLevelUp = new HonsProj.Event("Crew member leveled up!", "A crew member gained a level - allowing them to complete tasks faster!");
+        HonsProj.Event randomLevelUp = new HonsProj.Event("Crew member leveled up!", "A crew member gained a level, allowing them to complete tasks faster!");
         randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
-        randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, () => 
+        randomLevelUp.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
             CrewMember cm = CrewController.INSTANCE.GetRandomCrewMember();
             cm.LevelUp(); //todo have a pop up on who leveled up
         }, false);
 
         positive_events_low.Add(randomLevelUp);
-        //positive_events_low.Add();
+
+        HonsProj.Event wormholeFound = new HonsProj.Event("Wormhole found!", "Do you want to go through it or leave it be? " +
+            "You will get closer to earth but will sustain <color=red>20 hull damage</color>");
+
+        wormholeFound.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
+        wormholeFound.AddChoice(HonsProj.EventType.FIRST_CHOICE, () =>
+        {
+            DecreaseDistanceToEarth();
+            DecreaseShipHullIntegrity();
+        }, false, "1. Go through wormhole");
+
+        wormholeFound.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false, "2. Leave it be");
+
+        positive_events_low.Add(wormholeFound);
+
         //positive_events_low.Add();
         #endregion
 
         //-------------------------medium------------------------------------
         #region medium positive events
-        HonsProj.Event shipSpeedIncrease = new HonsProj.Event("Ship Engine Improved!", 
+        HonsProj.Event shipSpeedIncrease = new HonsProj.Event("Ship Engine Improved!",
             "A crew member has managed to improve the engine and the ship speed has increased!");
 
         shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
         shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, IncreaseShipSpeed, false, "+ (Ship speed has increased)");
+        //todo show ship speed
 
         positive_events_med.Add(shipSpeedIncrease);
-        //positive_events_med.Add();
+
+        HonsProj.Event resetShipAspectChoice = new HonsProj.Event("Extra components found!", "Someone has found some enough extra components to either repair" +
+            " the hull to 100% or the life support system to 100%");
+
+        resetShipAspectChoice.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
+        resetShipAspectChoice.AddChoice(HonsProj.EventType.FIRST_CHOICE, () =>
+        {
+            ShipController.INSTANCE.IncreaseShipHullIntegrity(100.0f);
+        }, false, "1. Repair hull to 100%");
+
+        resetShipAspectChoice.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false);
+        resetShipAspectChoice.AddChoice(HonsProj.EventType.SECOND_CHOICE, () =>
+        {
+            ShipController.INSTANCE.IncreaseLifeSupportEfficiency(100.0f);
+        }, false, "2. Repair life support system to 100%");
+
+        positive_events_med.Add(resetShipAspectChoice);
+
+
         //positive_events_med.Add();
         #endregion
 
@@ -113,7 +146,7 @@ public class EventController : MonoBehaviour
         }, false, "+ (REPAIR task is generated)");
 
         negative_events_low.Add(repairNeeded);
-        
+
         //negative_events_low.Add();
         //negative_events_low.Add();
         #endregion
@@ -123,7 +156,7 @@ public class EventController : MonoBehaviour
         HonsProj.Event fightBrokeOut = new HonsProj.Event("Fight broke out!", "Two crew members have had a fight and will need to be healed and leveled down");
 
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
-        
+
         Room med_bay = ShipController.INSTANCE.GetRoomByTaskType(TaskType.HEAL_CREW_MEMBER);
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
@@ -146,13 +179,13 @@ public class EventController : MonoBehaviour
 
         //
 
-        HonsProj.Event asteroidHit = new HonsProj.Event("Asteroid incoming!", "An asteroid is on course to hit the ship! "
-            +"How much damage we take depends on how much the shields are charged");
+        HonsProj.Event asteroidHit = new HonsProj.Event("Mega Asteroid incoming!", "A mega asteroid is on course to hit the ship! "
+            + "How much damage we take depends on how much the shields are charged");
 
         asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
         asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
-            ShipController.INSTANCE.DecreaseShipHullIntegrity((1-(ShipController.INSTANCE.Shield_Capacity/100.0f)) * 50.0f);
+            ShipController.INSTANCE.DecreaseShipHullIntegrity((1 - (ShipController.INSTANCE.Shield_Capacity / 100.0f)) * 50.0f);
         }, false, "+ (take hull damage based on shield capacity)");
 
         negative_events_med.Add(asteroidHit);
@@ -172,7 +205,14 @@ public class EventController : MonoBehaviour
         engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DecreaseShipHullIntegrity, false, "2. An explosion damages the ship hull");
 
         negative_events_high.Add(engineMalfunction);
-        //negative_events_high.Add();
+
+        HonsProj.Event mindwormInfestation = new HonsProj.Event("Mindworm Infestation!", "A mindworm infestation has caused the crew to wander from their stations! ");
+
+        mindwormInfestation.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
+        mindwormInfestation.AddChoice(HonsProj.EventType.CONTINUE, RandomiseCrewPositions, false, "+ (crew positions are scrambled)");
+        
+        negative_events_high.Add(mindwormInfestation);
+
         //negative_events_high.Add();
         #endregion
     }
@@ -206,6 +246,7 @@ public class EventController : MonoBehaviour
 
         current_event_go = Instantiate(eventPrefab, FindObjectOfType<Canvas>().transform);
         float goodEventChance = Random.value;
+        float eventSeverityChance = Random.value;
 
         switch (GameController.INSTANCE.Current_Game_Phase)
         {
@@ -213,11 +254,17 @@ public class EventController : MonoBehaviour
 
                 if (goodEventChance >= 0.5f)
                 {
-                    current_event = positive_events_low[Random.Range(0, positive_events_low.Count)];
+                    if (eventSeverityChance <= 0.75f)
+                        current_event = positive_events_low[Random.Range(0, positive_events_low.Count)];
+                    else
+                        current_event = positive_events_med[Random.Range(0, positive_events_med.Count)];
                 }
                 else
                 {
-                    current_event = negative_events_low[Random.Range(0, negative_events_low.Count)];
+                    if (eventSeverityChance <= 0.75f)
+                        current_event = negative_events_low[Random.Range(0, negative_events_low.Count)];
+                    else
+                        current_event = negative_events_med[Random.Range(0, negative_events_med.Count)];
                 }
 
                 break;
@@ -225,11 +272,22 @@ public class EventController : MonoBehaviour
 
                 if (goodEventChance >= 0.5f)
                 {
-                    current_event = positive_events_med[Random.Range(0, positive_events_med.Count)];
+                    if (eventSeverityChance <= 0.5f)
+                        current_event = positive_events_med[Random.Range(0, positive_events_med.Count)];
+                    else if (eventSeverityChance <= 0.75f)
+                        current_event = positive_events_high[Random.Range(0, positive_events_high.Count)];
+                    else
+                        current_event = positive_events_low[Random.Range(0, positive_events_low.Count)];
+
                 }
                 else
                 {
-                    current_event = negative_events_med[Random.Range(0, negative_events_med.Count)];
+                    if (eventSeverityChance <= 0.5f)
+                        current_event = negative_events_med[Random.Range(0, negative_events_med.Count)];
+                    else if (eventSeverityChance <= 0.75f)
+                        current_event = negative_events_high[Random.Range(0, negative_events_high.Count)];
+                    else
+                        current_event = negative_events_low[Random.Range(0, negative_events_low.Count)];
                 }
 
                 break;
@@ -237,11 +295,21 @@ public class EventController : MonoBehaviour
 
                 if (goodEventChance >= 0.5f)
                 {
-                    current_event = positive_events_high[Random.Range(0, positive_events_high.Count)];
+                    if (eventSeverityChance <= 0.5f)
+                        current_event = positive_events_high[Random.Range(0, positive_events_high.Count)];
+                    else if (eventSeverityChance <= 0.9f)
+                        current_event = positive_events_med[Random.Range(0, positive_events_med.Count)];
+                    else
+                        current_event = positive_events_low[Random.Range(0, positive_events_low.Count)];
                 }
                 else
                 {
-                    current_event = negative_events_high[Random.Range(0, negative_events_high.Count)];
+                    if (eventSeverityChance <= 0.5f)
+                        current_event = negative_events_high[Random.Range(0, negative_events_high.Count)];
+                    else if (eventSeverityChance <= 0.9f)
+                        current_event = negative_events_med[Random.Range(0, negative_events_med.Count)];
+                    else
+                        current_event = negative_events_low[Random.Range(0, negative_events_low.Count)];
                 }
 
                 break;
@@ -250,12 +318,15 @@ public class EventController : MonoBehaviour
                 break;
         }
 
-        //current_event = new HonsProj.Event("Crew levels up!");
-        //current_event.SetEventText("Level up the crew!");
-        //current_event.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
-        //current_event.AddChoice(HonsProj.EventType.CONTINUE, LevelUpCrew, false, "+ (each crew member gains one level)");
+        //note debug
+        //current_event = negative_events_high[1];
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
+    }
+
+    void RandomiseCrewPositions()
+    {
+        CrewController.INSTANCE.RandomiseCrewPositions();
     }
 
     void DestroyEvent(/*params object[] args*/)
