@@ -22,11 +22,8 @@ public class GameInputController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (GameController.INSTANCE.Current_Game_State == GameState.EVENT)
-            {
-                Debug.Log("clicked on event");
+            if (GameController.INSTANCE.Current_Game_State == GameState.EVENT || GameController.INSTANCE.Current_Game_State == GameState.PAUSED)
                 return;
-            }
 
             RaycastHit hit = new RaycastHit();
 
@@ -64,6 +61,9 @@ public class GameInputController : MonoBehaviour
         //note possible bug where crew member isn't properly deselected??? - probably not but be on lookout
         if (Input.GetMouseButtonDown(1))
         {
+            if (GameController.INSTANCE.Current_Game_State == GameState.EVENT || GameController.INSTANCE.Current_Game_State == GameState.PAUSED)
+                return;
+
             CrewController.INSTANCE.DeselectCrewMember();
         }
     }

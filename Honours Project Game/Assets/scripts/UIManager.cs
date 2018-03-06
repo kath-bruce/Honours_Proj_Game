@@ -45,6 +45,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     TMPro.TextMeshProUGUI Current_Ship_Speed_Display;
 
+    [SerializeField]
+    GameObject Pause_Display;
+
     private GameObject Selected_Crew_Sprite = null;
 
     private TwoWayDictionary<CrewMember> crewToUIsprite = new TwoWayDictionary<CrewMember>();
@@ -98,6 +101,12 @@ public class UIManager : MonoBehaviour
         crewToUIsprite.Clear();
 
         InitialiseUI();
+    }
+
+    public void UpdatePauseDisplay(bool isPaused)
+    {
+        Pause_Display.SetActive(isPaused);
+        Pause_Display.transform.SetAsLastSibling();
     }
 
     public void UpdateShipSpeedDisplay(float ship_speed)

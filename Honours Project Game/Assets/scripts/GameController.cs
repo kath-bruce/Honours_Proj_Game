@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public event RestartGame OnRestartGame;
 
     public GameState Current_Game_State { get; protected set; }
+    private GameState prev_game_state;
 
     private GamePhase current_game_phase;
     public GamePhase Current_Game_Phase
@@ -142,9 +143,23 @@ public class GameController : MonoBehaviour
         finished_event = true;
     }
 
+    public void Pause()
+    {
+        prev_game_state = Current_Game_State;
+        Current_Game_State = GameState.PAUSED;
+        UIManager.INSTANCE.UpdatePauseDisplay(true);
+    }
+
+    public void Unpause()
+    {
+        Current_Game_State = prev_game_state;
+        UIManager.INSTANCE.UpdatePauseDisplay(false);
+    }
+
     // Update is called once per frame
     void Update()
     {
+        //todo put below into gameinputcontroller
         if (Input.GetKeyDown(KeyCode.E))
         {
             Current_Game_Difficulty = GameDifficulty.EASY;
@@ -179,6 +194,18 @@ public class GameController : MonoBehaviour
 
             Distance_To_Earth = HARD_DISTANCE;
             initial_distance = Distance_To_Earth;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (Current_Game_State != GameState.PAUSED)
+            {
+                Pause();
+            }
+            else
+            {
+                Unpause();
+            }
         }
 
         if (finished_event)
