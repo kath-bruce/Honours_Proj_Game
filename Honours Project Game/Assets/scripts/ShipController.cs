@@ -394,6 +394,11 @@ public class ShipController : MonoBehaviour
         return null;
     }
 
+    public Dictionary<CrewMemberRole, List<TaskType>> GetTasksForRoles()
+    {
+        return tasks_for_roles;
+    }
+
     public void AddTask(Room room, TaskType type)
     {
         /*

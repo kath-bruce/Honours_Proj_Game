@@ -17,7 +17,22 @@ namespace HonsProj
 
         public CrewMemberRole Crew_Member_Role { get; protected set; }
 
-        public int Crew_Member_Level { get; protected set; }
+        private int crew_member_level;
+        public int Crew_Member_Level
+        {
+            get
+            {
+                return crew_member_level;
+            }
+
+            protected set
+            {
+                crew_member_level = value;
+
+                if (UpdateUICallBack != null)
+                    UpdateUICallBack(this);
+            }
+        }
 
         private Task current_task;
         public Task Current_Task
@@ -45,6 +60,8 @@ namespace HonsProj
         public Action<CrewMember, float, float> SetCrewMemberPosCallBack;    //todo null checking on callbacks
         public Func<CrewMember, Node> GetCrewMemberPosCallBack;
         public Action<CrewMember, Node> MoveCrewMemberCallBack;
+
+        public Action<CrewMember> UpdateUICallBack;
 
         //note crew members should have roles that define their tasks
         public CrewMember(string new_name, CrewMemberRole role)
@@ -159,6 +176,25 @@ namespace HonsProj
         public void Move()
         {
             MoveCrewMemberCallBack(this, crew_member_path[0]);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            CrewMember other = (CrewMember)obj;
+
+            return (Crew_Member_Name == other.Crew_Member_Name
+                && Crew_Member_Role == other.Crew_Member_Role);
+        }
+
+        public override int GetHashCode()
+        {
+            return Crew_Member_Name.GetHashCode()
+                ^ Crew_Member_Role.GetHashCode();
         }
     }
 }

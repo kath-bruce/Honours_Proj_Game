@@ -15,6 +15,12 @@ TagManager:
   - CrewMember
   - CrewMemberUISprite
   - Task
+  - CrewLegendSprite
+  - CrewLegendTitleAndName
+  - CrewLegendTasks
+  - CrewLegendTask
+  - CrewMemberUILevel
+  - CrewMemberUITitle
   layers:
   - Default
   - TransparentFX

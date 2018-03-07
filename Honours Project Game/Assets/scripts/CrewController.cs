@@ -83,6 +83,7 @@ public class CrewController : MonoBehaviour
             crewMember.SetCrewMemberPosCallBack += SetCrewMemberPos;
             crewMember.GetCrewMemberPosCallBack += GetCrewMemberPos;
             crewMember.MoveCrewMemberCallBack += MoveCrewMember;
+            crewMember.UpdateUICallBack += UpdateCrewMemberUI;
 
             Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom());
 
@@ -120,6 +121,11 @@ public class CrewController : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void UpdateCrewMemberUI(CrewMember cm)
+    {
+        UIManager.INSTANCE.UpdateCrewMemberUI(cm);
     }
 
     public void RandomiseCrewPositions()

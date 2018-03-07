@@ -48,6 +48,12 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     GameObject Pause_Display;
 
+    [SerializeField]
+    GameObject Crew_Legend_Display;
+
+    [SerializeField]
+    GameObject Crew_Legend_Entry_Prefab;
+
     private GameObject Selected_Crew_Sprite = null;
 
     private TwoWayDictionary<CrewMember> crewToUIsprite = new TwoWayDictionary<CrewMember>();
@@ -88,7 +94,7 @@ public class UIManager : MonoBehaviour
         if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
             return;
 
-
+        //
     }
 
     void RestartUI()
@@ -107,11 +113,16 @@ public class UIManager : MonoBehaviour
     {
         Pause_Display.SetActive(isPaused);
         Pause_Display.transform.SetAsLastSibling();
+
+        if (isPaused)
+            UpdateCrewLegend(CrewController.INSTANCE.GetCrewMembers(), ShipController.INSTANCE.GetTasksForRoles());
+        else
+            ClearCrewLegend();
     }
 
     public void UpdateShipSpeedDisplay(float ship_speed)
     {
-        Current_Ship_Speed_Display.text = "Warp Speed: \n<color=#00ffff>" +ship_speed+ "</color>";
+        Current_Ship_Speed_Display.text = "Warp Speed: \n<color=#00ffff>" + ship_speed + "</color>";
     }
 
     public void UpdatePhaseDisplay(GamePhase phase)
@@ -252,6 +263,149 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void UpdateCrewLegend(List<CrewMember> crew, Dictionary<CrewMemberRole, List<TaskType>> tasks_for_roles)
+    {
+        foreach (CrewMember cm in crew)
+        {
+            GameObject current_legend_entry = Instantiate(Crew_Legend_Entry_Prefab, Crew_Legend_Display.transform);
+
+            foreach (Transform child in current_legend_entry.transform)
+            {
+                switch (child.tag)
+                {
+                    case "CrewLegendSprite":
+
+                        Image crewImage = child.GetComponent<Image>();
+
+                        //note could potentially have a method for this?
+                        switch (cm.Crew_Member_Role)
+                        {
+                            case CrewMemberRole.CAPTAIN:
+                                crewImage.color = Color.blue;
+                                break;
+                            case CrewMemberRole.COMMS_OFFICER:
+                                crewImage.color = Color.cyan;
+                                break;
+                            case CrewMemberRole.ENGINEER:
+                                crewImage.color = Color.green;
+                                break;
+                            case CrewMemberRole.FIRST_OFFICER:
+                                crewImage.color = Color.magenta;
+                                break;
+                            case CrewMemberRole.PILOT:
+                                crewImage.color = Color.red;
+                                break;
+                            case CrewMemberRole.SHIP_MEDIC:
+                                crewImage.color = Color.yellow;
+                                break;
+                            case CrewMemberRole.WEAPONS_OFFICER:
+                                crewImage.color = Color.white;
+                                break;
+                            default:
+                                crewImage.color = Color.black;
+                                break;
+                        }
+
+                        crewImage.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Lvl " + cm.Crew_Member_Level;
+
+                        break;
+
+                    case "CrewLegendTitleAndName":
+
+                        TMPro.TextMeshProUGUI titleAndName = child.GetComponent<TMPro.TextMeshProUGUI>();
+
+                        switch (cm.Crew_Member_Role)
+                        {
+                            case CrewMemberRole.CAPTAIN:
+                                titleAndName.text = "<color=blue>Captain</color> " + cm.Crew_Member_Name;// Color.blue;
+                                break;
+                            case CrewMemberRole.COMMS_OFFICER:
+                                titleAndName.text = "<color=#00ffff>Comms Officer</color> " + cm.Crew_Member_Name;// Color.cyan;
+                                break;
+                            case CrewMemberRole.ENGINEER:
+                                titleAndName.text = "<color=green>Engineer</color> " + cm.Crew_Member_Name;// Color.green;
+                                break;
+                            case CrewMemberRole.FIRST_OFFICER:
+                                titleAndName.text = "<color=#ff00ff>First Officer</color> " + cm.Crew_Member_Name;// Color.magenta;
+                                break;
+                            case CrewMemberRole.PILOT:
+                                titleAndName.text = "<color=red>Pilot</color> " + cm.Crew_Member_Name;// Color.red;
+                                break;
+                            case CrewMemberRole.SHIP_MEDIC:
+                                titleAndName.text = "<color=yellow>Medic</color> " + cm.Crew_Member_Name;// Color.yellow;
+                                break;
+                            case CrewMemberRole.WEAPONS_OFFICER:
+                                titleAndName.text = "<color=white>Weapons Officer</color> " + cm.Crew_Member_Name;// Color.white;
+                                break;
+                            default:
+                                titleAndName.text = "WOOPS!";
+                                break;
+                        }
+
+                        break;
+
+                    case "CrewLegendTasks":
+
+                        if (cm.Crew_Member_Role == CrewMemberRole.CAPTAIN)
+                        {
+                            child.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = "> All tasks";
+                            break;
+                        }
+
+                        for (int i = 0; i < tasks_for_roles[cm.Crew_Member_Role].Count; i++)
+                        {
+                            TMPro.TextMeshProUGUI taskName = child.GetChild(i).GetComponent<TMPro.TextMeshProUGUI>();
+
+                            TaskType t = tasks_for_roles[cm.Crew_Member_Role][i];
+
+                            switch (t)
+                            {
+                                case TaskType.TORPEDO_ASTEROIDS:
+                                    taskName.text = "> <color=#ff00ff>Torpedo asteroids</color>";// Color.magenta;
+                                    break;
+                                case TaskType.REPAIR:
+                                    taskName.text = "> <color=blue>Repair</color>";// Color.blue;
+                                    break;
+                                case TaskType.STEER_SHIP:
+                                    taskName.text = "> <color=green>Steer ship</color>";// Color.green;
+                                    break;
+                                case TaskType.CHARGE_SHIELDS:
+                                    taskName.text = "> <color=red>Charge shields</color>";// Color.red;
+                                    break;
+                                case TaskType.MAINTAIN_LIFE_SUPPORT:
+                                    taskName.text = "> <color=yellow>Maintain life support</color>";// Color.yellow;
+                                    break;
+                                case TaskType.HEAL_CREW_MEMBER:
+                                    taskName.text = "> <color=#00ffff>Heal crew member</color>";// Color.cyan;
+                                    break;
+                                case TaskType.MAINTAIN_COMMS:
+                                    taskName.text = "> <color=black>Maintain comms</color>";// Color.black;
+                                    break;
+                                case TaskType.TALK_TO_OTHER_SHIP:
+                                    taskName.text = "> <color=#C3C3C3FF>Talk to other ship</color>";//grey C3C3C3FF
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+            }
+        }
+    }
+
+    public void ClearCrewLegend()
+    {
+        foreach(Transform child in Crew_Legend_Display.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
     public void UpdateCrewSelectionBar(CrewMember cm)
     {
         GameObject crewUIParent = CrewSelectionBar.GetComponentInChildren<HorizontalLayoutGroup>().gameObject;
@@ -287,10 +441,79 @@ public class UIManager : MonoBehaviour
                 break;
         }
 
+        foreach(Transform child in crewUIGo.transform)
+        {
+            switch (child.tag)
+            {
+                case "CrewMemberUILevel":
+                    child.GetComponent<TMPro.TextMeshProUGUI>().text = cm.Crew_Member_Level.ToString();
+
+                    break;
+
+                case "CrewMemberUITitle":
+                    TMPro.TextMeshProUGUI titleText = child.GetComponent<TMPro.TextMeshProUGUI>();
+                    
+                    switch (cm.Crew_Member_Role)
+                    {
+                        case CrewMemberRole.CAPTAIN:
+                            titleText.text = "<color=blue>Cpt.</color>";// Color.blue;
+                            break;
+                        case CrewMemberRole.COMMS_OFFICER:
+                            titleText.text = "<color=#00ffff>Comms.</color>";// Color.cyan;
+                            break;
+                        case CrewMemberRole.ENGINEER:
+                            titleText.text = "<color=green>Eng.</color>";// Color.green;
+                            break;
+                        case CrewMemberRole.FIRST_OFFICER:
+                            titleText.text = "<color=#ff00ff>1st O.</color>";// Color.magenta;
+                            break;
+                        case CrewMemberRole.PILOT:
+                            titleText.text = "<color=red>Pilot</color>";// Color.red;
+                            break;
+                        case CrewMemberRole.SHIP_MEDIC:
+                            titleText.text = "<color=yellow>Med.</color>";// Color.yellow;
+                            break;
+                        case CrewMemberRole.WEAPONS_OFFICER:
+                            titleText.text = "<color=white>W Off.</color>";// Color.white;
+                            break;
+                        default:
+                            titleText.text = "WOOPS!";
+                            break;
+                    }
+
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         crewToUIsprite.Add(cm, crewUIGo);
 
         RectTransform rect = CrewSelectionBar.GetComponent<RectTransform>();
         rect.sizeDelta = new Vector2(crewToUIsprite.GetCount() * CrewMemberUIPrefab.GetComponent<RectTransform>().rect.width,
-                                        CrewMemberUIPrefab.GetComponent<RectTransform>().rect.height);
+                                        CrewMemberUIPrefab.GetComponent<RectTransform>().rect.height + 20);
+    }
+
+    public void UpdateCrewMemberUI(CrewMember cm)
+    {
+        if (crewToUIsprite.ContainsF(cm))
+        {
+            GameObject uiObj = crewToUIsprite.GetGO(cm);
+
+            foreach(Transform child in uiObj.transform)
+            {
+                if (child.tag == "CrewMemberUILevel")
+                {
+                    child.GetComponent<TMPro.TextMeshProUGUI>().text = cm.Crew_Member_Level.ToString();
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 }
