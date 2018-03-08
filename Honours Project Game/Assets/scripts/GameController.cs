@@ -100,7 +100,7 @@ public class GameController : MonoBehaviour
 
         if (Distance_To_Earth <= initial_distance * (1.0f / 3.0f))
         {
-            Current_Game_Phase = GamePhase.FINAL_PHASE; //todo let player know
+            Current_Game_Phase = GamePhase.FINAL_PHASE;
         }
         else if (Distance_To_Earth <= initial_distance * (2.0f / 3.0f))
         {
@@ -156,72 +156,55 @@ public class GameController : MonoBehaviour
         UIManager.INSTANCE.UpdatePauseDisplay(false);
     }
 
+    public void RestartInEasyDifficulty()
+    {
+        Current_Game_Difficulty = GameDifficulty.EASY;
+
+        OnRestartGame();
+        Current_Game_State = GameState.IN_PLAY;
+        Current_Game_Phase = GamePhase.FIRST_PHASE;
+
+        Distance_To_Earth = EASY_DISTANCE;
+        initial_distance = Distance_To_Earth;
+    }
+
+    public void RestartInMediumDifficulty()
+    {
+        Current_Game_Difficulty = GameDifficulty.MEDIUM;
+
+        OnRestartGame();
+        Current_Game_State = GameState.IN_PLAY;
+        Current_Game_Phase = GamePhase.FIRST_PHASE;
+
+        Distance_To_Earth = MED_DISTANCE;
+        initial_distance = Distance_To_Earth;
+    }
+
+    public void RestartInHardDifficulty()
+    {
+        Current_Game_Difficulty = GameDifficulty.HARD;
+
+        OnRestartGame();
+        Current_Game_State = GameState.IN_PLAY;
+        Current_Game_Phase = GamePhase.FIRST_PHASE;
+
+        Distance_To_Earth = HARD_DISTANCE;
+        initial_distance = Distance_To_Earth;
+    }
+
+    public void RestartInCurrentDifficulty()
+    {
+        OnRestartGame();
+        Current_Game_State = GameState.IN_PLAY;
+        Current_Game_Phase = GamePhase.FIRST_PHASE;
+
+        Distance_To_Earth = initial_distance;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (Current_Game_State != GameState.PAUSED)
-        {
-            //todo put below into gameinputcontroller
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                Current_Game_Difficulty = GameDifficulty.EASY;
-
-                OnRestartGame();
-                Current_Game_State = GameState.IN_PLAY;
-                Current_Game_Phase = GamePhase.FIRST_PHASE;
-
-                Distance_To_Earth = EASY_DISTANCE;
-                initial_distance = Distance_To_Earth;
-            }
-
-            if (Input.GetKeyDown(KeyCode.M))
-            {
-                Current_Game_Difficulty = GameDifficulty.MEDIUM;
-
-                OnRestartGame();
-                Current_Game_State = GameState.IN_PLAY;
-                Current_Game_Phase = GamePhase.FIRST_PHASE;
-
-                Distance_To_Earth = MED_DISTANCE;
-                initial_distance = Distance_To_Earth;
-            }
-
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                Current_Game_Difficulty = GameDifficulty.HARD;
-
-                OnRestartGame();
-                Current_Game_State = GameState.IN_PLAY;
-                Current_Game_Phase = GamePhase.FIRST_PHASE;
-
-                Distance_To_Earth = HARD_DISTANCE;
-                initial_distance = Distance_To_Earth;
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                OnRestartGame();
-                Current_Game_State = GameState.IN_PLAY;
-                Current_Game_Phase = GamePhase.FIRST_PHASE;
-
-                Distance_To_Earth = initial_distance;
-            }
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            if (Current_Game_State != GameState.PAUSED)
-            {
-                Pause();
-            }
-            else
-            {
-                Unpause();
-            }
-        }
-
-        if (finished_event)
+        if (finished_event) //note is this necessary??
         {
             Current_Game_State = GameState.IN_PLAY;
             finished_event = false;

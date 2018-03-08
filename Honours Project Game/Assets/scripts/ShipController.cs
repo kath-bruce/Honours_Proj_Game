@@ -97,7 +97,7 @@ public class ShipController : MonoBehaviour
     private TwoWayDictionary<Node> clickableNodesGoDict;
     private TwoWayDictionary<Room> roomGoDict;
     private TwoWayDictionary<Task> taskGoDict = new TwoWayDictionary<Task>();
-    private List<Task> currentTasks = new List<Task>(); //note needed? since taskGoDict.GetFs() returns the same
+    private List<Task> currentTasks = new List<Task>(); 
 
     private const float EASY_TASK_GENERATION_TIMER = 4.0f;
     private const float MED_TASK_GENERATION_TIMER = 3.5f;
@@ -339,7 +339,7 @@ public class ShipController : MonoBehaviour
     {
         Ship_Speed += deltaSpeed;
 
-        if (Ship_Speed < 0.0f)
+        if (Ship_Speed <= 0.0f)
         {
             Ship_Speed = 1.0f; //!!!!!NOTE!!!!!! - if ship speed is zero something is wrong
         }
@@ -425,7 +425,7 @@ public class ShipController : MonoBehaviour
                 break;
         }
         
-        Task task = new Task(type, workNeeded, room, n); //note need to show how much work is needed on screen somehow
+        Task task = new Task(type, workNeeded, room, n);
 
         ship_graph.AddTaskToNode(n, task);
 
@@ -540,6 +540,7 @@ public class ShipController : MonoBehaviour
                 t.UncompletedCallBack += DecreaseShieldCapacity;
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
+                t.UncompletedCallBack += DecreaseLifeSupportEfficiency; //to make maintain life support task more important
                 t.UncompletedCallBack += DecreaseLifeSupportEfficiency;
                 break;
             case TaskType.REPAIR:
@@ -662,67 +663,32 @@ public class ShipController : MonoBehaviour
         taskGoDict.RemovefType(t);
 
         Debug.Log("Finished task: " + t.ToStringTaskType());
-
-        //int totalLevels = 0;
-
-        //foreach (CrewMember cm in t.Current_Crew_Members)
-        //{
-        //totalLevels += t.;
-        //}
-
-        //totalLevels /= 2;
-
-        //todo remove callbacks????
+        
         switch (t.Task_Type)
         {
             case TaskType.CHARGE_SHIELDS:
-
-                //Shield_Capacity += t.Work * cm.Crew_Member_Level;
-                //if (Shield_Capacity > 100.0f)
-                //{
-                //    Shield_Capacity = 100.0f;
-                //}
-
-                IncreaseShieldCapacity(t.Work * cm.Crew_Member_Level);
+                
+                IncreaseShieldCapacity((t.Work * cm.Crew_Member_Level)*1.5f);
 
                 break;
             case TaskType.REPAIR:
-
-                //Hull_Integrity += t.Work * cm.Crew_Member_Level;
-                //if (Hull_Integrity > 100.0f)
-                //{
-                //    Hull_Integrity = 100.0f;
-                //}
-
+                
                 IncreaseShipHullIntegrity(t.Work * cm.Crew_Member_Level);
 
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
-
-                //Life_Support_Efficiency += t.Work * cm.Crew_Member_Level;
-                //if (Life_Support_Efficiency > 100.0f)
-                //{
-                //    Life_Support_Efficiency = 100.0f;
-                //}
-
+                
                 IncreaseLifeSupportEfficiency(t.Work * cm.Crew_Member_Level);
 
                 break;
-            case TaskType.TORPEDO_ASTEROIDS: //todo ??????
-
-                //    IncreaseShieldCapacity(t.Work * cm.Crew_Member_Level);
-                //    IncreaseShipHullIntegrity((t.Work * cm.Crew_Member_Level)*0.5f);
+            case TaskType.TORPEDO_ASTEROIDS:
+                
                 AddTask(GetRoomByTaskType(TaskType.CHARGE_SHIELDS), TaskType.CHARGE_SHIELDS);
+
                 break;
 
             default:
-
-                //Crew_Stress -= t.Work * cm.Crew_Member_Level;
-                //if (Crew_Stress < 0.0f)
-                //{
-                //    Crew_Stress = 0.0f;
-                //}
-
+                
                 DecreaseCrewStress(t.Work * cm.Crew_Member_Level);
 
                 break;

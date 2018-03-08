@@ -17,7 +17,7 @@ namespace HonsProj
         public string Event_Second_Choice_Text { get; protected set; }
         public string Event_Third_Choice_Text { get; protected set; }
 
-        public delegate void EventOption(/*params object[] args*/); //note not sure what args would be needed
+        public delegate void EventOption();
 
         private Dictionary<EventType, EventOption> event_choices;
 

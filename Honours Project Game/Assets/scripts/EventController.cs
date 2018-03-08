@@ -68,6 +68,8 @@ public class EventController : MonoBehaviour
 
         positive_events_low.Add(randomLevelUp);
 
+        //
+
         HonsProj.Event wormholeFound = new HonsProj.Event("Wormhole found!", "Do you want to go through it or leave it be? " +
             "You will get closer to earth but will sustain <color=red>20 hull damage</color>");
 
@@ -81,8 +83,7 @@ public class EventController : MonoBehaviour
         wormholeFound.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false, "2. Leave it be");
 
         positive_events_low.Add(wormholeFound);
-
-        //positive_events_low.Add();
+        
         #endregion
 
         //-------------------------medium------------------------------------
@@ -91,9 +92,11 @@ public class EventController : MonoBehaviour
             "A crew member has managed to improve the engine and the ship speed has increased!");
 
         shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
-        shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, IncreaseShipSpeed, false, "+ (Ship speed has increased)");
+        shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, IncreaseShipSpeed, false, "+ (Ship speed has increased by 5)");
 
         positive_events_med.Add(shipSpeedIncrease);
+
+        //
 
         HonsProj.Event resetShipAspectChoice = new HonsProj.Event("Extra components found!", "Someone has found some enough extra components to either repair" +
             " the hull to 100% or the life support system to 100%");
@@ -111,23 +114,35 @@ public class EventController : MonoBehaviour
         }, false, "2. Repair life support system to 100%");
 
         positive_events_med.Add(resetShipAspectChoice);
-
-
-        //positive_events_med.Add();
+        
         #endregion
 
         //-------------------------high----------------------------------------
         #region highly positive events
-        HonsProj.Event wholeCrewLevelsUp = new HonsProj.Event("Crew levels up!");
-
-        wholeCrewLevelsUp.SetEventText("Level up the crew!");
+        HonsProj.Event wholeCrewLevelsUp = new HonsProj.Event("Crew levels up!", "Level up the crew!");
 
         wholeCrewLevelsUp.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
         wholeCrewLevelsUp.AddChoice(HonsProj.EventType.CONTINUE, LevelUpCrew, false, "+ (each crew member gains one level)");
 
         positive_events_high.Add(wholeCrewLevelsUp);
-        //positive_events_high.Add();
-        //positive_events_high.Add();
+
+        //
+
+        HonsProj.Event partyOrWork = new HonsProj.Event("Party or work","The crew want to have a party but also " +
+            "think that they could do some work around the ship - what should they do?");
+
+        partyOrWork.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
+        partyOrWork.AddChoice(HonsProj.EventType.FIRST_CHOICE, DecreaseCrewStress, false, "1. Have a party (-20 stress)");
+
+        partyOrWork.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false);
+        partyOrWork.AddChoice(HonsProj.EventType.SECOND_CHOICE, () =>
+        {
+            ShipController.INSTANCE.IncreaseLifeSupportEfficiency(10.0f);
+            ShipController.INSTANCE.IncreaseShieldCapacity(10.0f);
+            ShipController.INSTANCE.IncreaseShipHullIntegrity(10.0f);
+        }, false, "2. Work on ship (+10 to hull, shields and life support");
+
+        positive_events_high.Add(partyOrWork);
         #endregion
     }
 
@@ -146,8 +161,21 @@ public class EventController : MonoBehaviour
 
         negative_events_low.Add(repairNeeded);
 
-        //negative_events_low.Add();
-        //negative_events_low.Add();
+        //
+
+        HonsProj.Event shieldProblem = new HonsProj.Event("Problem with shields!", "An issue has been found with the shield" +
+            " - either someone has to go outside the ship to fix it, causing stress, or the shield capacity will take a hit");
+
+        shieldProblem.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
+        shieldProblem.AddChoice(HonsProj.EventType.FIRST_CHOICE, IncreaseCrewStress, false, "1. send someone to fix the shield (+20 stress)");
+
+        shieldProblem.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false);
+        shieldProblem.AddChoice(HonsProj.EventType.SECOND_CHOICE, () =>
+        {
+            ShipController.INSTANCE.DecreaseShieldCapacity(10.0f);
+        }, false, "2. ignore the problem (-10 shields)");
+
+        negative_events_low.Add(shieldProblem);
         #endregion
 
         //-------------------------medium------------------------------------
@@ -186,11 +214,10 @@ public class EventController : MonoBehaviour
         asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
             ShipController.INSTANCE.DecreaseShipHullIntegrity((1 - (ShipController.INSTANCE.Shield_Capacity / 100.0f)) * 50.0f);
-        }, false, "+ (take hull damage based on shield capacity)");
+        }, false, "+ (take 50 hull damage based on shield capacity)");
 
         negative_events_med.Add(asteroidHit);
-
-        //negative_events_med.Add();
+        
         #endregion
 
         //-------------------------high----------------------------------------
@@ -199,12 +226,14 @@ public class EventController : MonoBehaviour
            " - either the ship speed will need to decrease or an explosion will damage the hull");
 
         engineMalfunction.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
-        engineMalfunction.AddChoice(HonsProj.EventType.FIRST_CHOICE, DecreaseShipSpeed, false, "1. Decrease the ship speed");
+        engineMalfunction.AddChoice(HonsProj.EventType.FIRST_CHOICE, DecreaseShipSpeed, false, "1. Decrease the ship speed (-5)");
 
         engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false);
-        engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DecreaseShipHullIntegrity, false, "2. An explosion damages the ship hull");
+        engineMalfunction.AddChoice(HonsProj.EventType.SECOND_CHOICE, DecreaseShipHullIntegrity, false, "2. An explosion damages the ship hull (-20)");
 
         negative_events_high.Add(engineMalfunction);
+
+        //
 
         HonsProj.Event mindwormInfestation = new HonsProj.Event("Mindworm Infestation!", "A mindworm infestation has caused the crew to wander from their stations! ");
 
@@ -212,8 +241,7 @@ public class EventController : MonoBehaviour
         mindwormInfestation.AddChoice(HonsProj.EventType.CONTINUE, RandomiseCrewPositions, false, "+ (crew positions are scrambled)");
         
         negative_events_high.Add(mindwormInfestation);
-
-        //negative_events_high.Add();
+        
         #endregion
     }
 
@@ -319,7 +347,7 @@ public class EventController : MonoBehaviour
         }
 
         //note debug
-        //current_event = negative_events_med[0];
+        //current_event = negative_events_high[0];
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
     }

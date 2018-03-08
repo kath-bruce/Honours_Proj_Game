@@ -62,8 +62,7 @@ namespace HonsProj
         public Action<CrewMember, Node> MoveCrewMemberCallBack;
 
         public Action<CrewMember> UpdateUICallBack;
-
-        //note crew members should have roles that define their tasks
+        
         public CrewMember(string new_name, CrewMemberRole role)
         {
             Crew_Member_Name = new_name;

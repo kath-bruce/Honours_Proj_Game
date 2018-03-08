@@ -207,7 +207,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateCrewStressDisplay(float new_value)
     {
-        Crew_Stress_Display.text = "Crew Stress: " + new_value.ToString("0.0");
+        Crew_Stress_Display.text = "Crew Stress: " + new_value.ToString("0") + "/300";
     }
 
     public void UpdateDistanceToEarth(float new_value)
@@ -361,28 +361,28 @@ public class UIManager : MonoBehaviour
                             switch (t)
                             {
                                 case TaskType.TORPEDO_ASTEROIDS:
-                                    taskName.text = "> <color=#ff00ff>Torpedo asteroids</color>";// Color.magenta;
+                                    taskName.text = "> <color=#c300c3>Torpedo asteroids</color>";// Color.magenta; //#c300c3 //#ff00ff
                                     break;
                                 case TaskType.REPAIR:
-                                    taskName.text = "> <color=blue>Repair</color>";// Color.blue;
+                                    taskName.text = "> <color=#0000c3>Repair</color>";// Color.blue; //#0000c3 //blue
                                     break;
                                 case TaskType.STEER_SHIP:
-                                    taskName.text = "> <color=green>Steer ship</color>";// Color.green;
+                                    taskName.text = "> <color=#00c300>Steer ship</color>";// Color.green; //#00c300 //green
                                     break;
                                 case TaskType.CHARGE_SHIELDS:
-                                    taskName.text = "> <color=red>Charge shields</color>";// Color.red;
+                                    taskName.text = "> <color=#c30000>Charge shields</color>";// Color.red; //#c30000 //red
                                     break;
                                 case TaskType.MAINTAIN_LIFE_SUPPORT:
-                                    taskName.text = "> <color=yellow>Maintain life support</color>";// Color.yellow;
+                                    taskName.text = "> <color=#c3b403>Maintain life support</color>";// Color.yellow; //#c3b403 //yellow
                                     break;
                                 case TaskType.HEAL_CREW_MEMBER:
-                                    taskName.text = "> <color=#00ffff>Heal crew member</color>";// Color.cyan;
+                                    taskName.text = "> <color=#00c3c3>Heal crew member</color>";// Color.cyan; //#00c3c3 //#00ffff
                                     break;
                                 case TaskType.MAINTAIN_COMMS:
                                     taskName.text = "> <color=black>Maintain comms</color>";// Color.black;
                                     break;
                                 case TaskType.TALK_TO_OTHER_SHIP:
-                                    taskName.text = "> <color=#C3C3C3FF>Talk to other ship</color>";//grey C3C3C3FF
+                                    taskName.text = "> <color=#959595>Talk to other ship</color>";//grey //#C3C3C3FF //#959595
                                     break;
                                 default:
                                     break;

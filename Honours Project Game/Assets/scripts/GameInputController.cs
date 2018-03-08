@@ -14,11 +14,11 @@ public class GameInputController : MonoBehaviour
     void Update()
     {
         //if left click
-            //if in event
-                //return
-            //else - raycast 
-                //if raycast hit
-                    //switch case on tag
+        //if in event
+        //return
+        //else - raycast 
+        //if raycast hit
+        //switch case on tag
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -65,6 +65,33 @@ public class GameInputController : MonoBehaviour
                 return;
 
             CrewController.INSTANCE.DeselectCrewMember();
+        }
+
+        if (GameController.INSTANCE.Current_Game_State != GameState.PAUSED)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+                GameController.INSTANCE.RestartInEasyDifficulty();
+
+            if (Input.GetKeyDown(KeyCode.M))
+                GameController.INSTANCE.RestartInMediumDifficulty();
+
+            if (Input.GetKeyDown(KeyCode.H))
+                GameController.INSTANCE.RestartInHardDifficulty();
+
+            if (Input.GetKeyDown(KeyCode.R))
+                GameController.INSTANCE.RestartInCurrentDifficulty();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (GameController.INSTANCE.Current_Game_State != GameState.PAUSED)
+            {
+                GameController.INSTANCE.Pause();
+            }
+            else
+            {
+                GameController.INSTANCE.Unpause();
+            }
         }
     }
 }

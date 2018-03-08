@@ -8,8 +8,7 @@ namespace HonsProj
     public struct Node
     {
         public float? X, Y;
-
-        //todo see where you can use this
+        
         public Node(float? new_x, float? new_y)
         {
             X = new_x;

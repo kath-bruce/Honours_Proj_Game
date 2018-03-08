@@ -5,11 +5,6 @@ using System.Text;
 
 namespace HonsProj
 {
-    //note could potentially end up splitting up task type into different enums
-    //  then a struct that contains ONLY one type of task??? 
-    //  to provide single thing for tasks to use???
-    //  with 2 constructors - default will spawn random one and another will be specific
-    //  idk
     public enum TaskType
     {
         REPAIR, TORPEDO_ASTEROIDS,
