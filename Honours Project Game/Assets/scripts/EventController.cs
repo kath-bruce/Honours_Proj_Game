@@ -92,7 +92,6 @@ public class EventController : MonoBehaviour
 
         shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
         shipSpeedIncrease.AddChoice(HonsProj.EventType.CONTINUE, IncreaseShipSpeed, false, "+ (Ship speed has increased)");
-        //todo show ship speed
 
         positive_events_med.Add(shipSpeedIncrease);
 
@@ -157,9 +156,10 @@ public class EventController : MonoBehaviour
 
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
 
-        Room med_bay = ShipController.INSTANCE.GetRoomByTaskType(TaskType.HEAL_CREW_MEMBER);
         fightBrokeOut.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
+            Room med_bay = ShipController.INSTANCE.GetRoomByTaskType(TaskType.HEAL_CREW_MEMBER);
+
             CrewMember cm1 = CrewController.INSTANCE.GetRandomCrewMember();
             CrewMember cm2;
 
@@ -319,7 +319,7 @@ public class EventController : MonoBehaviour
         }
 
         //note debug
-        //current_event = negative_events_high[1];
+        //current_event = negative_events_med[0];
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
     }

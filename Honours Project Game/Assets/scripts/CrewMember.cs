@@ -165,6 +165,7 @@ namespace HonsProj
 
         public void SetPos(float new_x, float new_y)
         {
+            SetPath(null);
             SetCrewMemberPosCallBack(this, new_x, new_y);
         }
 

@@ -101,7 +101,7 @@ public class ShipController : MonoBehaviour
 
     private const float EASY_TASK_GENERATION_TIMER = 4.0f;
     private const float MED_TASK_GENERATION_TIMER = 3.5f;
-    private const float HARD_TASK_GENERATION_TIMER = 3.0f;
+    private const float HARD_TASK_GENERATION_TIMER = 3.5f;
 
     private float timeTilNextTaskGeneration;// = taskGenerationTimer;
     private float current_task_timer;
@@ -300,9 +300,7 @@ public class ShipController : MonoBehaviour
 
     public Room GetRandomRoom()
     {
-        GameObject go = roomGoDict.GetGOs()[Random.Range(0, roomGoDict.GetGOs().Length)];
-
-        return roomGoDict.GetfType(go);
+        return roomGoDict.GetFs()[Random.Range(0, roomGoDict.GetFs().Length)];
     }
 
     public Room GetRoom(RoomType type)
@@ -325,12 +323,16 @@ public class ShipController : MonoBehaviour
 
     public Node GetRandomNodeInRoom(Room rm)
     {
-        if (ship_graph.GetNodesInRoom(rm) == null)
+        try
         {
-            Debug.LogError("the ship graph is null for some reason");
+            return ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
         }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("something is wrong with this bloody method again");
 
-        return ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
+            return new Node(rm.Room_Info.X, rm.Room_Info.Y);
+        }
     }
 
     public void ChangeShipSpeed(float deltaSpeed)
@@ -401,27 +403,29 @@ public class ShipController : MonoBehaviour
 
     public void AddTask(Room room, TaskType type)
     {
-        /*
-         * Node n = ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
-
-                //temp random task
-                Task task =
-                    new Task(
-                        //(TaskType)Random.Range(0, System.Enum.GetNames(typeof(TaskType)).Length), //random task type
-                        task_type,
-                        Random.Range(1, 4),                                                       //random work needed
-                        rm,                                                                         //the random room
-                        n
-                        );
-
-                ship_graph.AddTaskToNode(n, task);
-
-                rm.AddTask(task, n);
-         */
+        if (!tasks_for_room_type[room.Room_Type].Contains(type))
+            return;
 
         Node n = GetRandomNodeInRoom(room);
 
-        Task task = new Task(type, Random.Range(1, 6), room, n); //note work needed has been increased -> (1,6)
+        int workNeeded = 1;
+
+        switch (GameController.INSTANCE.Current_Game_Difficulty)
+        {
+            case GameDifficulty.EASY:
+                workNeeded = Random.Range(2, 6);
+                break;
+            case GameDifficulty.MEDIUM:
+                workNeeded = Random.Range(2, 7);
+                break;
+            case GameDifficulty.HARD:
+                workNeeded = Random.Range(2, 7);
+                break;
+            default:
+                break;
+        }
+        
+        Task task = new Task(type, workNeeded, room, n); //note need to show how much work is needed on screen somehow
 
         ship_graph.AddTaskToNode(n, task);
 
@@ -704,11 +708,11 @@ public class ShipController : MonoBehaviour
                 IncreaseLifeSupportEfficiency(t.Work * cm.Crew_Member_Level);
 
                 break;
-            case TaskType.TORPEDO_ASTEROIDS:
+            case TaskType.TORPEDO_ASTEROIDS: //todo ??????
 
-                IncreaseShieldCapacity(t.Work * cm.Crew_Member_Level);
-                IncreaseShipHullIntegrity((t.Work * cm.Crew_Member_Level)*0.5f);
-
+                //    IncreaseShieldCapacity(t.Work * cm.Crew_Member_Level);
+                //    IncreaseShipHullIntegrity((t.Work * cm.Crew_Member_Level)*0.5f);
+                AddTask(GetRoomByTaskType(TaskType.CHARGE_SHIELDS), TaskType.CHARGE_SHIELDS);
                 break;
 
             default:

@@ -91,16 +91,18 @@ namespace HonsProj
                 && Room_Info.X == other.Room_Info.X 
                 && Room_Info.Y == other.Room_Info.Y 
                 && Room_Info.width == other.Room_Info.width 
-                && Room_Info.height == other.Room_Info.height);
+                && Room_Info.height == other.Room_Info.height
+                );
         }
 
         public override int GetHashCode()
         {
-            return Room_Type.GetHashCode() 
-                ^ Room_Info.X.GetHashCode() 
-                ^ Room_Info.Y.GetHashCode() 
+            return Room_Type.GetHashCode()
+                ^ Room_Info.X.GetHashCode()
+                ^ Room_Info.Y.GetHashCode()
                 ^ Room_Info.width.GetHashCode() 
-                ^ Room_Info.height.GetHashCode();
+                ^ Room_Info.height.GetHashCode()
+               ;
         }
     }
 }
