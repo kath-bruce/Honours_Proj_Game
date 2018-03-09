@@ -85,13 +85,17 @@ namespace HonsProj
             nodeToTask.Remove(n);
         }
 
-        public List<Node> GetNodesInRoom(Room rm)
+        public List<Node> GetNodesInRoom(Room rm, bool all_nodes)
         {
             List<Node> ns = new List<Node>();
 
             if (roomToNodes.TryGetValue(rm, out ns))
             {
                 //return new copy of list of nodes that don't appear in node to task
+
+                if (all_nodes)
+                    return ns;
+
                 List<Node> ns_w_o_task = new List<Node>();
 
                 foreach (Node node in ns)

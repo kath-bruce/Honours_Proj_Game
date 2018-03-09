@@ -97,7 +97,7 @@ public class ShipController : MonoBehaviour
     private TwoWayDictionary<Node> clickableNodesGoDict;
     private TwoWayDictionary<Room> roomGoDict;
     private TwoWayDictionary<Task> taskGoDict = new TwoWayDictionary<Task>();
-    private List<Task> currentTasks = new List<Task>(); 
+    private List<Task> currentTasks = new List<Task>();
 
     private const float EASY_TASK_GENERATION_TIMER = 4.0f;
     private const float MED_TASK_GENERATION_TIMER = 3.5f;
@@ -298,16 +298,36 @@ public class ShipController : MonoBehaviour
 
     }
 
-    public Room GetRandomRoom()
+    public Room GetRandomRoom(bool only_non_full_room)
     {
-        return roomGoDict.GetFs()[Random.Range(0, roomGoDict.GetFs().Length)];
+        if (only_non_full_room)
+        {
+            List<Room> non_full_rooms = new List<Room>();
+
+            foreach (Room rm in roomGoDict.GetFs())
+            {
+                if (!rm.IsFull())
+                {
+                    non_full_rooms.Add(rm);
+                }
+            }
+
+            if (non_full_rooms.Count == 0)
+                return null;
+
+            return non_full_rooms[Random.Range(0, non_full_rooms.Count)];
+        }
+        else
+        {
+            return roomGoDict.GetFs()[Random.Range(0, roomGoDict.GetFs().Length)];
+        }
     }
 
     public Room GetRoom(RoomType type)
     {
         foreach (Room r in roomGoDict.GetFs())
         {
-            if (r.Room_Type == type)
+            if (r.Room_Type == type && !r.IsFull())
             {
                 return r;
             }
@@ -321,18 +341,14 @@ public class ShipController : MonoBehaviour
         taskGoDict.GetGO(t).GetComponent<cakeslice.Outline>().enabled = isHighlighted;
     }
 
-    public Node GetRandomNodeInRoom(Room rm)
+    public Node GetRandomNodeInRoom(Room rm, bool all_nodes)
     {
-        try
-        {
-            return ship_graph.GetNodesInRoom(rm)[Random.Range(0, ship_graph.GetNodesInRoom(rm).Count)];
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError("something is wrong with this bloody method again");
+        List<Node> roomNodes = ship_graph.GetNodesInRoom(rm, all_nodes);
 
-            return new Node(rm.Room_Info.X, rm.Room_Info.Y);
-        }
+        if (roomNodes.Count > 0)
+            return roomNodes[Random.Range(0, roomNodes.Count)];
+        else
+            return new Node(null, null);
     }
 
     public void ChangeShipSpeed(float deltaSpeed)
@@ -365,7 +381,7 @@ public class ShipController : MonoBehaviour
 
             #region generate task in random room
 
-            Room rm = GetRandomRoom();
+            Room rm = GetRandomRoom(true);
 
             List<TaskType> task_type_list = new List<TaskType>();
             tasks_for_room_type.TryGetValue(rm.Room_Type, out task_type_list);
@@ -406,7 +422,13 @@ public class ShipController : MonoBehaviour
         if (!tasks_for_room_type[room.Room_Type].Contains(type))
             return;
 
-        Node n = GetRandomNodeInRoom(room);
+        if (room == null)
+            return;
+
+        Node n = GetRandomNodeInRoom(room, false);
+
+        if (n.IsNull())
+            return;
 
         int workNeeded = 1;
 
@@ -424,7 +446,7 @@ public class ShipController : MonoBehaviour
             default:
                 break;
         }
-        
+
         Task task = new Task(type, workNeeded, room, n);
 
         ship_graph.AddTaskToNode(n, task);
@@ -663,32 +685,32 @@ public class ShipController : MonoBehaviour
         taskGoDict.RemovefType(t);
 
         Debug.Log("Finished task: " + t.ToStringTaskType());
-        
+
         switch (t.Task_Type)
         {
             case TaskType.CHARGE_SHIELDS:
-                
-                IncreaseShieldCapacity((t.Work * cm.Crew_Member_Level)*1.5f);
+
+                IncreaseShieldCapacity((t.Work * cm.Crew_Member_Level) * 1.5f);
 
                 break;
             case TaskType.REPAIR:
-                
+
                 IncreaseShipHullIntegrity(t.Work * cm.Crew_Member_Level);
 
                 break;
             case TaskType.MAINTAIN_LIFE_SUPPORT:
-                
+
                 IncreaseLifeSupportEfficiency(t.Work * cm.Crew_Member_Level);
 
                 break;
             case TaskType.TORPEDO_ASTEROIDS:
-                
+
                 AddTask(GetRoomByTaskType(TaskType.CHARGE_SHIELDS), TaskType.CHARGE_SHIELDS);
 
                 break;
 
             default:
-                
+
                 DecreaseCrewStress(t.Work * cm.Crew_Member_Level);
 
                 break;

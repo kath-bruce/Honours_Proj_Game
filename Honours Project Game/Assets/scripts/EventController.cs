@@ -78,7 +78,7 @@ public class EventController : MonoBehaviour
         {
             DecreaseDistanceToEarth();
             DecreaseShipHullIntegrity();
-        }, false, "1. Go through wormhole");
+        }, false, "1. Go through wormhole (travel 500 LY)");
 
         wormholeFound.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false, "2. Leave it be");
 
@@ -155,7 +155,7 @@ public class EventController : MonoBehaviour
 
         repairNeeded.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
-            Room rm = ShipController.INSTANCE.GetRandomRoom();
+            Room rm = ShipController.INSTANCE.GetRandomRoom(true);
             ShipController.INSTANCE.AddTask(rm, TaskType.REPAIR);
         }, false, "+ (REPAIR task is generated)");
 
@@ -214,7 +214,7 @@ public class EventController : MonoBehaviour
         asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
             ShipController.INSTANCE.DecreaseShipHullIntegrity((1 - (ShipController.INSTANCE.Shield_Capacity / 100.0f)) * 50.0f);
-        }, false, "+ (take 50 hull damage based on shield capacity)");
+        }, false, "+ (take hull damage based on shield capacity - MAX 50)");
 
         negative_events_med.Add(asteroidHit);
         
@@ -347,7 +347,7 @@ public class EventController : MonoBehaviour
         }
 
         //note debug
-        //current_event = negative_events_high[0];
+        //current_event = negative_events_high[1];
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
     }
@@ -357,7 +357,7 @@ public class EventController : MonoBehaviour
         CrewController.INSTANCE.RandomiseCrewPositions();
     }
 
-    void DestroyEvent(/*params object[] args*/)
+    void DestroyEvent()
     {
         Destroy(current_event_go);
         current_event = null;
@@ -369,8 +369,6 @@ public class EventController : MonoBehaviour
         foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
         {
             cm.LevelUp();
-
-            //Debug.Log(cm.Crew_Member_Name + " leveled up to " + cm.Crew_Member_Level + "!");
         }
     }
 
@@ -378,18 +376,6 @@ public class EventController : MonoBehaviour
     {
         CrewController.INSTANCE.GetRandomCrewMember().LevelUp();
     }
-
-    //public void LevelUpCrewMember(CrewMemberRole role)
-    //{
-    //    foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
-    //    {
-    //        if (cm.Crew_Member_Role == role && cm.Crew_Member_Level < 10)
-    //        {
-    //            cm.LevelUp();
-    //            break;
-    //        }
-    //    }
-    //}
 
     void LevelDownCrew()
     {
@@ -403,18 +389,6 @@ public class EventController : MonoBehaviour
     {
         CrewController.INSTANCE.GetRandomCrewMember().LevelDown();
     }
-
-    //public void LevelDownCrewMember(CrewMemberRole role)
-    //{
-    //    foreach (CrewMember cm in CrewController.INSTANCE.GetCrewMembers())
-    //    {
-    //        if (cm.Crew_Member_Role == role && cm.Crew_Member_Level > 1)
-    //        {
-    //            cm.LevelDown();
-    //            break;
-    //        }
-    //    }
-    //}
 
     void GenerateTask(TaskType task_type)
     {

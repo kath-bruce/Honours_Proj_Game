@@ -50,6 +50,11 @@ namespace HonsProj
             }
         }
 
+        public bool IsFull()
+        {
+            return isFull;
+        }
+
         public void RemoveTask(Task t, CrewMember cm)
         {
             tasks.Remove(t);

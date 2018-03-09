@@ -85,7 +85,7 @@ public class CrewController : MonoBehaviour
             crewMember.MoveCrewMemberCallBack += MoveCrewMember;
             crewMember.UpdateUICallBack += UpdateCrewMemberUI;
 
-            Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom());
+            Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom(false), true);
 
             crewMember.SetPos((float)randomNode.X, (float)randomNode.Y);
 
@@ -132,7 +132,7 @@ public class CrewController : MonoBehaviour
     {
         foreach(CrewMember cm in crew.GetFs())
         {
-            Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom());
+            Node randomNode = ShipController.INSTANCE.GetRandomNodeInRoom(ShipController.INSTANCE.GetRandomRoom(false), true);
 
             cm.SetPos((float)randomNode.X, (float)randomNode.Y);
         }
