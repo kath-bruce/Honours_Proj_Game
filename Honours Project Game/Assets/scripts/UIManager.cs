@@ -164,6 +164,7 @@ public class UIManager : MonoBehaviour
     public void ShowWinDisplay()
     {
         Win_Display.SetActive(true);
+        Win_Display.transform.SetAsLastSibling();
     }
 
     public void ShowLossDisplay(GameState state)
@@ -188,6 +189,7 @@ public class UIManager : MonoBehaviour
                 break;
         }
 
+        Loss_Display.transform.SetAsLastSibling();
     }
 
     public void UpdateHullIntegrityDisplay(float new_value)
