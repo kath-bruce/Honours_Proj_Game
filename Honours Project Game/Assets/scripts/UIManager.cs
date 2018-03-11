@@ -307,6 +307,7 @@ public class UIManager : MonoBehaviour
             SelectedCrewMemberHighlight.GetComponent<RectTransform>().SetPositionAndRotation(Selected_Crew_Sprite.transform.position, Quaternion.identity);
 
             CrewController.INSTANCE.SelectCrewMember(cm);
+
         }
     }
 
@@ -331,6 +332,7 @@ public class UIManager : MonoBehaviour
             SelectedCrewMemberHighlight.GetComponent<RectTransform>().SetPositionAndRotation(Selected_Crew_Sprite.transform.position, Quaternion.identity);
 
             CrewController.INSTANCE.SelectCrewMember(cm);
+
         }
     }
 
@@ -590,6 +592,7 @@ public class UIManager : MonoBehaviour
 
     public void ViewTutorial()
     {
+        AudioController.INSTANCE.PlayButtonSelectAudio();
         Tutorial.SetActive(true);
         Tutorial.transform.SetAsLastSibling();
     }

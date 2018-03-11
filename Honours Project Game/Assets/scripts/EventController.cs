@@ -350,6 +350,8 @@ public class EventController : MonoBehaviour
         //current_event = negative_events_high[1];
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
+
+        AudioController.INSTANCE.PlayEventAudio();
     }
 
     void RandomiseCrewPositions()

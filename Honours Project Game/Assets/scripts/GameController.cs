@@ -62,8 +62,8 @@ public class GameController : MonoBehaviour
             UIManager.INSTANCE.UpdateDistanceToEarth(value);
         }
     }
-    
-    //private bool finished_event = false;
+
+    private bool finished_event = false;
 
     private const float EASY_DISTANCE = 2500.0f;
     private const float MED_DISTANCE = 3000.0f;
@@ -153,6 +153,7 @@ public class GameController : MonoBehaviour
             Distance_To_Earth = 0.0f;
             Current_Game_State = GameState.WON;
             UIManager.INSTANCE.ShowWinDisplay();
+            AudioController.INSTANCE.PlayWinAudio();
         }
     }
 
@@ -160,18 +161,21 @@ public class GameController : MonoBehaviour
     {
         Current_Game_State = GameState.LOST_HULL;
         UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
+        AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void LostLifeSupport()
     {
         Current_Game_State = GameState.LOST_LIFE_SUPPORT;
         UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
+        AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void LostSanity()
     {
         Current_Game_State = GameState.LOST_STRESSED;
         UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
+        AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void InEvent()
@@ -181,8 +185,8 @@ public class GameController : MonoBehaviour
 
     public void FinishedEvent()
     {
-        //finished_event = true;
-        Current_Game_State = GameState.IN_PLAY;
+        finished_event = true;
+        //Current_Game_State = GameState.IN_PLAY;
     }
 
     public void Pause()
@@ -252,11 +256,11 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (finished_event) //note is this necessary??
-        //{
-        //    Current_Game_State = GameState.IN_PLAY;
-        //    finished_event = false;
-        //}
+        if (finished_event) //note is this necessary?? - yes apparently
+        {
+            Current_Game_State = GameState.IN_PLAY;
+            finished_event = false;
+        }
 
         if (Current_Game_State == GameState.IN_PLAY)
         {

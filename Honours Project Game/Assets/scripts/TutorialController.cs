@@ -72,6 +72,8 @@ public class TutorialController : MonoBehaviour
 
     public void NextTutorialPart()
     {
+        AudioController.INSTANCE.PlayButtonSelectAudio();
+
         ++current_tutorial_part;
         prevButton.SetActive(true);
 
@@ -93,6 +95,8 @@ public class TutorialController : MonoBehaviour
 
     public void PreviousTutorialPart()
     {
+        AudioController.INSTANCE.PlayButtonSelectAudio();
+
         --current_tutorial_part;
         nextButton.SetActive(true);
 

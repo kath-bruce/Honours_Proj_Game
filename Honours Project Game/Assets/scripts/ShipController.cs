@@ -395,6 +395,9 @@ public class ShipController : MonoBehaviour
 
         foreach (Task t in currentTasks)
         {
+            if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
+                return;
+
             t.OnTick(Time.deltaTime);
         }
     }
@@ -579,6 +582,8 @@ public class ShipController : MonoBehaviour
         t.WorkedOnCallback += HighlightTask;
 
         taskGoDict.Add(t, t_go);
+
+        AudioController.INSTANCE.PlayTaskGenerationAudio();
     }
 
     private void AsteroidHittingShield(float timeDecay)
@@ -635,6 +640,9 @@ public class ShipController : MonoBehaviour
 
     public void DecreaseLifeSupportEfficiency(float timeDecay)
     {
+        if (GameController.INSTANCE.Current_Game_State != GameState.IN_PLAY)
+            return;
+        
         Life_Support_Efficiency -= timeDecay;
 
         if (Life_Support_Efficiency <= 0.0f)
@@ -677,6 +685,8 @@ public class ShipController : MonoBehaviour
 
     private void RemoveTask(Task t, CrewMember cm)
     {
+        AudioController.INSTANCE.PlayTaskCompletionAudio();
+
         currentTasks.Remove(t);
         ship_graph.RemoveTaskFromNode(t.Task_Node);
 
