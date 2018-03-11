@@ -54,6 +54,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     GameObject Crew_Legend_Entry_Prefab;
 
+    [SerializeField]
+    GameObject Tutorial;
+
     private GameObject Selected_Crew_Sprite = null;
 
     private TwoWayDictionary<CrewMember> crewToUIsprite = new TwoWayDictionary<CrewMember>();
@@ -117,7 +120,10 @@ public class UIManager : MonoBehaviour
         if (isPaused)
             UpdateCrewLegend(CrewController.INSTANCE.GetCrewMembers(), ShipController.INSTANCE.GetTasksForRoles());
         else
+        {
             ClearCrewLegend();
+            Tutorial.SetActive(false);
+        }
     }
 
     public void UpdateShipSpeedDisplay(float ship_speed)
@@ -164,29 +170,92 @@ public class UIManager : MonoBehaviour
     public void ShowWinDisplay()
     {
         Win_Display.SetActive(true);
+
+        if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+        {
+            TMPro.TextMeshProUGUI win_text = Win_Display.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+
+            win_text.text = "<color=white>Reached Earth!<size=30>\n\nYou have made it back in one piece!</size></color>\n\n"+
+                "<size=20>Press Escape to go back to the menu</size>";
+        }
+
         Win_Display.transform.SetAsLastSibling();
     }
 
-    public void ShowLossDisplay(GameState state)
+    public void ShowLossDisplay(GameState state, int no_of_tries)
     {
         Loss_Display.SetActive(true);
 
-        TMPro.TextMeshProUGUI loss_text = Loss_Display.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        TMPro.TextMeshProUGUI[] loss_texts = Loss_Display.GetComponentsInChildren<TMPro.TextMeshProUGUI>();
 
-        switch (state)
+        foreach(TMPro.TextMeshProUGUI loss_text in loss_texts)
         {
-            case GameState.LOST_HULL:
-                loss_text.text =
-                    "Hull Destroyed!\n\nThe <color=white>ship hull integrity</color> has reached 0%!\n\nPress 'r' to try again";
-                break;
-            case GameState.LOST_LIFE_SUPPORT:
-                loss_text.text =
-                    "Life Support Failure!\n\nThe <color=white>life support efficiency</color> has reached 0%!\n\nPress 'r' to try again";
-                break;
-            case GameState.LOST_STRESSED:
-                loss_text.text =
-                    "Crew Too Stressed!\n\nThe <color=white>crew stress</color> has reached 500!\n\nPress 'r' to try again";
-                break;
+            if (loss_text.gameObject.name == "Tries")
+            {
+                if (GameController.INSTANCE.Current_Game_Difficulty != GameDifficulty.HARD)
+                    loss_text.text = "Tries: " + no_of_tries + "/" + GameController.MAX_NO_OF_TRIES;
+                else
+                    loss_text.text = "";
+            }
+            else
+            {
+                switch (state)
+                {
+                    case GameState.LOST_HULL:
+                        loss_text.text =
+                            "Hull Destroyed!\n\n<size=30>The<color=white> ship hull integrity</color> has reached 0%!</size>\n\n";
+
+                        if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+                        {
+                            loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
+                        }
+                        else if (no_of_tries < GameController.MAX_NO_OF_TRIES)
+                        {
+                            loss_text.text += "<size=20>Press 'r' to try again or space to advance to the next difficulty level</size>";
+                        }
+                        else if (no_of_tries >= GameController.MAX_NO_OF_TRIES)
+                        {
+                            loss_text.text += "<size=20>Press space to advance to the next difficulty level</size>";
+                        }
+                        break;
+                    case GameState.LOST_LIFE_SUPPORT:
+                        loss_text.text =
+                            "Life Support Failure!\n\n<size=30>The<color=white> life support efficiency</color> has reached 0%!</size>\n\n";
+
+                        if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+                        {
+                            loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
+                        }
+                        else if (no_of_tries < GameController.MAX_NO_OF_TRIES)
+                        {
+                            loss_text.text += "<size=20>Press 'r' to try again or space to advance to the next difficulty level</size>";
+                        }
+                        else if (no_of_tries >= GameController.MAX_NO_OF_TRIES)
+                        {
+                            loss_text.text += "<size=20>Press space to advance to the next difficulty level</size>";
+                        }
+
+                        break;
+                    case GameState.LOST_STRESSED:
+                        loss_text.text =
+                            "Crew Too Stressed!\n\n<size=30>The <color=white>crew stress</color> has reached 300!</size>\n\n";
+
+                        if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+                        {
+                            loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
+                        }
+                        else if (no_of_tries < GameController.MAX_NO_OF_TRIES)
+                        {
+                            loss_text.text += "<size=20>Press 'r' to try again or space to advance to the next difficulty level</size>";
+                        }
+                        else if (no_of_tries >= GameController.MAX_NO_OF_TRIES)
+                        {
+                            loss_text.text += "<size=20>Press space to advance to the next difficulty level</size>";
+                        }
+
+                        break;
+                }
+            }
         }
 
         Loss_Display.transform.SetAsLastSibling();
@@ -402,7 +471,7 @@ public class UIManager : MonoBehaviour
 
     public void ClearCrewLegend()
     {
-        foreach(Transform child in Crew_Legend_Display.transform)
+        foreach (Transform child in Crew_Legend_Display.transform)
         {
             Destroy(child.gameObject);
         }
@@ -443,7 +512,7 @@ public class UIManager : MonoBehaviour
                 break;
         }
 
-        foreach(Transform child in crewUIGo.transform)
+        foreach (Transform child in crewUIGo.transform)
         {
             switch (child.tag)
             {
@@ -454,7 +523,7 @@ public class UIManager : MonoBehaviour
 
                 case "CrewMemberUITitle":
                     TMPro.TextMeshProUGUI titleText = child.GetComponent<TMPro.TextMeshProUGUI>();
-                    
+
                     switch (cm.Crew_Member_Role)
                     {
                         case CrewMemberRole.CAPTAIN:
@@ -504,7 +573,7 @@ public class UIManager : MonoBehaviour
         {
             GameObject uiObj = crewToUIsprite.GetGO(cm);
 
-            foreach(Transform child in uiObj.transform)
+            foreach (Transform child in uiObj.transform)
             {
                 if (child.tag == "CrewMemberUILevel")
                 {
@@ -517,5 +586,11 @@ public class UIManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ViewTutorial()
+    {
+        Tutorial.SetActive(true);
+        Tutorial.transform.SetAsLastSibling();
     }
 }

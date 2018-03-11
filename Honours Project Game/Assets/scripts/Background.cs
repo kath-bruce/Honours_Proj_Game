@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Background : MonoBehaviour
 {
@@ -23,7 +24,14 @@ public class Background : MonoBehaviour
     {
         transform.localScale = new Vector3((Camera.main.aspect * Camera.main.orthographicSize) * 2, Camera.main.orthographicSize * 2, 0.0f);
 
-        if (GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
-            rend.material.SetTextureOffset("_MainTex", new Vector2(ShipController.INSTANCE.Ship_Speed*Time.time*scroll_limiter, 0));
+        if (SceneManager.GetActiveScene().name == "_spaceship")
+        {
+            if (GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
+                rend.material.SetTextureOffset("_MainTex", new Vector2(ShipController.INSTANCE.Ship_Speed * Time.time * scroll_limiter, 0));
+        }
+        else if (SceneManager.GetActiveScene().name == "_menu")
+        {
+            rend.material.SetTextureOffset("_MainTex", new Vector2(10.0f * Time.time * scroll_limiter, 0));
+        }
     }
 }

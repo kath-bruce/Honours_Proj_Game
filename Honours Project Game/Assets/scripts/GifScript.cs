@@ -6,11 +6,13 @@ using UnityEngine.Video;
 
 public class GifScript : MonoBehaviour
 {
+    VideoClip temp;
+
     VideoPlayer gif;
     RawImage display;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         gif = GetComponent<VideoPlayer>();
         display = GetComponent<RawImage>();
@@ -25,5 +27,13 @@ public class GifScript : MonoBehaviour
 
         if (!gif.isPlaying)
             gif.Play();
+        
+    }
+
+    public void SwitchGif(VideoClip newGif)
+    {
+        temp = gif.clip;
+        gif.clip = newGif;
+        newGif = temp;
     }
 }

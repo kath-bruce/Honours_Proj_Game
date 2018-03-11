@@ -1,0 +1,59 @@
+﻿<tutorial>
+  <tutorial_part name ="COMPLETING_TASK">
+    <top_text>Direct your {color=green}crew members{/color} to complete {color=#ff00ff}tasks{/color} - you can tell if a {color=#ff00ff}task{/color} is being worked on by the white outline</top_text>
+    <bottom_text>Leaving {color=#ff00ff}tasks{/color} uncompleted will degrade a {color=orange}ship aspects{/color} and completing them will improve that {color=orange}ship aspect</bottom_text>
+    <extra_text>
+      {color=#c30000}Charge Shields{/color}        - affects {color=red}shield capacity{/color}
+      {color=#c3b403}Maintain life support{/color} - affects {color=green}life support efficiency{/color}
+      {color=#0000c3}Repair{/color}                - affects {color=blue}hull integrity{/color}
+      {color=#c300c3}Torpedo asteroids{/color}    - decreases {color=red}shields{/color} then {color=blue}hull{/color}
+                                                  - generates a {color=#c30000}Charge Shields{/color} {color=#ff00ff}task{/color} when completed
+      {color=#aaaaaa}Other tasks{/color}         - affects {color=black}crew stress{/color}
+    </extra_text>
+  </tutorial_part>
+  <tutorial_part name ="CREW_MEMBER_MOVEMENT">
+    <top_text>{color=black}Left click{/color} on {color=#c3c3c3}nodes{/color} (grey boxes) to direct your selected {color=green}crew member{/color} there or to a {color=#ff00ff}task{/color} for them to complete</top_text>
+    <bottom_text>{color=green}Crew members{/color} have roles which determine what {color=#ff00ff}tasks{/color} they can do - {color=red}crew members will not go to tasks they cannot do{/color}</bottom_text>
+    <extra_text>
+{color=black}Press tab to pause{/color} and view which {color=green}crew member{/color} can do which {color=#ff00ff}task{/color} and access the tutorial again
+
+Your {color=green}crew members{/color} have {color=black}levels{/color} (1-10) which affects how quickly they complete {color=#ff00ff}tasks{/color} and how much they improve {color=orange}ship aspects{/color}
+    </extra_text>
+  <tutorial_part name ="CREW_SELECTION">
+    <top_text>{color=black}Left click{/color} on a {color=green}crew member{/color} on the ship or on the selection bar at the top to select a {color=green}crew member{/color}</top_text>
+    <bottom_text>{color=black}Right click{/color} to deselect</bottom_text>
+    <extra_text>
+If multiple {color=green}crew members{/color} are on the same {color=#c3c3c3}node{/color} (grey boxes), it may be hard to select the {color=green}crew member{/color} you want.
+In this case, use the selection bar at the top</extra_text>
+  </tutorial_part>
+  </tutorial_part>
+  <tutorial_part name ="LOSE_SCREEN">
+    <top_text>Keep your {color=orange}ship aspects{/color} in order by completing {color=#ff00ff}tasks{/color} as quickly as possible</top_text>
+    <bottom_text>Your difficulty level will determine how far from earth you'll start, the initial {color=orange}ship aspects{/color} and your {color=green}crew members'{/color} {color=black}levels{/color}</bottom_text>
+    <extra_text>
+You will lose if the {color=red}hull integrity{/color} or {color=green}life support efficiency{/color} reaches 0%, or if the {color=black}crew stress{/color} reaches 300</extra_text>
+  </tutorial_part>
+  <tutorial_part name ="TASK_GENERATION">
+    <top_text>{color=#ff00ff}Tasks{/color} will be generated every few seconds - rooms will generate specific types of {color=#ff00ff}tasks{/color}</top_text>
+    <bottom_text>Use your crew to complete {color=#ff00ff}tasks{/color}</bottom_text>
+    <extra_text>
+      All rooms can have {color=#0000c3}Repair{/color} {color=#ff00ff}tasks{/color}
+      {color=yellow}Comms{/color} - {color=#959595}Talk to other ship{/color}, {color=black}Maintain comms{/color}
+      {color=red}Shield Charger{/color} - {color=#c30000}Charge shields{/color}
+      {color=green}Life Support{/color} - {color=#c3b403}Maintain life support{/color}
+      {color=blue}Torpedo Launcher{/color} - {color=#c300c3}Torpedo asteroids{/color}
+      {color=#ff00ff}Navigation{/color} - {color=#00c300}Steer ship{/color}
+      {color=#00ffff}Med Bay{/color} - {color=#00c3c3}Heal crew member{/color}
+    </extra_text>
+  </tutorial_part>
+  <tutorial_part name ="WIN_SCREEN">
+    <top_text>Your {color=#00ffff}ship speed{/color} (warp speed: 1-50) determines how quickly you will get back to Earth</top_text>
+    <bottom_text></bottom_text>
+    <extra_text>
+You will see how far along in the game you are by looking at the current {color=blue}phase{/color} in the bottom right corner
+
+You win by keeping your {color=orange}ship aspects{/color} in order until you reach Earth
+
+{color=yellow}Good Luck!{/color}</extra_text>
+  </tutorial_part>
+</tutorial>

@@ -137,5 +137,58 @@ namespace HonsProj
 
             return tasks_for_roles;
         }
+
+        public static Dictionary<TutorialPartName, TutorialPart> GetTutorialParts(string pathToXML)
+        {
+            Dictionary<TutorialPartName, TutorialPart> tut_parts = new Dictionary<TutorialPartName, TutorialPart>();
+            
+            XmlDocument xmlDoc = new XmlDocument();
+
+            if (!System.IO.File.Exists(pathToXML))
+            {
+                return null;
+            }
+
+            xmlDoc.Load(pathToXML);
+
+            XmlNodeList parts = xmlDoc.GetElementsByTagName("tutorial_part");
+
+            foreach(XmlNode part in parts)
+            {
+                XmlNodeList texts = part.ChildNodes;
+
+                TutorialPartName name = (TutorialPartName)Enum.Parse(typeof(TutorialPartName), part.Attributes["name"].Value, true);
+
+                TutorialPart tut_part = new TutorialPart();
+
+                foreach (XmlNode text in texts)
+                {
+                    switch (text.Name)
+                    {
+                        case "top_text":
+                            tut_part.topText = text.InnerText;
+                            tut_part.topText = tut_part.topText.Replace('{', '<');
+                            tut_part.topText = tut_part.topText.Replace('}', '>');
+                            break;
+                        case "bottom_text":
+                            tut_part.bottomText = text.InnerText;
+                            tut_part.bottomText = tut_part.bottomText.Replace('{', '<');
+                            tut_part.bottomText = tut_part.bottomText.Replace('}', '>');
+                            break;
+                        case "extra_text":
+                            tut_part.extraText = text.InnerText;
+                            tut_part.extraText = tut_part.extraText.Replace('{', '<');
+                            tut_part.extraText = tut_part.extraText.Replace('}', '>');
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                tut_parts.Add(name, tut_part);
+            }
+
+            return tut_parts;
+        }
     }
 }

@@ -66,23 +66,76 @@ public class GameInputController : MonoBehaviour
 
             CrewController.INSTANCE.DeselectCrewMember();
         }
+        
+        ///////////////////////////////
 
-        if (GameController.INSTANCE.Current_Game_State != GameState.PAUSED)
+        //if (Input.GetKeyDown(KeyCode.I))
+        //    GameController.INSTANCE.LostHullIntegrity();
+
+        //if (Input.GetKeyDown(KeyCode.L))
+            //GameController.INSTANCE.LostLifeSupport();
+
+        //if (Input.GetKeyDown(KeyCode.S))
+        //    GameController.INSTANCE.LostSanity();
+
+        //if (Input.GetKeyDown(KeyCode.W))
+        //    GameController.INSTANCE.ChangeDistanceToEarth(-50000.0f);
+
+        ///////////////////////////
+
+        if (GameController.INSTANCE.Current_Game_State == GameState.LOST_HULL 
+            || GameController.INSTANCE.Current_Game_State == GameState.LOST_LIFE_SUPPORT 
+            || GameController.INSTANCE.Current_Game_State == GameState.LOST_STRESSED)
         {
-            if (Input.GetKeyDown(KeyCode.E))
-                GameController.INSTANCE.RestartInEasyDifficulty();
+            if ((GameController.INSTANCE.No_Of_Tries < GameController.MAX_NO_OF_TRIES) 
+                || (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD))
+            {
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    GameController.INSTANCE.RestartInCurrentDifficulty();
+                }
+            }
 
-            if (Input.GetKeyDown(KeyCode.M))
-                GameController.INSTANCE.RestartInMediumDifficulty();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                switch (GameController.INSTANCE.Current_Game_Difficulty)
+                {
+                    case GameDifficulty.EASY:
+                        GameController.INSTANCE.RestartInMediumDifficulty();
+                        break;
+                    case GameDifficulty.MEDIUM:
+                        GameController.INSTANCE.RestartInHardDifficulty();
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-            if (Input.GetKeyDown(KeyCode.H))
-                GameController.INSTANCE.RestartInHardDifficulty();
-
-            if (Input.GetKeyDown(KeyCode.R))
-                GameController.INSTANCE.RestartInCurrentDifficulty();
+            if (Input.GetKeyDown(KeyCode.Escape) && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+                GameController.INSTANCE.Menu();
+        }
+        else if (GameController.INSTANCE.Current_Game_State == GameState.WON)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                switch (GameController.INSTANCE.Current_Game_Difficulty)
+                {
+                    case GameDifficulty.EASY:
+                        GameController.INSTANCE.RestartInMediumDifficulty();
+                        break;
+                    case GameDifficulty.MEDIUM:
+                        GameController.INSTANCE.RestartInHardDifficulty();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Escape) && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+            GameController.INSTANCE.Menu();
+
+        if (Input.GetKeyDown(KeyCode.Tab) && GameController.INSTANCE.HasFinishedTutorial())
         {
             if (GameController.INSTANCE.Current_Game_State != GameState.PAUSED)
             {

@@ -21,6 +21,9 @@ TagManager:
   - CrewLegendTask
   - CrewMemberUILevel
   - CrewMemberUITitle
+  - TutorialTopText
+  - TutorialBottomText
+  - TutorialExtraText
   layers:
   - Default
   - TransparentFX

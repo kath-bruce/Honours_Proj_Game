@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using HonsProj;
+using UnityEngine.SceneManagement;
 
 public enum GameState { IN_PLAY, PAUSED, EVENT, WON, LOST_HULL, LOST_LIFE_SUPPORT, LOST_STRESSED }
 public enum GamePhase { FIRST_PHASE, MIDDLE_PHASE, FINAL_PHASE }
@@ -61,14 +62,32 @@ public class GameController : MonoBehaviour
             UIManager.INSTANCE.UpdateDistanceToEarth(value);
         }
     }
-
-    private bool finished_event = false;
+    
+    //private bool finished_event = false;
 
     private const float EASY_DISTANCE = 2500.0f;
     private const float MED_DISTANCE = 3000.0f;
     private const float HARD_DISTANCE = 3500.0f;
 
     private float initial_distance;
+
+    private int no_of_tries = 0;
+    public int No_Of_Tries
+    {
+        get
+        {
+            return no_of_tries;
+        }
+
+        protected set
+        {
+            no_of_tries = value;
+        }
+    }
+
+    public const int MAX_NO_OF_TRIES = 3;
+
+    private bool has_finished_tutorial;
 
     // Use this for initialization
     void Awake()
@@ -87,11 +106,33 @@ public class GameController : MonoBehaviour
     void Start()
     {
         Current_Game_State = GameState.IN_PLAY;
+
         Current_Game_Phase = GamePhase.FIRST_PHASE;
         Current_Game_Difficulty = GameDifficulty.EASY;
 
         Distance_To_Earth = EASY_DISTANCE;
         initial_distance = Distance_To_Earth;
+
+        //TODO!!!! - remember to uncomment this
+        Pause();
+        UIManager.INSTANCE.ViewTutorial();
+        has_finished_tutorial = false;
+        //has_finished_tutorial = true;
+    }
+
+    public void FinishedTutorial()
+    {
+        has_finished_tutorial = true;
+    }
+
+    public bool HasFinishedTutorial()
+    {
+        return has_finished_tutorial;
+    }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene("_menu");
     }
 
     public void ChangeDistanceToEarth(float deltaDistance)
@@ -118,19 +159,19 @@ public class GameController : MonoBehaviour
     public void LostHullIntegrity()
     {
         Current_Game_State = GameState.LOST_HULL;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
     }
 
     public void LostLifeSupport()
     {
         Current_Game_State = GameState.LOST_LIFE_SUPPORT;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
     }
 
     public void LostSanity()
     {
         Current_Game_State = GameState.LOST_STRESSED;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
     }
 
     public void InEvent()
@@ -140,7 +181,8 @@ public class GameController : MonoBehaviour
 
     public void FinishedEvent()
     {
-        finished_event = true;
+        //finished_event = true;
+        Current_Game_State = GameState.IN_PLAY;
     }
 
     public void Pause()
@@ -166,6 +208,8 @@ public class GameController : MonoBehaviour
 
         Distance_To_Earth = EASY_DISTANCE;
         initial_distance = Distance_To_Earth;
+
+        No_Of_Tries = 0;
     }
 
     public void RestartInMediumDifficulty()
@@ -178,6 +222,8 @@ public class GameController : MonoBehaviour
 
         Distance_To_Earth = MED_DISTANCE;
         initial_distance = Distance_To_Earth;
+
+        No_Of_Tries = 0;
     }
 
     public void RestartInHardDifficulty()
@@ -190,6 +236,8 @@ public class GameController : MonoBehaviour
 
         Distance_To_Earth = HARD_DISTANCE;
         initial_distance = Distance_To_Earth;
+
+        No_Of_Tries = 0;
     }
 
     public void RestartInCurrentDifficulty()
@@ -204,11 +252,11 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (finished_event) //note is this necessary??
-        {
-            Current_Game_State = GameState.IN_PLAY;
-            finished_event = false;
-        }
+        //if (finished_event) //note is this necessary??
+        //{
+        //    Current_Game_State = GameState.IN_PLAY;
+        //    finished_event = false;
+        //}
 
         if (Current_Game_State == GameState.IN_PLAY)
         {
