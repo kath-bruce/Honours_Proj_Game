@@ -176,7 +176,7 @@ public class UIManager : MonoBehaviour
             TMPro.TextMeshProUGUI win_text = Win_Display.GetComponentInChildren<TMPro.TextMeshProUGUI>();
 
             win_text.text = "<color=white>Reached Earth!<size=30>\n\nYou have made it back in one piece!</size></color>\n\n"+
-                "<size=20>Press Escape to go back to the menu</size>";
+                "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
         }
 
         Win_Display.transform.SetAsLastSibling();

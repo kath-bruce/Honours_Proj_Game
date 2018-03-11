@@ -66,19 +66,19 @@ public class GameInputController : MonoBehaviour
 
             CrewController.INSTANCE.DeselectCrewMember();
         }
-        
+
         ///////////////////////////////
 
-        //if (Input.GetKeyDown(KeyCode.I))
+        //if (Input.GetKeyDown(KeyCode.I) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
         //    GameController.INSTANCE.LostHullIntegrity();
 
-        //if (Input.GetKeyDown(KeyCode.L))
-            //GameController.INSTANCE.LostLifeSupport();
+        //if (Input.GetKeyDown(KeyCode.L) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
+        //    GameController.INSTANCE.LostLifeSupport();
 
-        //if (Input.GetKeyDown(KeyCode.S))
+        //if (Input.GetKeyDown(KeyCode.S) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
         //    GameController.INSTANCE.LostSanity();
 
-        //if (Input.GetKeyDown(KeyCode.W))
+        //if (Input.GetKeyDown(KeyCode.W) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
         //    GameController.INSTANCE.ChangeDistanceToEarth(-50000.0f);
 
         ///////////////////////////
@@ -128,6 +128,14 @@ public class GameInputController : MonoBehaviour
                         break;
                     default:
                         break;
+                }
+            }
+
+            if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+            {
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    GameController.INSTANCE.RestartInCurrentDifficulty();
                 }
             }
         }
