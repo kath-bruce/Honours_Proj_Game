@@ -13,7 +13,7 @@
   </tutorial_part>
   <tutorial_part name ="CREW_MEMBER_MOVEMENT">
     <top_text>{color=black}Left click{/color} on {color=#c3c3c3}nodes{/color} (grey boxes) to direct your selected {color=green}crew member{/color} there or to a {color=#ff00ff}task{/color} for them to complete</top_text>
-    <bottom_text>{color=green}Crew members{/color} have {color=#9400D3}roles{/color} which determine what {color=#ff00ff}tasks{/color} they can do - {color=red}crew members will not go to tasks they cannot do{/color}</bottom_text>
+    <bottom_text>{color=green}Crew members{/color} have {color=#4b0082}roles{/color} which determine what {color=#ff00ff}tasks{/color} they can do - {color=red}crew members will not go to tasks they cannot do{/color}</bottom_text>
     <extra_text>
 {color=black}Press tab to pause{/color} and view which {color=green}crew member{/color} can do which {color=#ff00ff}task{/color} and access the tutorial again
 
