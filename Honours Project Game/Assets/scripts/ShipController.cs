@@ -422,12 +422,12 @@ public class ShipController : MonoBehaviour
 
     public void AddTask(Room room, TaskType type)
     {
-        if (!tasks_for_room_type[room.Room_Type].Contains(type))
-            return;
-
         if (room == null)
             return;
 
+        if (!tasks_for_room_type[room.Room_Type].Contains(type))
+            return;
+        
         Node n = GetRandomNodeInRoom(room, false);
 
         if (n.IsNull())

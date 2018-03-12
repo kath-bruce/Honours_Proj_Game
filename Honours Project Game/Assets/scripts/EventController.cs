@@ -99,19 +99,19 @@ public class EventController : MonoBehaviour
         //
 
         HonsProj.Event resetShipAspectChoice = new HonsProj.Event("Extra components found!", "Someone has found some enough extra components to either repair" +
-            " the hull to 100% or the life support system to 100%");
+            " the hull by 30% or the life support system by 30%");
 
         resetShipAspectChoice.AddChoice(HonsProj.EventType.FIRST_CHOICE, DestroyEvent, false);
         resetShipAspectChoice.AddChoice(HonsProj.EventType.FIRST_CHOICE, () =>
         {
-            ShipController.INSTANCE.IncreaseShipHullIntegrity(100.0f);
-        }, false, "1. Repair hull to 100%");
+            ShipController.INSTANCE.IncreaseShipHullIntegrity(30.0f);
+        }, false, "1. Repair hull by 30%");
 
         resetShipAspectChoice.AddChoice(HonsProj.EventType.SECOND_CHOICE, DestroyEvent, false);
         resetShipAspectChoice.AddChoice(HonsProj.EventType.SECOND_CHOICE, () =>
         {
-            ShipController.INSTANCE.IncreaseLifeSupportEfficiency(100.0f);
-        }, false, "2. Repair life support system to 100%");
+            ShipController.INSTANCE.IncreaseLifeSupportEfficiency(30.0f);
+        }, false, "2. Repair life support system by 30%");
 
         positive_events_med.Add(resetShipAspectChoice);
         
@@ -140,7 +140,7 @@ public class EventController : MonoBehaviour
             ShipController.INSTANCE.IncreaseLifeSupportEfficiency(10.0f);
             ShipController.INSTANCE.IncreaseShieldCapacity(10.0f);
             ShipController.INSTANCE.IncreaseShipHullIntegrity(10.0f);
-        }, false, "2. Work on ship (+10 to hull, shields and life support");
+        }, false, "2. Work on ship (+10 to hull, shields and life support)");
 
         positive_events_high.Add(partyOrWork);
         #endregion
@@ -213,6 +213,9 @@ public class EventController : MonoBehaviour
         asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, DestroyEvent, false, "continue");
         asteroidHit.AddChoice(HonsProj.EventType.CONTINUE, () =>
         {
+            if (GameController.INSTANCE.Current_Game_State != GameState.EVENT)
+                return;
+
             ShipController.INSTANCE.DecreaseShipHullIntegrity((1 - (ShipController.INSTANCE.Shield_Capacity / 100.0f)) * 50.0f);
         }, false, "+ (take hull damage based on shield capacity - MAX 50)");
 
@@ -409,6 +412,9 @@ public class EventController : MonoBehaviour
 
     void DecreaseShipHullIntegrity()
     {
+        if (GameController.INSTANCE.Current_Game_State != GameState.EVENT)
+            return;
+
         ShipController.INSTANCE.DecreaseShipHullIntegrity(20.0f);
     }
 
@@ -429,6 +435,9 @@ public class EventController : MonoBehaviour
 
     void DecreaseLifeSupportEfficiency()
     {
+        if (GameController.INSTANCE.Current_Game_State != GameState.EVENT)
+            return;
+
         ShipController.INSTANCE.DecreaseLifeSupportEfficiency(20.0f);
     }
 
@@ -439,6 +448,9 @@ public class EventController : MonoBehaviour
 
     void IncreaseCrewStress()
     {
+        if (GameController.INSTANCE.Current_Game_State != GameState.EVENT)
+            return;
+
         ShipController.INSTANCE.IncreaseCrewStress(20.0f);
     }
 

@@ -81,6 +81,9 @@ public class GameInputController : MonoBehaviour
         //if (Input.GetKeyDown(KeyCode.W) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
         //    GameController.INSTANCE.ChangeDistanceToEarth(-50000.0f);
 
+        //if (Input.GetKeyDown(KeyCode.H) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
+        //    GameController.INSTANCE.RestartInHardDifficulty();
+
         ///////////////////////////
 
         if (GameController.INSTANCE.Current_Game_State == GameState.LOST_HULL 
