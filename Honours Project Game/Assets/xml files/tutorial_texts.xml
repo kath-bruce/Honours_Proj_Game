@@ -7,7 +7,7 @@
       {color=#c3b403}Maintain life support{/color} - affects {color=green}life support efficiency{/color}
       {color=#0000c3}Repair{/color}                - affects {color=blue}hull integrity{/color}
       {color=#c300c3}Torpedo asteroids{/color}    - decreases {color=red}shields{/color} then {color=blue}hull{/color}
-                                                  - generates a {color=#c30000}Charge Shields{/color} {color=#ff00ff}task{/color} when completed
+                     - generates a {color=#c30000}Charge Shields{/color} {color=#ff00ff}task{/color} when completed
       {color=#aaaaaa}Other tasks{/color}         - affects {color=black}crew stress{/color}
     </extra_text>
   </tutorial_part>
