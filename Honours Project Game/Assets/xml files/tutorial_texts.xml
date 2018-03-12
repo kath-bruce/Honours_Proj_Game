@@ -1,7 +1,7 @@
 ﻿<tutorial>
   <tutorial_part name ="COMPLETING_TASK">
     <top_text>Direct your {color=green}crew members{/color} to complete {color=#ff00ff}tasks{/color} - you can tell if a {color=#ff00ff}task{/color} is being worked on by the white outline</top_text>
-    <bottom_text>Leaving {color=#ff00ff}tasks{/color} uncompleted will degrade a {color=orange}ship aspects{/color} and completing them will improve that {color=orange}ship aspect</bottom_text>
+    <bottom_text>Leaving {color=#ff00ff}tasks{/color} uncompleted will degrade a {color=orange}ship aspect{/color} and completing them will improve that {color=orange}ship aspect</bottom_text>
     <extra_text>
       {color=#c30000}Charge Shields{/color}        - affects {color=red}shield capacity{/color}
       {color=#c3b403}Maintain life support{/color} - affects {color=green}life support efficiency{/color}
@@ -13,7 +13,7 @@
   </tutorial_part>
   <tutorial_part name ="CREW_MEMBER_MOVEMENT">
     <top_text>{color=black}Left click{/color} on {color=#c3c3c3}nodes{/color} (grey boxes) to direct your selected {color=green}crew member{/color} there or to a {color=#ff00ff}task{/color} for them to complete</top_text>
-    <bottom_text>{color=green}Crew members{/color} have roles which determine what {color=#ff00ff}tasks{/color} they can do - {color=red}crew members will not go to tasks they cannot do{/color}</bottom_text>
+    <bottom_text>{color=green}Crew members{/color} have {color=#9400D3}roles{/color} which determine what {color=#ff00ff}tasks{/color} they can do - {color=red}crew members will not go to tasks they cannot do{/color}</bottom_text>
     <extra_text>
 {color=black}Press tab to pause{/color} and view which {color=green}crew member{/color} can do which {color=#ff00ff}task{/color} and access the tutorial again
 
