@@ -3,12 +3,11 @@
     <top_text>Direct your {color=green}crew members{/color} to complete {color=#ff00ff}tasks{/color} - you can tell if a {color=#ff00ff}task{/color} is being worked on by the white outline</top_text>
     <bottom_text>Leaving {color=#ff00ff}tasks{/color} uncompleted will degrade a {color=orange}ship aspect{/color} and completing them will improve that {color=orange}ship aspect</bottom_text>
     <extra_text>
-      {color=#c30000}Charge Shields{/color}        - affects {color=red}shield capacity{/color}
-      {color=#c3b403}Maintain life support{/color} - affects {color=green}life support efficiency{/color}
-      {color=#0000c3}Repair{/color}                - affects {color=blue}hull integrity{/color}
-      {color=#c300c3}Torpedo asteroids{/color}    - decreases {color=red}shields{/color} then {color=blue}hull{/color}
-           - generates a {color=#c30000}Charge Shields{/color} {color=#ff00ff}task{/color} when completed
-      {color=#aaaaaa}Other tasks{/color}         - affects {color=black}crew stress{/color}
+{color=#c30000}Charge Shields{/color} - affects {color=red}shield capacity{/color}
+{color=#c3b403}Maintain life support{/color} - affects {color=green}life support efficiency{/color}
+{color=#0000c3}Repair{/color} - affects {color=blue}hull integrity{/color}
+{color=#c300c3}Torpedo asteroids{/color} - decreases {color=red}shields{/color} then {color=blue}hull{/color}, generates a {color=#c30000}Charge Shields{/color} {color=#ff00ff}task{/color} when completed
+{color=#aaaaaa}Other tasks{/color} - affects {color=black}crew stress{/color}
     </extra_text>
   </tutorial_part>
   <tutorial_part name ="CREW_MEMBER_MOVEMENT">
@@ -37,13 +36,13 @@ You will lose if the {color=red}hull integrity{/color} or {color=green}life supp
     <top_text>{color=#ff00ff}Tasks{/color} will be generated every few seconds - rooms will generate specific types of {color=#ff00ff}tasks{/color}</top_text>
     <bottom_text>Use your crew to complete {color=#ff00ff}tasks{/color}</bottom_text>
     <extra_text>
-      All rooms can have {color=#0000c3}Repair{/color} {color=#ff00ff}tasks{/color}
-      {color=yellow}Comms{/color} - {color=#959595}Talk to other ship{/color}, {color=black}Maintain comms{/color}
-      {color=red}Shield Charger{/color} - {color=#c30000}Charge shields{/color}
-      {color=green}Life Support{/color} - {color=#c3b403}Maintain life support{/color}
-      {color=blue}Torpedo Launcher{/color} - {color=#c300c3}Torpedo asteroids{/color}
-      {color=#ff00ff}Navigation{/color} - {color=#00c300}Steer ship{/color}
-      {color=#00ffff}Med Bay{/color} - {color=#00c3c3}Heal crew member{/color}
+All rooms can have {color=#0000c3}Repair{/color} {color=#ff00ff}tasks{/color}
+{color=yellow}Comms{/color} - {color=#959595}Talk to other ship{/color}, {color=black}Maintain comms{/color}
+{color=red}Shield Charger{/color} - {color=#c30000}Charge shields{/color}
+{color=green}Life Support{/color} - {color=#c3b403}Maintain life support{/color}
+{color=blue}Torpedo Launcher{/color} - {color=#c300c3}Torpedo asteroids{/color}
+{color=#ff00ff}Navigation{/color} - {color=#00c300}Steer ship{/color}
+{color=#00ffff}Med Bay{/color} - {color=#00c3c3}Heal crew member{/color}
     </extra_text>
   </tutorial_part>
   <tutorial_part name ="WIN_SCREEN">
@@ -54,6 +53,7 @@ You will see how far along in the game you are by looking at the current {color=
 
 You win by keeping your {color=orange}ship aspects{/color} in order until you reach Earth
 
-{color=yellow}Good Luck!{/color}</extra_text>
+{color=yellow}Good Luck!{/color}
+Press tab to start playing</extra_text>
   </tutorial_part>
 </tutorial>
