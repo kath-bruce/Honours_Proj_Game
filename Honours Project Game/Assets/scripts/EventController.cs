@@ -350,7 +350,7 @@ public class EventController : MonoBehaviour
         }
 
         //note debug
-        //current_event = negative_events_high[1];
+        //current_event = negative_events_high[0];
 
         current_event_go.GetComponent<EventInfoSetter>().SetEventInfo(current_event);
 

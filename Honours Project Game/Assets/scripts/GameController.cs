@@ -256,7 +256,8 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (finished_event) //note is this necessary?? - yes apparently
+        if (finished_event && Current_Game_State != GameState.LOST_HULL && Current_Game_State 
+            != GameState.LOST_LIFE_SUPPORT && Current_Game_State != GameState.LOST_STRESSED) //note is this necessary?? - yes apparently
         {
             Current_Game_State = GameState.IN_PLAY;
             finished_event = false;

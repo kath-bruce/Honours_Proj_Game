@@ -23,9 +23,6 @@ public struct TutorialPart
 public class TutorialController : MonoBehaviour
 {
     [SerializeField]
-    VideoClip temp;
-
-    [SerializeField]
     List<VideoClip> tutorial_gifs;
     Dictionary<TutorialPartName, TutorialPart> other_dict;
 
