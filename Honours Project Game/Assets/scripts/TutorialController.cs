@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using HonsProj;
+using UnityEngine.SceneManagement;
 
 public enum TutorialPartName { COMPLETING_TASK, CREW_MEMBER_MOVEMENT, CREW_SELECTION, LOSE_SCREEN, TASK_GENERATION, WIN_SCREEN }
 
@@ -37,8 +38,8 @@ public class TutorialController : MonoBehaviour
     [SerializeField]
     GameObject nextButton;
 
-    [SerializeField]
-    GameObject pausePanel;
+    //[SerializeField]
+    //GameObject pausePanel;
 
     // Use this for initialization
     void Start()
@@ -64,12 +65,15 @@ public class TutorialController : MonoBehaviour
 
         prevButton.SetActive(false);
 
-        pausePanel.SetActive(false);
+        //pausePanel.SetActive(false);
     }
 
     public void NextTutorialPart()
     {
-        AudioController.INSTANCE.PlayButtonSelectAudio();
+        if (SceneManager.GetActiveScene().name != "_tutorial")
+            AudioController.INSTANCE.PlayButtonSelectAudio();
+        else
+            GetComponent<AudioSource>().Play();
 
         ++current_tutorial_part;
         prevButton.SetActive(true);
@@ -81,8 +85,8 @@ public class TutorialController : MonoBehaviour
         else if (current_tutorial_part == tutorial_gifs.Count - 1)
         {
             nextButton.SetActive(false);
-            pausePanel.SetActive(true);
-            GameController.INSTANCE.FinishedTutorial();
+            //pausePanel.SetActive(true);
+            //GameController.INSTANCE.FinishedTutorial();
         }
 
         GetComponentInChildren<GifScript>().SwitchGif(tutorial_gifs[current_tutorial_part]);
@@ -92,7 +96,10 @@ public class TutorialController : MonoBehaviour
 
     public void PreviousTutorialPart()
     {
-        AudioController.INSTANCE.PlayButtonSelectAudio();
+        if (SceneManager.GetActiveScene().name != "_tutorial")
+            AudioController.INSTANCE.PlayButtonSelectAudio();
+        else
+            GetComponent<AudioSource>().Play();
 
         --current_tutorial_part;
         nextButton.SetActive(true);
@@ -130,5 +137,15 @@ public class TutorialController : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void BackToMenu()
+    {
+        if (SceneManager.GetActiveScene().name != "_tutorial")
+            AudioController.INSTANCE.PlayButtonSelectAudio();
+        else
+            GetComponent<AudioSource>().Play();
+
+        SceneManager.LoadScene("_menu");
     }
 }

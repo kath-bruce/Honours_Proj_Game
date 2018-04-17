@@ -5,10 +5,31 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
-    public void Play()
+    public void PlayEasy()
     {
         GetComponent<AudioSource>().Play();
+        FindObjectOfType<MenuState>().ChosenDifficulty = GameDifficulty.EASY;
         SceneManager.LoadScene("_spaceship");
+    }
+
+    public void PlayMedium()
+    {
+        GetComponent<AudioSource>().Play();
+        FindObjectOfType<MenuState>().ChosenDifficulty = GameDifficulty.MEDIUM;
+        SceneManager.LoadScene("_spaceship");
+    }
+
+    public void PlayHard()
+    {
+        GetComponent<AudioSource>().Play();
+        FindObjectOfType<MenuState>().ChosenDifficulty = GameDifficulty.HARD;
+        SceneManager.LoadScene("_spaceship");
+    }
+
+    public void Tutorial()
+    {
+        GetComponent<AudioSource>().Play();
+        SceneManager.LoadScene("_tutorial");
     }
 
     public void Exit()

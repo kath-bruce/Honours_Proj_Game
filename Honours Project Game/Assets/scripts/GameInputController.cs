@@ -86,67 +86,70 @@ public class GameInputController : MonoBehaviour
 
         ///////////////////////////
 
-        if (GameController.INSTANCE.Current_Game_State == GameState.LOST_HULL 
-            || GameController.INSTANCE.Current_Game_State == GameState.LOST_LIFE_SUPPORT 
-            || GameController.INSTANCE.Current_Game_State == GameState.LOST_STRESSED)
+        if (Input.GetKeyDown(KeyCode.Escape))// && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+            GameController.INSTANCE.Menu();
+
+        if (GameController.INSTANCE.Current_Game_State == GameState.LOST_HULL
+            || GameController.INSTANCE.Current_Game_State == GameState.LOST_LIFE_SUPPORT
+            || GameController.INSTANCE.Current_Game_State == GameState.LOST_STRESSED
+            || GameController.INSTANCE.Current_Game_State == GameState.WON)
         {
-            if ((GameController.INSTANCE.No_Of_Tries < GameController.MAX_NO_OF_TRIES) 
-                || (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD))
+            //if ((GameController.INSTANCE.No_Of_Tries < GameController.MAX_NO_OF_TRIES) 
+            //    || (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD))
+            //{
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    GameController.INSTANCE.RestartInCurrentDifficulty();
-                }
+                GameController.INSTANCE.RestartInCurrentDifficulty();
             }
+            //}
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                switch (GameController.INSTANCE.Current_Game_Difficulty)
-                {
-                    case GameDifficulty.EASY:
-                        GameController.INSTANCE.RestartInMediumDifficulty();
-                        break;
-                    case GameDifficulty.MEDIUM:
-                        GameController.INSTANCE.RestartInHardDifficulty();
-                        break;
-                    default:
-                        break;
-                }
-            }
+            //if (Input.GetKeyDown(KeyCode.Space))
+            //{
+            //    switch (GameController.INSTANCE.Current_Game_Difficulty)
+            //    {
+            //        case GameDifficulty.EASY:
+            //            GameController.INSTANCE.RestartInMediumDifficulty();
+            //            break;
+            //        case GameDifficulty.MEDIUM:
+            //            GameController.INSTANCE.RestartInHardDifficulty();
+            //            break;
+            //        default:
+            //            break;
+            //    }
+            //}
 
-            if (Input.GetKeyDown(KeyCode.Escape) && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-                GameController.INSTANCE.Menu();
+            
         }
-        else if (GameController.INSTANCE.Current_Game_State == GameState.WON)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                switch (GameController.INSTANCE.Current_Game_Difficulty)
-                {
-                    case GameDifficulty.EASY:
-                        GameController.INSTANCE.RestartInMediumDifficulty();
-                        break;
-                    case GameDifficulty.MEDIUM:
-                        GameController.INSTANCE.RestartInHardDifficulty();
-                        break;
-                    default:
-                        break;
-                }
-            }
+        //else if (GameController.INSTANCE.Current_Game_State == GameState.WON)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.Space))
+        //    {
+        //        switch (GameController.INSTANCE.Current_Game_Difficulty)
+        //        {
+        //            case GameDifficulty.EASY:
+        //                GameController.INSTANCE.RestartInMediumDifficulty();
+        //                break;
+        //            case GameDifficulty.MEDIUM:
+        //                GameController.INSTANCE.RestartInHardDifficulty();
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
 
-            if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-            {
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    GameController.INSTANCE.RestartInCurrentDifficulty();
-                }
-            }
-        }
+        //    if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+        //    {
+        //        if (Input.GetKeyDown(KeyCode.R))
+        //        {
+        //            GameController.INSTANCE.RestartInCurrentDifficulty();
+        //        }
+        //    }
+        //}
 
         if (Input.GetKeyDown(KeyCode.Escape) && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
             GameController.INSTANCE.Menu();
 
-        if (Input.GetKeyDown(KeyCode.Tab) && GameController.INSTANCE.HasFinishedTutorial())
+        if (Input.GetKeyDown(KeyCode.Tab))// && GameController.INSTANCE.HasFinishedTutorial())
         {
             if (GameController.INSTANCE.Current_Game_State != GameState.PAUSED)
             {

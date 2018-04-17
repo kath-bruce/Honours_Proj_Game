@@ -71,23 +71,23 @@ public class GameController : MonoBehaviour
 
     private float initial_distance;
 
-    private int no_of_tries = 0;
-    public int No_Of_Tries
-    {
-        get
-        {
-            return no_of_tries;
-        }
+    //private int no_of_tries = 0;
+    //public int No_Of_Tries
+    //{
+    //    get
+    //    {
+    //        return no_of_tries;
+    //    }
 
-        protected set
-        {
-            no_of_tries = value;
-        }
-    }
+    //    protected set
+    //    {
+    //        no_of_tries = value;
+    //    }
+    //}
 
-    public const int MAX_NO_OF_TRIES = 3;
+    //public const int MAX_NO_OF_TRIES = 3;
 
-    private bool has_finished_tutorial;
+    //private bool has_finished_tutorial;
 
     // Use this for initialization
     void Awake()
@@ -105,30 +105,45 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        Current_Game_State = GameState.IN_PLAY;
+        switch(FindObjectOfType<MenuState>().ChosenDifficulty)
+        {
+            case GameDifficulty.EASY:
+                RestartInEasyDifficulty();
+                break;
+            case GameDifficulty.MEDIUM:
+                RestartInMediumDifficulty();
+                break;
+            case GameDifficulty.HARD:
+                RestartInHardDifficulty();
+                break;
+            default:
+                break;
+        }
 
-        Current_Game_Phase = GamePhase.FIRST_PHASE;
-        Current_Game_Difficulty = GameDifficulty.EASY;
+        //Current_Game_State = GameState.IN_PLAY;
 
-        Distance_To_Earth = EASY_DISTANCE;
-        initial_distance = Distance_To_Earth;
+        //Current_Game_Phase = GamePhase.FIRST_PHASE;
+        //Current_Game_Difficulty = GameDifficulty.EASY;
+
+        //Distance_To_Earth = EASY_DISTANCE;
+        //initial_distance = Distance_To_Earth;
 
         //TODO!!!! - remember to uncomment this
-        Pause();
-        UIManager.INSTANCE.ViewTutorial();
-        has_finished_tutorial = false;
+        //Pause();
+        //UIManager.INSTANCE.ViewTutorial();
+        //has_finished_tutorial = false;
         //has_finished_tutorial = true;
     }
 
-    public void FinishedTutorial()
-    {
-        has_finished_tutorial = true;
-    }
+    //public void FinishedTutorial()
+    //{
+    //    has_finished_tutorial = true;
+    //}
 
-    public bool HasFinishedTutorial()
-    {
-        return has_finished_tutorial;
-    }
+    //public bool HasFinishedTutorial()
+    //{
+    //    return has_finished_tutorial;
+    //}
 
     public void Menu()
     {
@@ -160,21 +175,21 @@ public class GameController : MonoBehaviour
     public void LostHullIntegrity()
     {
         Current_Game_State = GameState.LOST_HULL;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);//, ++No_Of_Tries);
         AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void LostLifeSupport()
     {
         Current_Game_State = GameState.LOST_LIFE_SUPPORT;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);//, ++No_Of_Tries);
         AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void LostSanity()
     {
         Current_Game_State = GameState.LOST_STRESSED;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State, ++No_Of_Tries);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);//, ++No_Of_Tries);
         AudioController.INSTANCE.PlayLoseAudio();
     }
 
@@ -206,42 +221,48 @@ public class GameController : MonoBehaviour
     {
         Current_Game_Difficulty = GameDifficulty.EASY;
 
-        OnRestartGame();
+        if (OnRestartGame != null)
+            OnRestartGame();
+
         Current_Game_State = GameState.IN_PLAY;
         Current_Game_Phase = GamePhase.FIRST_PHASE;
 
         Distance_To_Earth = EASY_DISTANCE;
         initial_distance = Distance_To_Earth;
 
-        No_Of_Tries = 0;
+        //No_Of_Tries = 0;
     }
 
     public void RestartInMediumDifficulty()
     {
         Current_Game_Difficulty = GameDifficulty.MEDIUM;
 
-        OnRestartGame();
+        if (OnRestartGame != null)
+            OnRestartGame();
+
         Current_Game_State = GameState.IN_PLAY;
         Current_Game_Phase = GamePhase.FIRST_PHASE;
 
         Distance_To_Earth = MED_DISTANCE;
         initial_distance = Distance_To_Earth;
 
-        No_Of_Tries = 0;
+        //No_Of_Tries = 0;
     }
 
     public void RestartInHardDifficulty()
     {
         Current_Game_Difficulty = GameDifficulty.HARD;
 
-        OnRestartGame();
+        if (OnRestartGame != null)
+            OnRestartGame();
+
         Current_Game_State = GameState.IN_PLAY;
         Current_Game_Phase = GamePhase.FIRST_PHASE;
 
         Distance_To_Earth = HARD_DISTANCE;
         initial_distance = Distance_To_Earth;
 
-        No_Of_Tries = 0;
+        //No_Of_Tries = 0;
     }
 
     public void RestartInCurrentDifficulty()
