@@ -10,4 +10,7 @@ EditorBuildSettings:
     guid: 903d5c3bcd74be14cb12b4469d1903d7
   - enabled: 1
     path: Assets/_spaceship.unity
+    guid: f646784780b626f4884ea96ff1a22fb6
+  - enabled: 1
+    path: Assets/_tutorial.unity
     guid: 00000000000000000000000000000000

@@ -57,8 +57,7 @@ public class GameInputController : MonoBehaviour
         }
 
         //if right click 
-        //probably just wanting to deselect crew member - call crew controller function
-        //note possible bug where crew member isn't properly deselected??? - probably not but be on lookout
+        //deselect crew member - call crew controller function
         if (Input.GetMouseButtonDown(1))
         {
             if (GameController.INSTANCE.Current_Game_State == GameState.EVENT || GameController.INSTANCE.Current_Game_State == GameState.PAUSED)
@@ -66,27 +65,8 @@ public class GameInputController : MonoBehaviour
 
             CrewController.INSTANCE.DeselectCrewMember();
         }
-
-        ///////////////////////////////
-
-        //if (Input.GetKeyDown(KeyCode.I) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
-        //    GameController.INSTANCE.LostHullIntegrity();
-
-        //if (Input.GetKeyDown(KeyCode.L) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
-        //    GameController.INSTANCE.LostLifeSupport();
-
-        //if (Input.GetKeyDown(KeyCode.S) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
-        //    GameController.INSTANCE.LostSanity();
-
-        //if (Input.GetKeyDown(KeyCode.W) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
-        //    GameController.INSTANCE.ChangeDistanceToEarth(-50000.0f);
-
-        //if (Input.GetKeyDown(KeyCode.H) && GameController.INSTANCE.Current_Game_State == GameState.IN_PLAY)
-        //    GameController.INSTANCE.RestartInHardDifficulty();
-
-        ///////////////////////////
-
-        if (Input.GetKeyDown(KeyCode.Escape))// && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
+        
+        if (Input.GetKeyDown(KeyCode.Escape))
             GameController.INSTANCE.Menu();
 
         if (GameController.INSTANCE.Current_Game_State == GameState.LOST_HULL
@@ -94,62 +74,16 @@ public class GameInputController : MonoBehaviour
             || GameController.INSTANCE.Current_Game_State == GameState.LOST_STRESSED
             || GameController.INSTANCE.Current_Game_State == GameState.WON)
         {
-            //if ((GameController.INSTANCE.No_Of_Tries < GameController.MAX_NO_OF_TRIES) 
-            //    || (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD))
-            //{
             if (Input.GetKeyDown(KeyCode.R))
             {
                 GameController.INSTANCE.RestartInCurrentDifficulty();
             }
-            //}
-
-            //if (Input.GetKeyDown(KeyCode.Space))
-            //{
-            //    switch (GameController.INSTANCE.Current_Game_Difficulty)
-            //    {
-            //        case GameDifficulty.EASY:
-            //            GameController.INSTANCE.RestartInMediumDifficulty();
-            //            break;
-            //        case GameDifficulty.MEDIUM:
-            //            GameController.INSTANCE.RestartInHardDifficulty();
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //}
-
-            
         }
-        //else if (GameController.INSTANCE.Current_Game_State == GameState.WON)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.Space))
-        //    {
-        //        switch (GameController.INSTANCE.Current_Game_Difficulty)
-        //        {
-        //            case GameDifficulty.EASY:
-        //                GameController.INSTANCE.RestartInMediumDifficulty();
-        //                break;
-        //            case GameDifficulty.MEDIUM:
-        //                GameController.INSTANCE.RestartInHardDifficulty();
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    }
-
-        //    if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-        //    {
-        //        if (Input.GetKeyDown(KeyCode.R))
-        //        {
-        //            GameController.INSTANCE.RestartInCurrentDifficulty();
-        //        }
-        //    }
-        //}
-
+        
         if (Input.GetKeyDown(KeyCode.Escape) && GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
             GameController.INSTANCE.Menu();
 
-        if (Input.GetKeyDown(KeyCode.Tab))// && GameController.INSTANCE.HasFinishedTutorial())
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (GameController.INSTANCE.Current_Game_State != GameState.PAUSED)
             {

@@ -71,24 +71,6 @@ public class GameController : MonoBehaviour
 
     private float initial_distance;
 
-    //private int no_of_tries = 0;
-    //public int No_Of_Tries
-    //{
-    //    get
-    //    {
-    //        return no_of_tries;
-    //    }
-
-    //    protected set
-    //    {
-    //        no_of_tries = value;
-    //    }
-    //}
-
-    //public const int MAX_NO_OF_TRIES = 3;
-
-    //private bool has_finished_tutorial;
-
     // Use this for initialization
     void Awake()
     {
@@ -119,31 +101,7 @@ public class GameController : MonoBehaviour
             default:
                 break;
         }
-
-        //Current_Game_State = GameState.IN_PLAY;
-
-        //Current_Game_Phase = GamePhase.FIRST_PHASE;
-        //Current_Game_Difficulty = GameDifficulty.EASY;
-
-        //Distance_To_Earth = EASY_DISTANCE;
-        //initial_distance = Distance_To_Earth;
-
-        //TODO!!!! - remember to uncomment this
-        //Pause();
-        //UIManager.INSTANCE.ViewTutorial();
-        //has_finished_tutorial = false;
-        //has_finished_tutorial = true;
     }
-
-    //public void FinishedTutorial()
-    //{
-    //    has_finished_tutorial = true;
-    //}
-
-    //public bool HasFinishedTutorial()
-    //{
-    //    return has_finished_tutorial;
-    //}
 
     public void Menu()
     {
@@ -175,21 +133,21 @@ public class GameController : MonoBehaviour
     public void LostHullIntegrity()
     {
         Current_Game_State = GameState.LOST_HULL;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);//, ++No_Of_Tries);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
         AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void LostLifeSupport()
     {
         Current_Game_State = GameState.LOST_LIFE_SUPPORT;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);//, ++No_Of_Tries);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
         AudioController.INSTANCE.PlayLoseAudio();
     }
 
     public void LostSanity()
     {
         Current_Game_State = GameState.LOST_STRESSED;
-        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);//, ++No_Of_Tries);
+        UIManager.INSTANCE.ShowLossDisplay(Current_Game_State);
         AudioController.INSTANCE.PlayLoseAudio();
     }
 
@@ -201,7 +159,6 @@ public class GameController : MonoBehaviour
     public void FinishedEvent()
     {
         finished_event = true;
-        //Current_Game_State = GameState.IN_PLAY;
     }
 
     public void Pause()
@@ -229,8 +186,7 @@ public class GameController : MonoBehaviour
 
         Distance_To_Earth = EASY_DISTANCE;
         initial_distance = Distance_To_Earth;
-
-        //No_Of_Tries = 0;
+        
     }
 
     public void RestartInMediumDifficulty()
@@ -245,8 +201,7 @@ public class GameController : MonoBehaviour
 
         Distance_To_Earth = MED_DISTANCE;
         initial_distance = Distance_To_Earth;
-
-        //No_Of_Tries = 0;
+        
     }
 
     public void RestartInHardDifficulty()
@@ -261,8 +216,7 @@ public class GameController : MonoBehaviour
 
         Distance_To_Earth = HARD_DISTANCE;
         initial_distance = Distance_To_Earth;
-
-        //No_Of_Tries = 0;
+        
     }
 
     public void RestartInCurrentDifficulty()
@@ -278,7 +232,7 @@ public class GameController : MonoBehaviour
     void Update()
     {
         if (finished_event && Current_Game_State != GameState.LOST_HULL && Current_Game_State 
-            != GameState.LOST_LIFE_SUPPORT && Current_Game_State != GameState.LOST_STRESSED) //note is this necessary?? - yes apparently
+            != GameState.LOST_LIFE_SUPPORT && Current_Game_State != GameState.LOST_STRESSED)
         {
             Current_Game_State = GameState.IN_PLAY;
             finished_event = false;

@@ -171,91 +171,46 @@ public class UIManager : MonoBehaviour
     {
         Win_Display.SetActive(true);
 
-        //if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-        //{
-            TMPro.TextMeshProUGUI win_text = Win_Display.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        TMPro.TextMeshProUGUI win_text = Win_Display.GetComponentInChildren<TMPro.TextMeshProUGUI>();
 
-            win_text.text = "<color=white>Reached Earth!<size=30>\n\nYou have made it back in one piece!</size></color>\n\n"+
-                "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
-        //}
+        win_text.text = "<color=white>Reached Earth!<size=30>\n\nYou have made it back in one piece!</size></color>\n\n" +
+            "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
 
         Win_Display.transform.SetAsLastSibling();
     }
 
-    public void ShowLossDisplay(GameState state)//, int no_of_tries)
+    public void ShowLossDisplay(GameState state)
     {
         Loss_Display.SetActive(true);
 
         TMPro.TextMeshProUGUI[] loss_texts = Loss_Display.GetComponentsInChildren<TMPro.TextMeshProUGUI>();
 
-        foreach(TMPro.TextMeshProUGUI loss_text in loss_texts)
+        foreach (TMPro.TextMeshProUGUI loss_text in loss_texts)
         {
-            //if (loss_text.gameObject.name == "Tries")
-            //{
-            //    if (GameController.INSTANCE.Current_Game_Difficulty != GameDifficulty.HARD)
-            //        loss_text.text = "Tries: " + no_of_tries + "/" + GameController.MAX_NO_OF_TRIES;
-            //    else
-            //        loss_text.text = "";
-            //}
-            //else
-            //{
-                switch (state)
-                {
-                    case GameState.LOST_HULL:
-                        loss_text.text =
-                            "Hull Destroyed!\n\n<size=30>The<color=white> ship hull integrity</color> has reached 0%!</size>\n\n";
+            switch (state)
+            {
+                case GameState.LOST_HULL:
+                    loss_text.text =
+                        "Hull Destroyed!\n\n<size=30>The<color=white> ship hull integrity</color> has reached 0%!</size>\n\n";
 
-                        //if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-                        //{
-                            loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
-                        //}
-                        //else if (no_of_tries < GameController.MAX_NO_OF_TRIES)
-                        //{
-                            //loss_text.text += "<size=20>Press 'r' to try again or space to advance to the next difficulty level</size>";
-                        //}
-                        //else if (no_of_tries >= GameController.MAX_NO_OF_TRIES)
-                        //{
-                            //loss_text.text += "<size=20>Press space to advance to the next difficulty level</size>";
-                        //}
-                        break;
-                    case GameState.LOST_LIFE_SUPPORT:
-                        loss_text.text =
-                            "Life Support Failure!\n\n<size=30>The<color=white> life support efficiency</color> has reached 0%!</size>\n\n";
+                    loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
 
-                        //if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-                        //{
-                            loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
-                        //}
-                        //else if (no_of_tries < GameController.MAX_NO_OF_TRIES)
-                        //{
-                        //    loss_text.text += "<size=20>Press 'r' to try again or space to advance to the next difficulty level</size>";
-                        //}
-                        //else if (no_of_tries >= GameController.MAX_NO_OF_TRIES)
-                        //{
-                        //    loss_text.text += "<size=20>Press space to advance to the next difficulty level</size>";
-                        //}
+                    break;
+                case GameState.LOST_LIFE_SUPPORT:
+                    loss_text.text =
+                        "Life Support Failure!\n\n<size=30>The<color=white> life support efficiency</color> has reached 0%!</size>\n\n";
 
-                        break;
-                    case GameState.LOST_STRESSED:
-                        loss_text.text =
-                            "Crew Too Stressed!\n\n<size=30>The <color=white>crew stress</color> has reached 300!</size>\n\n";
+                    loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
 
-                        //if (GameController.INSTANCE.Current_Game_Difficulty == GameDifficulty.HARD)
-                        //{
-                            loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
-                        //}
-                        //else if (no_of_tries < GameController.MAX_NO_OF_TRIES)
-                        //{
-                        //    loss_text.text += "<size=20>Press 'r' to try again or space to advance to the next difficulty level</size>";
-                        //}
-                        //else if (no_of_tries >= GameController.MAX_NO_OF_TRIES)
-                        //{
-                        //    loss_text.text += "<size=20>Press space to advance to the next difficulty level</size>";
-                        //}
+                    break;
+                case GameState.LOST_STRESSED:
+                    loss_text.text =
+                        "Crew Too Stressed!\n\n<size=30>The <color=white>crew stress</color> has reached 300!</size>\n\n";
 
-                        break;
-                }
-            //}
+                    loss_text.text += "<size=20>Press 'r' to try again or Escape to go back to the menu</size>";
+
+                    break;
+            }
         }
 
         Loss_Display.transform.SetAsLastSibling();

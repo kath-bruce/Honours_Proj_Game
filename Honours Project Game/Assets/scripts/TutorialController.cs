@@ -38,9 +38,6 @@ public class TutorialController : MonoBehaviour
     [SerializeField]
     GameObject nextButton;
 
-    //[SerializeField]
-    //GameObject pausePanel;
-
     // Use this for initialization
     void Start()
     {
@@ -64,8 +61,6 @@ public class TutorialController : MonoBehaviour
         UpdateTutorialText();
 
         prevButton.SetActive(false);
-
-        //pausePanel.SetActive(false);
     }
 
     public void NextTutorialPart()
@@ -85,8 +80,6 @@ public class TutorialController : MonoBehaviour
         else if (current_tutorial_part == tutorial_gifs.Count - 1)
         {
             nextButton.SetActive(false);
-            //pausePanel.SetActive(true);
-            //GameController.INSTANCE.FinishedTutorial();
         }
 
         GetComponentInChildren<GifScript>().SwitchGif(tutorial_gifs[current_tutorial_part]);
